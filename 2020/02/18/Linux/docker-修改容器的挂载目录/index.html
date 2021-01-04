@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker-修改容器的挂载目录 | 一叶知秋</title>
+  <meta name="description" content="今天新买的一块 ssd 到货了，把一些 Android系统平台的代码都迁移到这个 ssd　上去。这个 ssd 挂载到了 &#x2F;media&#x2F;qiushao&#x2F;source-code　目录下。这样的话，我之前创建的 docker container 就读取不到这个目录的内容了。之前的 container 的创建命令为: 1docker run -it --name aosp_builder -v ~&amp;#x2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker-修改容器的挂载目录">
+<meta property="og:url" content="http://qiushao.net/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="今天新买的一块 ssd 到货了，把一些 Android系统平台的代码都迁移到这个 ssd　上去。这个 ssd 挂载到了 &#x2F;media&#x2F;qiushao&#x2F;source-code　目录下。这样的话，我之前创建的 docker container 就读取不到这个目录的内容了。之前的 container 的创建命令为: 1docker run -it --name aosp_builder -v ~&amp;#x2">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-18T06:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-提交现有-container-为镜像"><span class="toc-text">1. 提交现有 container 为镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-删除旧的-container"><span class="toc-text">2. 删除旧的 container</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-创建新的-container"><span class="toc-text">3. 创建新的 container</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/docker-修改容器的挂载目录" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker-修改容器的挂载目录
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/" class="article-date">
+	  <time datetime="2020-02-18T06:00:00.000Z" itemprop="datePublished">2020-02-18</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Linux/" rel="tag">Linux</a>, <a class="article-tag-link" href="/tags/docker/" rel="tag">docker</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/" class="leancloud_visitors"  data-flag-title="docker-修改容器的挂载目录">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>今天新买的一块 ssd 到货了，把一些 Android系统平台的代码都迁移到这个 ssd　上去。这个 ssd 挂载到了 /media/qiushao/source-code　目录下。这样的话，我之前创建的 docker container 就读取不到这个目录的内容了。之前的 container 的创建命令为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name aosp_builder -v ~&#x2F;source:&#x2F;home&#x2F;builder&#x2F;source -u builder aosp_builder:V1.0 &#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
+
+<p>挂载的路径是 /home/qiushao/source, 现在我要把路径修改为 /media/qiushao/source-code 的话，要怎么做呢。<br>最简单的方法是把这个旧的 container 给删除了，重新创建一个 container，　用新的路径来挂载。但是之前的那个 container 我在使用过程中还不断修改了很多配置，安装了很多新软件。安装了哪些软件又不记得了。这些软件又是编译某些平台必要的。所以这个方法行不通。网上查了一下，有很多种方法，下面是我使用的一种方法介绍。</p>
+<h2 id="1-提交现有-container-为镜像"><a href="#1-提交现有-container-为镜像" class="headerlink" title="1. 提交现有 container 为镜像"></a>1. 提交现有 container 为镜像</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS                    PORTS               NAMES</span><br><span class="line">41f6f5ff41af        bestwu&#x2F;wechat          &quot;&#x2F;entrypoint.sh&quot;    2 weeks ago         Up 36 minutes                                 script_wechat</span><br><span class="line">393ac94612d9        aosp_builder:V1.0      &quot;&#x2F;bin&#x2F;bash&quot;         2 months ago        Exited (0) 36 hours ago                       aosp_builder</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们目前在用的 aosp_builder container id 为 393ac94612d9。我们把这个 container 提交一下，成为一个新的镜像：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ docker commit 393ac94612d9 aosp_builder:V2.0</span><br><span class="line">sha256:84f496a7977d0d9c65cb928308f6da98f4f40d3ae61dd97ed41a259d5b3c58fd</span><br><span class="line">qiushao@qiushao-pc:~$ docker images </span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">aosp_builder        V2.0                84f496a7977d        30 seconds ago      4.68GB</span><br><span class="line">aosp_builder        V1.0                149ef2e2830b        2 months ago        1.23GB</span><br><span class="line">bestwu&#x2F;wechat       latest              53c371b7016c        5 months ago        941MB</span><br><span class="line">ubuntu              14.04               2c5e00d77a67        9 months ago        188MB</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>我们把新的镜像命名为 aosp_builder:V2.0。提交完之后，<code>docker images</code>　查看，发现多了一个镜像出来了。</p>
+<h2 id="2-删除旧的-container"><a href="#2-删除旧的-container" class="headerlink" title="2. 删除旧的 container"></a>2. 删除旧的 container</h2><p>旧的 container 已经被我们提交成镜像了，我们可以删除掉了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ docker container stop aosp_builder</span><br><span class="line">aosp_builder</span><br><span class="line">qiushao@qiushao-pc:~$ docker container rm aosp_builder</span><br><span class="line">aosp_builder</span><br><span class="line">qiushao@qiushao-pc:~$ docker container ls -a</span><br><span class="line">CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS              PORTS               NAMES</span><br><span class="line">41f6f5ff41af        bestwu&#x2F;wechat          &quot;&#x2F;entrypoint.sh&quot;    2 weeks ago         Up 45 minutes                           script_wechat</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-创建新的-container"><a href="#3-创建新的-container" class="headerlink" title="3. 创建新的 container"></a>3. 创建新的 container</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ docker run -it --name aosp_builder -v &#x2F;media&#x2F;qiushao&#x2F;source-code:&#x2F;home&#x2F;builder&#x2F;source -u builder aosp_builder:V2.0 &#x2F;bin&#x2F;bash</span><br><span class="line">builder@88da927b1ee5:~$ exit</span><br><span class="line">qiushao@qiushao-pc:~$ docker container ls -a</span><br><span class="line">CONTAINER ID        IMAGE                  COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">88da927b1ee5        aosp_builder:V2.0      &quot;&#x2F;bin&#x2F;bash&quot;         14 seconds ago      Exited (0) 9 seconds ago                       aosp_builder</span><br><span class="line">41f6f5ff41af        bestwu&#x2F;wechat          &quot;&#x2F;entrypoint.sh&quot;    2 weeks ago         Up 47 minutes                                  script_wechat</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>至此我们就完成修改挂载目录的目的啦。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/" title="docker-修改容器的挂载目录" target="_blank" rel="external">http://qiushao.net/2020/02/18/Linux/docker-%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/22/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Android系统开发进阶-系统启动流程概要"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/18/Java/Java-%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" title="Java-类的加载机制介绍"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

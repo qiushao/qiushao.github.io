@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Java-注解介绍 | 一叶知秋</title>
+  <meta name="description" content="1. 什么是注解Java 的官方文档是这么介绍的:  Annotations, a form of metadata, provide data about a program that is not part of the program itself. Annotations have no direct effect on the operation of the code they ann">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java-注解介绍">
+<meta property="og:url" content="http://qiushao.net/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="1. 什么是注解Java 的官方文档是这么介绍的:  Annotations, a form of metadata, provide data about a program that is not part of the program itself. Annotations have no direct effect on the operation of the code they ann">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-16T06:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-什么是注解"><span class="toc-text">1. 什么是注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-注解的使用场景"><span class="toc-text">2. 注解的使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-注解的基本用法"><span class="toc-text">3. 注解的基本用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-注解的定义"><span class="toc-text">4. 注解的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-元注解"><span class="toc-text">5. 元注解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Retention"><span class="toc-text">5.1 @Retention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Target"><span class="toc-text">5.2 @Target</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Inherited"><span class="toc-text">5.3 @Inherited</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-Documented"><span class="toc-text">5.4 @Documented</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-Repeatable"><span class="toc-text">5.5 @Repeatable</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-注解的提取"><span class="toc-text">6. 注解的提取</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Java/Java-注解介绍" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java-注解介绍
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/" class="article-date">
+	  <time datetime="2020-02-16T06:00:00.000Z" itemprop="datePublished">2020-02-16</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Java/" rel="tag">Java</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/" class="leancloud_visitors"  data-flag-title="Java-注解介绍">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="1-什么是注解"><a href="#1-什么是注解" class="headerlink" title="1. 什么是注解"></a>1. 什么是注解</h2><p>Java 的<a href="https://docs.oracle.com/javase/tutorial/java/annotations/" target="_blank" rel="noopener">官方文档</a>是这么介绍的:</p>
+<blockquote>
+<p>Annotations, a form of metadata, provide data about a program that is not part of the program itself. Annotations have no direct effect on the operation of the code they annotate.<br>Annotations have a number of uses, among them:<br><strong>Information for the compiler</strong> : Annotations can be used by the compiler to detect errors or suppress warnings.<br><strong>Compile-time and deployment-time processing</strong> : Software tools can process annotation information to generate code, XML files, and so forth.<br><strong>Runtime processing</strong> : Some annotations are available to be examined at runtime.</p>
+</blockquote>
+<p>翻译过来就是：注解是一种元数据形式，它可以为程序提供数据，但这些数据并不是程序本身的一部分。注解对代码的执行并没有任何直接的影响。注解通常有以下几个使用场景：</p>
+<ul>
+<li>为编译器提供信息：注解可以被编译器用来检查错误，或者忽略警告。</li>
+<li>编译时和发布时处理：一些软件工具可以通过处理注解信息来生成代码，xml 文件等。</li>
+<li>运行时处理：有些注解可以在运行时被使用。</li>
+</ul>
+<p>说实话，我看了这个解析，觉得跟没说一样，我个人认为，比较糟糕的技术文档主要特征之一就是：用专业名词来介绍专业名词。对于一个不知道注解是什么东西的人，你跟他说元数据，这不是扯蛋嘛。<br>在经过学习，整理，并自已运用注解实现了一个简易的 ORM　框架之后，我才明白了注解是什么，它的使用场景是什么。我个人的理解：注解是一种标签(tag)系统，　这里我们用博客文章来作类比。如果这篇文章是代码程序，我给这篇文章打了一个标签 Java，那么这个 Java 标签我们就可以理解为一个注解。一篇文章可以打多个标签，一段代码，也可以使用多个注解。标签本身对这篇文章没有任何影响，但我可以根据标签来对文章进行分类。注解本身对代码也没有任何影响，但我们要以编写注解处理器来处理注解生成代码或者其他处理。</p>
+<h2 id="2-注解的使用场景"><a href="#2-注解的使用场景" class="headerlink" title="2. 注解的使用场景"></a>2. 注解的使用场景</h2><p>注解的使用可以说是无处不在，如果你是 Java　语言的使用者，我相信你一定用过。下面根据官方文档列举的几个场景举些例子。</p>
+<ul>
+<li><ol>
+<li>为编译器提供信息<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+</li>
+</ul>
+<p>这个 @Override 就是一个给编译器提供信息的注解了，我们常见的还有 @Deprecated, @SuppressWarnings　等。</p>
+<ul>
+<li><ol start="2">
+<li>编译时自动生成代码或者数据<br>这种场景用得比较少，　一般是出于性能考虑，　因为运行时处理注解的话是要使用反射的，反射的性能比较差，为了尽可能的提高性能，所以把注解的处理放在编译期处理。Android 的　ORM　框架 <a href="https://greenrobot.org/greendao/" target="_blank" rel="noopener">GreenDao</a> 就是一个典型。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>运行时处理<br>这种使用场景就比较广泛了，<br>比如 ORM 框架 <a href="https://github.com/litesuits/android-lite-orm" target="_blank" rel="noopener">LiteOrm</a><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Table</span>(<span class="string">"test_model"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestModel</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 指定自增，每个对象需要有一个主键</span></span><br><span class="line">    <span class="meta">@PrimaryKey</span>(AssignType.AUTO_INCREMENT)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="comment">// 非空字段</span></span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="comment">//忽略字段，将不存储到数据库</span></span><br><span class="line">    <span class="meta">@Ignore</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="comment">// 默认为true，指定列名</span></span><br><span class="line">    <span class="meta">@Default</span>(<span class="string">"true"</span>)</span><br><span class="line">    <span class="meta">@Column</span>(<span class="string">"login"</span>)</span><br><span class="line">    <span class="keyword">private</span> Boolean isLogin;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+比如 Android View 注入框架 <a href="https://github.com/JakeWharton/butterknife" target="_blank" rel="noopener">Butter Knife</a><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExampleActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">  <span class="meta">@BindView</span>(R.id.user) EditText username;</span><br><span class="line">  <span class="meta">@BindView</span>(R.id.pass) EditText password;</span><br><span class="line">  <span class="meta">@BindString</span>(R.string.login_error) String loginErrorMessage;</span><br><span class="line">  <span class="meta">@OnClick</span>(R.id.submit) <span class="function"><span class="keyword">void</span> <span class="title">submit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// TODO call server...</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.simple_activity);</span><br><span class="line">    ButterKnife.bind(<span class="keyword">this</span>);</span><br><span class="line">    <span class="comment">// TODO Use fields...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+web 服务开发的应用就更多了，这里就不列举了。我们只需要知道注解是一种很有用的工具就行。</li>
+</ol>
+</li>
+</ul>
+<h2 id="3-注解的基本用法"><a href="#3-注解的基本用法" class="headerlink" title="3. 注解的基本用法"></a>3. 注解的基本用法</h2><p>还是以一个简单的小 Demo 开始：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> qiushao.net;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.ElementType;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建一个注解</span></span><br><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@interface</span> Table &#123;</span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">version</span><span class="params">()</span> <span class="keyword">default</span> 1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用这个注解</span></span><br><span class="line"><span class="meta">@Table</span>(name = <span class="string">"person"</span>)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="comment">//注解的解析处理</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException </span>&#123;</span><br><span class="line">        <span class="comment">//通过反射获取注解信息，如果这个 obj 上有注解的话，返回对应的注解实例，没有的话，返回 null</span></span><br><span class="line">        Class&lt;?&gt; claz = obj.getClass();</span><br><span class="line">        Table table = claz.getAnnotation(Table<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == table) &#123;</span><br><span class="line">            System.out.println(<span class="string">"no Table annotation on this object"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"there is annotation on this object"</span>);</span><br><span class="line">        System.out.println(<span class="string">"table name = "</span> + table.name() + <span class="string">", table version = "</span> + table.version());</span><br><span class="line"></span><br><span class="line">        Field[] fields = claz.getFields();</span><br><span class="line">        <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">            String fieldName = field.getName();</span><br><span class="line">            Object fieldValue = field.get(obj);</span><br><span class="line">            System.out.println(fieldName + <span class="string">" = "</span> + fieldValue);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException </span>&#123;</span><br><span class="line">        Person person = <span class="keyword">new</span> Person();</span><br><span class="line">        person.id = <span class="number">1</span>;</span><br><span class="line">        person.name = <span class="string">"qiushao"</span>;</span><br><span class="line">        save(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">there is annotation on this object</span><br><span class="line">table name &#x3D; person, table version &#x3D; 1</span><br><span class="line">id &#x3D; 1</span><br><span class="line">name &#x3D; qiushao</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的例子，我们展示了注解的一些最基本用法，比如创建注解，使用注解，解析注解信息等。接下来我们详细的讨论注解的各种功能具体用法。</p>
+<h2 id="4-注解的定义"><a href="#4-注解的定义" class="headerlink" title="4. 注解的定义"></a>4. 注解的定义</h2><p>直接使用上面的例子来分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@interface</span> Table &#123;</span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">version</span><span class="params">()</span> <span class="keyword">default</span> 1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注解通过 @interface关键字进行定义。它的形式跟接口很类似，不过前面多了一个 @ 符号。上面的代码就创建了一个名字为 Table 的注解。这个注解有两个成员变量 name 和 version。注解的成员变量定义形式跟普通的 java 类成员定义有点差别。它的定义形式为：<code>变量类型　变量名() [default value];</code>，感觉是同时定义了一个变量和一个与变量同名的方法，这一点可以从后面获取注解的成员变量信息用法(<code>table.name()</code>)看出来。</p>
+<p>@Target　@Retention　这两个叫做元注解。具体作用下面来介绍。</p>
+<h2 id="5-元注解"><a href="#5-元注解" class="headerlink" title="5. 元注解"></a>5. 元注解</h2><p>元注解是可以注解到注解上的注解，或者说元注解是一种基本注解，它能够应用到其它的注解上面。元注解有@Retention、@Documented、@Target、@Inherited、@Repeatable，下面我们一一介绍。</p>
+<h3 id="5-1-Retention"><a href="#5-1-Retention" class="headerlink" title="5.1 @Retention"></a>5.1 @Retention</h3><p>Retention 的英文意为保留期的意思。当 @Retention 应用到一个注解上的时候，它解释说明了这个注解的的存活时间。它的取值如下：</p>
+<ul>
+<li>RetentionPolicy.SOURCE  :注解只在源码阶段保留，在编译器进行编译时它将被丢弃忽视。</li>
+<li>RetentionPolicy.CLASS   :注解只被保留到编译进行的时候，它并不会被加载到 JVM 中。</li>
+<li>RetentionPolicy.RUNTIME :注解可以保留到程序运行的时候，它会被加载进入到 JVM 中，所以在程序运行时可以获取到它们。</li>
+</ul>
+<h3 id="5-2-Target"><a href="#5-2-Target" class="headerlink" title="5.2 @Target"></a>5.2 @Target</h3><p>Target 是目标的意思，@Target 指定了注解可以被使用的地方。它的取值如下：</p>
+<ul>
+<li>ElementType.ANNOTATION_TYPE :可以给一个注解进行注解</li>
+<li>ElementType.CONSTRUCTOR     :可以给构造方法进行注解</li>
+<li>ElementType.FIELD           :可以给成员变量进行注解</li>
+<li>ElementType.LOCAL_VARIABLE  :可以给局部变量进行注解</li>
+<li>ElementType.METHOD          :可以给方法进行注解</li>
+<li>ElementType.PACKAGE         :可以给一个包进行注解</li>
+<li>ElementType.PARAMETER       :可以给一个方法内的参数进行注解</li>
+<li>ElementType.TYPE            :可以给一个类型进行注解，比如类、接口、枚举</li>
+</ul>
+<p>比如我们标注　@Target(ElementType.TYPE)　后，这个注解就只能对 类、接口、枚举 进行注解了，不能对方法或者成员变量进行注解。</p>
+<h3 id="5-3-Inherited"><a href="#5-3-Inherited" class="headerlink" title="5.3 @Inherited"></a>5.3 @Inherited</h3><p>Inherited 是继承的意思，但是它并不是说注解本身可以继承，而是说如果一个超类被 @Inherited 注解过的注解进行注解的话，那么如果它的子类没有被任何注解应用的话，那么这个子类就继承了超类的注解。说的比较抽象。show you the code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@interface</span> Test &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注解 Test 被 @Inherited 修饰，之后类 A 被 Test 注解，类 B 继承 A,类 B 也拥有 Test 这个注解。</p>
+<h3 id="5-4-Documented"><a href="#5-4-Documented" class="headerlink" title="5.4 @Documented"></a>5.4 @Documented</h3><p>表示拥有该注解的元素可通过javadoc此类的工具进行文档化。</p>
+<h3 id="5-5-Repeatable"><a href="#5-5-Repeatable" class="headerlink" title="5.5 @Repeatable"></a>5.5 @Repeatable</h3><p>Repeatable 自然是可重复的意思。@Repeatable 是 Java 1.8 才加进来的，所以算是一个新的特性。什么样的注解会多次应用呢？通常是注解的值可以同时取多个。举个例子，一个人他既是程序员又是产品经理:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> qiushao.net;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.*;</span><br><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@interface</span> Roles &#123;</span><br><span class="line">    Role[] value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Repeatable</span>(Roles<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">interface</span> <span class="title">Role</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">role</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Role</span>(role = <span class="string">"Programmer"</span>)</span><br><span class="line"><span class="meta">@Role</span>(role = <span class="string">"Product Manager"</span>)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException </span>&#123;</span><br><span class="line">        Class&lt;?&gt; claz = obj.getClass();</span><br><span class="line">        Roles roles = claz.getAnnotation(Roles<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != roles) &#123;</span><br><span class="line">            System.out.println(<span class="string">"has Roles Annotation"</span>);</span><br><span class="line">            <span class="keyword">for</span> (Role role : roles.value()) &#123;</span><br><span class="line">                System.out.println(role);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException </span>&#123;</span><br><span class="line">        Person person = <span class="keyword">new</span> Person();</span><br><span class="line">        person.id = <span class="number">1</span>;</span><br><span class="line">        person.name = <span class="string">"qiushao"</span>;</span><br><span class="line">        save(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">has Roles Annotation</span><br><span class="line">@qiushao.net.Role(role&#x3D;Programmer)</span><br><span class="line">@qiushao.net.Role(role&#x3D;Product Manager)</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-注解的提取"><a href="#6-注解的提取" class="headerlink" title="6. 注解的提取"></a>6. 注解的提取</h2><p>从前面的例子我们看到注解信息的提取是通过反射来获取的。我们可以通过　Class, Method, Field　对象来获取注解信息，有以下这些接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//当存在该元素的指定类型注解，则返回true，否则返回false</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span>	<span class="title">isAnnotationPresent</span><span class="params">(Class&lt;? extends Annotation&gt; annotationClass)</span></span>;</span><br><span class="line"><span class="comment">//返回此元素上存在的所有注解</span></span><br><span class="line">Annotation[] getAnnotations();</span><br><span class="line"><span class="comment">//返回直接存在于此元素上的所有注解。</span></span><br><span class="line">Annotation[] getDeclaredAnnotations();</span><br><span class="line"><span class="comment">//当存在该元素的指定类型注解，则返回相应注解，否则返回null</span></span><br><span class="line"><span class="function">T <span class="title">getAnnotation</span><span class="params">(Class annotationClass)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们已经学习了反射跟注解的基本使用方法了，这两个技术是实现 ORM 框架的一个基本要求，学以致用才能更深入的理解所学到的知识，所以我们可以自己尝试写个 ORM 框架来玩玩。<a href="https://github.com/qiushao/DBHelper" target="_blank" rel="noopener">DBHelper</a>，　这个是我之前学习反射跟注解时写的一个练手项目，一个 Android ORM 框架。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/" title="Java-注解介绍" target="_blank" rel="external">http://qiushao.net/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/18/Java/Java-%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" title="Java-类的加载机制介绍"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" title="Java-反射机制介绍"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

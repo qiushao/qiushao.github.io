@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Hi3519AV100 sdk 介绍 | 一叶知秋</title>
+  <meta name="description" content="0. 文档目录结构1234567891011121314151617181920212223qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;ReleaseDoc&#x2F;zh$ tree -L 4.├── 00.hardware  # 硬件相关文档├── 01.software  # 软件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hi3519AV100 sdk 介绍">
+<meta property="og:url" content="http://qiushao.net/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="0. 文档目录结构1234567891011121314151617181920212223qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;ReleaseDoc&#x2F;zh$ tree -L 4.├── 00.hardware  # 硬件相关文档├── 01.software  # 软件">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-15T13:30:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Hi3519AV100">
+<meta property="article:tag" content="Camera">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-文档目录结构"><span class="toc-text">0. 文档目录结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-sdk-目录结构"><span class="toc-text">1. sdk 目录结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-编译工具安装"><span class="toc-text">2. 编译工具安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-依赖安装"><span class="toc-text">2.1 依赖安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-编译工具链安装"><span class="toc-text">2.2 编译工具链安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-编译烧录-uboot-kernel-rootfs"><span class="toc-text">3. 编译烧录 uboot, kernel, rootfs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-下载-kernel"><span class="toc-text">3.1 下载 kernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-编译系统镜像"><span class="toc-text">3.2 编译系统镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-烧录系统"><span class="toc-text">3.3 烧录系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-hitool-烧录"><span class="toc-text">3.3.1 hitool 烧录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-tftp-烧录"><span class="toc-text">3.3.2 tftp 烧录</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-板子网络环境配置"><span class="toc-text">4. 板子网络环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-pc端配置nfs服务"><span class="toc-text">4.1 pc端配置nfs服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-设置板子的-mac-ip-等信息"><span class="toc-text">4.2 设置板子的 mac,ip 等信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-板子上挂载-nfs-文件系统"><span class="toc-text">4.3 板子上挂载 nfs 文件系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-编译运行-sample"><span class="toc-text">5. 编译运行 sample</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-编译-sample"><span class="toc-text">5.1 编译 sample</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-加载设备驱动"><span class="toc-text">5.2 加载设备驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-运行-sample"><span class="toc-text">5.3 运行 sample</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-IPCamera/Hi3519AV100-sdk-overview" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hi3519AV100 sdk 介绍
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/" class="article-date">
+	  <time datetime="2020-04-15T13:30:00.000Z" itemprop="datePublished">2020-04-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Camera/">Camera</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Camera/" rel="tag">Camera</a>, <a class="article-tag-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/" class="leancloud_visitors"  data-flag-title="Hi3519AV100 sdk 介绍">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="0-文档目录结构"><a href="#0-文档目录结构" class="headerlink" title="0. 文档目录结构"></a>0. 文档目录结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;ReleaseDoc&#x2F;zh$ tree -L 4</span><br><span class="line">.</span><br><span class="line">├── 00.hardware  # 硬件相关文档</span><br><span class="line">├── 01.software  # 软件相关文档</span><br><span class="line">│   ├── board</span><br><span class="line">│   │   ├── Hi3519AV100 SDK 安装及升级使用说明.pdf  # sdk 安装,编译，烧录说明。本文后面的内容主要参考此文档。</span><br><span class="line">│   │   ├── Hi3519AV100与Hi3559AV100 开发包差异说明.pdf</span><br><span class="line">│   │   ├── MPP</span><br><span class="line">│   │   │   ├── HDMI 开发参考.pdf</span><br><span class="line">│   │   │   ├── HiMPP V4.0 媒体处理软件 FAQ.pdf</span><br><span class="line">│   │   │   ├── HiMPP V4.0 媒体处理软件开发参考.pdf  # camera 功能开发参考文档。进行 camera 应用开发时主要参考此文档。</span><br><span class="line">│   │   ├── OSDRV</span><br><span class="line">│   │   │   ├── Hi3519AV100╱Hi3556AV100 U-boot 移植应用开发指南.pdf</span><br><span class="line">│   │   │   ├── Hi3519AV100╱Hi3556AV100 开发环境用户指南.pdf</span><br><span class="line">│   │   │   ├── UBI 文件系统使用指南.pdf</span><br><span class="line">│   │   │   ├── 外围设备驱动 操作指南.doc</span><br><span class="line">│   │   │   └── 裸烧及非裸烧升级 使用手册.pdf</span><br><span class="line">│   │   ├── PQ</span><br><span class="line">│   │   └── SVP</span><br><span class="line">│   ├── Hi3519AV100R001 Open Source Software Notice.doc</span><br><span class="line">│   ├── HiMPP SDK 二次开发网络安全注意事项.pdf</span><br><span class="line">│   ├── pc</span><br><span class="line">├── 02.only for reference</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-sdk-目录结构"><a href="#1-sdk-目录结构" class="headerlink" title="1. sdk 目录结构"></a>1. sdk 目录结构</h2><p>我们拿到的 sdk 有以下文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519$ ll</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1870000000 Apr  3 08:54 arm-himix200-linux.part1.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1861766810 Apr  3 08:54 arm-himix200-linux.part2.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1519247343 Apr  3 08:55 Hi3519AV100R001C02SPC020.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue   12771415 Apr  3 08:56 HiDPU_PC_V2.0.0.0.tgz*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue   22645270 Apr  3 08:56 HiIVE_PC_V2.1.0.8_64bit_sec.tgz*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1710000000 Apr  3 08:55 HiSVP_PC_V1.2.2.0.part1.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1710000000 Apr  3 08:55 HiSVP_PC_V1.2.2.0.part2.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1710000000 Apr  3 08:54 HiSVP_PC_V1.2.2.0.part3.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue 1681662082 Apr  3 08:56 HiSVP_PC_V1.2.2.0.part4.rar*</span><br><span class="line">-rwxr-x---  1 qiushao geoclue      15852 Apr  3 08:55 linux-4.9.y.rar*</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519$</span><br></pre></td></tr></table></figure>
+
+<p>我们目前用到的只有前面三个文件。其中 arm-himix200-linux 是编译工具链。 Hi3519AV100R001C02SPC020 是 sdk 及一些工具。<br>Hi3519AV100R001C02SPC020.rar 解压后的目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;Hi3519AV100R001C02SPC020$ tree</span><br><span class="line">.</span><br><span class="line">├── 00.hardware  # 硬件相关设计文档</span><br><span class="line">├── 01.software  # 软件相关，包括 sdk 代码和烧录工具,调试工具等</span><br><span class="line">│   ├── board</span><br><span class="line">│   │   └── Hi3519AV100_SDK_V2.0.2.0.tgz</span><br><span class="line">│   └── pc</span><br><span class="line">│       └── HiTool</span><br><span class="line">│           └── HiTool-BVT-5.2.7.zip</span><br><span class="line">└── 02.only for reference  # 其他参考文档，包括 sensor 规则书，uboot 移植相关的硬件信息表等</span><br></pre></td></tr></table></figure>
+
+<p>其中 Hi3519AV100_SDK_V2.0.2.0.tgz 是最重要的 sdk 代码包。我们把它拿出来解压。目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;Hi3519AV100_SDK_V2.0.2.0$ tree</span><br><span class="line">.</span><br><span class="line">├── package</span><br><span class="line">│   ├── drv.tgz</span><br><span class="line">│   ├── mpp_smp_linux.tgz</span><br><span class="line">│   ├── osal.tgz</span><br><span class="line">│   └── osdrv.tgz</span><br><span class="line">├── scripts</span><br><span class="line">│   └── common.sh</span><br><span class="line">├── sdk.cleanup</span><br><span class="line">├── sdk.unpack</span><br><span class="line">└── smp_image_glibc</span><br><span class="line">    ├── rootfs_hi3519av100_128k.jffs2</span><br><span class="line">    ├── rootfs_hi3519av100_256k.jffs2</span><br><span class="line">    ├── rootfs_hi3519av100_2k_24bit.yaffs2</span><br><span class="line">    ├── rootfs_hi3519av100_2k_4bit.yaffs2</span><br><span class="line">    ├── rootfs_hi3519av100_32M.ext4</span><br><span class="line">    ├── rootfs_hi3519av100_64k.jffs2</span><br><span class="line">    ├── u-boot-hi3519av100.bin</span><br><span class="line">    └── uImage_hi3519av100_smp</span><br></pre></td></tr></table></figure>
+
+<p>代码压缩文件都放在 package 目录。我们需要执行 sdk.unpack 脚本来解压代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;Hi3519AV100_SDK_V2.0.2.0$ .&#x2F;sdk.unpack</span><br></pre></td></tr></table></figure>
+
+<p>解压代码后目录结构如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;Hi3519AV100_SDK_V2.0.2.0$ tree -L 4</span><br><span class="line">.</span><br><span class="line">├── osdrv  # bsp 相关代码, 主要包含 uboot, kernel, rootfs </span><br><span class="line">│   ├── components</span><br><span class="line">│   │   ├── ipcm</span><br><span class="line">│   │   └── pcie_mcc</span><br><span class="line">│   ├── Makefile</span><br><span class="line">│   ├── opensource</span><br><span class="line">│   │   ├── busybox  # busybox 源码</span><br><span class="line">│   │   ├── kernel   # kernel 源码，</span><br><span class="line">│   │   └── uboot</span><br><span class="line">│   ├── pub  # 编译出来的镜像放在这个目录</span><br><span class="line">│   ├── rootfs_scripts</span><br><span class="line">│   └── tools # 编译镜像需要的一些工具</span><br><span class="line">├── package  # 压缩的 sdk</span><br><span class="line">├── scripts  # sdk 解压相关脚本</span><br><span class="line">├── sdk.cleanup</span><br><span class="line">├── sdk.unpack </span><br><span class="line">├── smp  </span><br><span class="line">│   ├── a53_linux</span><br><span class="line">│   │   ├── drv</span><br><span class="line">│   │   │   ├── extdrv    ＃ 外设驱动</span><br><span class="line">│   │   │   └── interdrv  # 内部芯片驱动</span><br><span class="line">│   │   ├── mpp           # 媒体处理相关的驱动，库，头文件以及 sample等。应用层的开发主要就是使用这些库来进行开发了。</span><br><span class="line">│   │   │   ├── cfg.mak</span><br><span class="line">│   │   │   ├── component</span><br><span class="line">│   │   │   ├── include　　＃　mpi 头文件</span><br><span class="line">│   │   │   ├── init       # 媒体模块驱动初始化</span><br><span class="line">│   │   │   ├── ko         # 预编译好的驱动文件及加载脚本</span><br><span class="line">│   │   │   ├── lib        # 预编译好的 mpi 静态库和动态库 </span><br><span class="line">│   │   │   ├── Makefile.linux.param</span><br><span class="line">│   │   │   ├── Makefile.param</span><br><span class="line">│   │   │   ├── obj        # 预编译好的驱动 .o 文件</span><br><span class="line">│   │   │   ├── sample     # mpi 接口使用样例，供开发参考。</span><br><span class="line">│   │   │   └── tools      # 调试工具</span><br><span class="line">│   │   └── osal           ＃ 操作系统抽象层(Linux, Liteos)</span><br><span class="line">│   │       ├── include</span><br><span class="line">│   │       └── linux</span><br><span class="line">│   └── dsp_liteos</span><br><span class="line">└── smp_image_glibc       # 预编译好的系统镜像: uboot, kernel, rootfs</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-编译工具安装"><a href="#2-编译工具安装" class="headerlink" title="2. 编译工具安装"></a>2. 编译工具安装</h2><h3 id="2-1-依赖安装"><a href="#2-1-依赖安装" class="headerlink" title="2.1 依赖安装"></a>2.1 依赖安装</h3><p>先安装以下这些工具，不然编译会出现各种莫名其妙的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gperf bison flex libuuid1 u-boot-tools zlib1g-dev build-essential ncurses-dev libacl1-dev liblzo2-dev uuid-dev zlib1g-dev liblzo2-dev uuid-dev pkg-config texinfo</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-编译工具链安装"><a href="#2-2-编译工具链安装" class="headerlink" title="2.2 编译工具链安装"></a>2.2 编译工具链安装</h3><p>把 arm-himix200-linux.rar 解压后，得到 arm-himix200-linux.tgz。再解压一次得到 arm-himix200-linux 目录，结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;arm-himix200-linux$ tree </span><br><span class="line">.</span><br><span class="line">├── arm-himix200-linux.install</span><br><span class="line">├── arm-himix200-linux.tar.bz2</span><br><span class="line">├── gdb_build.sh</span><br><span class="line">├── gdb_readme_cn.txt</span><br><span class="line">├── gdb_readme_en.txt</span><br><span class="line">├── readme.txt</span><br><span class="line">└── runtime_glibc.tgz</span><br></pre></td></tr></table></figure>
+
+<p>按文档的操作，是需要 sudo 执行 arm-himix200-linux.install 进行安装。其实只要把工具链解压，并设置一下 PATH 环境变量就行了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;arm-himix200-linux$ tar xvf arm-himix200-linux.tar.bz2</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;arm-himix200-linux$ tar xvf runtime_glibc.tgz -C arm-himix200-linux&#x2F;</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;arm-himix200-linux&#x2F;arm-himix200-linux&#x2F;bin$ cd </span><br><span class="line">qiushao@qiushao-pc:~$ echo &#39;PATH&#x3D;&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;arm-himix200-linux&#x2F;arm-himix200-linux&#x2F;bin:$PATH&#39; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">qiushao@qiushao-pc:~$ source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-编译烧录-uboot-kernel-rootfs"><a href="#3-编译烧录-uboot-kernel-rootfs" class="headerlink" title="3. 编译烧录 uboot, kernel, rootfs"></a>3. 编译烧录 uboot, kernel, rootfs</h2><p>编译方法主要参考 Hi3519AV100_SDK/osdrv/readme_cn.txt 说明文件。</p>
+<h3 id="3-1-下载-kernel"><a href="#3-1-下载-kernel" class="headerlink" title="3.1 下载 kernel"></a>3.1 下载 kernel</h3><p>由于 GPL 协议的问题，海思并没有把 kernel 的代码一起发布。需要我们自己下载 kernel 源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519&#x2F;Hi3519AV100_SDK&#x2F;osdrv&#x2F;opensource&#x2F;kernel$ wget https:&#x2F;&#x2F;mirrors.edge.kernel.org&#x2F;pub&#x2F;linux&#x2F;kernel&#x2F;v4.x&#x2F;linux-4.9.37.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-编译系统镜像"><a href="#3-2-编译系统镜像" class="headerlink" title="3.2 编译系统镜像"></a>3.2 编译系统镜像</h3><p>在 osdrv 目录下执行 make all 就行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;osdrv$ make all</span><br><span class="line">...</span><br><span class="line">---------finish osdrv work</span><br></pre></td></tr></table></figure>
+
+<p>出现 finish osdrv work 提示，说明已经编译完成了。<br>编译生成的镜像放在 osdrv/pub/smp_image_glibc 目录下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;osdrv&#x2F;pub&#x2F;smp_image_glibc$ ls</span><br><span class="line">rootfs_hi3519av100_128k.jffs2  rootfs_hi3519av100_2k_24bit.yaffs2  rootfs_hi3519av100_32M.ext4   u-boot-hi3519av100.bin</span><br><span class="line">rootfs_hi3519av100_256k.jffs2  rootfs_hi3519av100_2k_4bit.yaffs2   rootfs_hi3519av100_64k.jffs2  uImage_hi3519av100_smp</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-烧录系统"><a href="#3-3-烧录系统" class="headerlink" title="3.3 烧录系统"></a>3.3 烧录系统</h3><p>SPI Nand Flash 的地址空间安排如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">|           1M         |          4M         |        32M          |</span><br><span class="line">|----------------------|---------------------|---------------------|</span><br><span class="line">|          uboot       |         kernel      |       rootfs        |</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-1-hitool-烧录"><a href="#3-3-1-hitool-烧录" class="headerlink" title="3.3.1 hitool 烧录"></a>3.3.1 hitool 烧录</h4><p>如果板子是空板的话，需要使用 hitool 进行烧录。请参考 HiBurn工具使用指南.pdf</p>
+<h4 id="3-3-2-tftp-烧录"><a href="#3-3-2-tftp-烧录" class="headerlink" title="3.3.2 tftp 烧录"></a>3.3.2 tftp 烧录</h4><p>如果板子上有 uboot 的话，且板子有网口的话，则可以使用 tftp 来烧录。因为 hitool 没有提供 linux 版本，所以我一般都是使用 tftp 来烧录了。</p>
+<ul>
+<li><ol>
+<li>tftp 配置<br>上一篇文章我们已经介绍过 tftp 服务环境的搭建了。先修改 tftp 的目录为编译生成 images 的目录：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># &#x2F;etc&#x2F;default&#x2F;tftpd-hpa</span><br><span class="line"></span><br><span class="line">TFTP_USERNAME&#x3D;&quot;tftp&quot;</span><br><span class="line">TFTP_DIRECTORY&#x3D;&quot;&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;osdrv&#x2F;pub&#x2F;smp_image_glibc&quot;</span><br><span class="line">TFTP_ADDRESS&#x3D;&quot;:69&quot;</span><br><span class="line">TFTP_OPTIONS&#x3D;&quot;-l -c -s&quot;</span><br></pre></td></tr></table></figure>
+然后重启 tftp 服务。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;etc&#x2F;default$ sudo service tftpd-hpa restart</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>pc 网络信息查看<br>ubuntu 下查看 pc 的 ip, 网关等信息的方法<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ ifconfig</span><br><span class="line">wlp4s0: flags&#x3D;4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 192.168.3.29  netmask 255.255.255.0  broadcast 192.168.3.255</span><br><span class="line">        inet6 fe80::f7d3:b73c:461a:af45  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        inet6 240e:fe:3839:339:c717:1207:24ef:fd76  prefixlen 64  scopeid 0x0&lt;global&gt;</span><br><span class="line">        inet6 240e:fe:3839:300:7c94:2acf:4818:8  prefixlen 128  scopeid 0x0&lt;global&gt;</span><br><span class="line">        inet6 240e:fe:3839:339:1002:ba0c:2ed:5ffa  prefixlen 64  scopeid 0x0&lt;global&gt;</span><br><span class="line">        ether 40:74:e0:b3:f2:63  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 36413  bytes 33826854 (33.8 MB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 16292  bytes 2617305 (2.6 MB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">qiushao@qiushao-pc:~$ </span><br><span class="line">qiushao@qiushao-pc:~$ route -n</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         192.168.3.1     0.0.0.0         UG    600    0        0 wlp4s0</span><br><span class="line">169.254.0.0     0.0.0.0         255.255.0.0     U     1000   0        0 virbr0</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</span><br><span class="line">192.168.3.0     0.0.0.0         255.255.255.0   U     600    0        0 wlp4s0</span><br><span class="line">192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+根据以上信息得到 pc 的网络信息如下：<br>ip: 192.168.3.29<br>netmask: 255.255.255.0<br>gateway: 192.168.3.1<br>mac: 40:74:e0:b3:f2:63</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>板子网络信息配置<br>板子需要接入和 pc 同一个局域网。板子上电后, 敲任意键进入 u-boot。设置 serverip(即 tftp 服务器的 ip), ipaddr(板子 ip)和 ethaddr(板子的 MAC 地址)。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">hisilicon # setenv serverip 192.168.3.29</span><br><span class="line">hisilicon # setenv ipaddr 192.168.3.30  # 板子的 ip，参考 serverip, 修改最后一位即可。</span><br><span class="line">hisilicon # setenv netmask 255.255.255.0</span><br><span class="line">hisilicon # setenv gatewayip 192.168.3.1</span><br><span class="line">hisilicon # setenv ethaddr 40:74:e0:b3:f2:64  # 参考 pc 的 mac, 修改最后一位即可。</span><br><span class="line">hisilicon # saveenv</span><br><span class="line">Saving Environment to NAND...</span><br><span class="line">Erasing NAND...</span><br><span class="line">Erasing at 0xa0000 -- 100% complete.</span><br><span class="line">Writing to NAND... OK</span><br><span class="line">hisilicon # ping 192.168.3.29  # 确认网络设置正常。</span><br><span class="line">ETH0: PHY(phyaddr&#x3D;1, rgmii) link UP: DUPLEX&#x3D;FULL : SPEED&#x3D;1000M</span><br><span class="line">MAC:   54-E1-AD-0A-A1-F8</span><br><span class="line">Using gmac0 device</span><br><span class="line">host 192.168.3.29 is alive</span><br><span class="line">hisilicon #</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><ol start="4">
+<li>烧录分区<ul>
+<li>烧写 u-boot<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mw.b 42000000 ff 80000</span><br><span class="line">tftp 0x42000000 u-boot-hi3519av100.bin</span><br><span class="line">nand erase 0 80000;nand write 42000000 0 80000</span><br></pre></td></tr></table></figure></li>
+<li>烧写内核<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mw.b 42000000 ff 400000</span><br><span class="line">tftp 42000000 uImage_hi3519av100_smp</span><br><span class="line">nand erase 100000 400000;nand write 42000000 100000 400000</span><br></pre></td></tr></table></figure></li>
+<li>烧写根文件系统<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mw.b 42000000 ff 2000000</span><br><span class="line">tftp 42000000 rootfs_hi3519av100_2k_4bit.yaffs2</span><br><span class="line">nand erase 500000 2000000;nand write.yaffs 42000000 500000 0xafeb00 (0xafeb00 为实际文件大小)</span><br></pre></td></tr></table></figure></li>
+<li>设置启动参数<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs &#39;mem&#x3D;256M console&#x3D;ttyAMA0,115200 clk_ignore_unused root&#x3D;&#x2F;dev&#x2F;mtdblock2 rw rootfstype&#x3D;yaffs2 mtdparts&#x3D;hinand:1M(boot),4M(kernel),32M(rootfs)&#39;</span><br><span class="line">setenv bootcmd &#39;nand read 0x42000000 100000 400000; bootm 0x42000000&#39;</span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure></li>
+<li>重启系统<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reset</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="4-板子网络环境配置"><a href="#4-板子网络环境配置" class="headerlink" title="4. 板子网络环境配置"></a>4. 板子网络环境配置</h2><p>经过上面的步骤，我们的系统是跑起来了，但只是把 kernel 启动了，根文件系统挂载了而已，什么业务都没有运行的。我们需要编写自己的应用在上面运行才可以。<br>在写代码之前我们还需要配置一下板子的网络环境，以便开发调试。在开发阶段,推荐使用 NFS 作为开发环境,可以省去重新制作和烧写根文件系统的工作。也不需要频繁用 u 盘 copy 文件。</p>
+<h3 id="4-1-pc端配置nfs服务"><a href="#4-1-pc端配置nfs服务" class="headerlink" title="4.1 pc端配置nfs服务"></a>4.1 pc端配置nfs服务</h3><p>pc 端 nfs 服务的配置之前已经介绍过了，这里面就不再重复。我们把 nfs share 的目录改成 Hi3519AV100_SDK：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;etc$ cat exports </span><br><span class="line"># &#x2F;etc&#x2F;exports: the access control list for filesystems which may be exported</span><br><span class="line">#               to NFS clients.  See exports(5).</span><br><span class="line">#</span><br><span class="line"># Example for NFSv2 and NFSv3:</span><br><span class="line"># &#x2F;srv&#x2F;homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)</span><br><span class="line">#</span><br><span class="line"># Example for NFSv4:</span><br><span class="line"># &#x2F;srv&#x2F;nfs4        gss&#x2F;krb5i(rw,sync,fsid&#x3D;0,crossmnt,no_subtree_check)</span><br><span class="line"># &#x2F;srv&#x2F;nfs4&#x2F;homes  gss&#x2F;krb5i(rw,sync,no_subtree_check)</span><br><span class="line">#</span><br><span class="line">&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK *(rw,sync,no_subtree_check,root_squash)</span><br><span class="line">qiushao@qiushao-pc:&#x2F;etc$</span><br><span class="line">qiushao@qiushao-pc:&#x2F;etc$ sudo exportfs -a </span><br><span class="line">qiushao@qiushao-pc:&#x2F;etc$ sudo service nfs-kernel-server restart</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-设置板子的-mac-ip-等信息"><a href="#4-2-设置板子的-mac-ip-等信息" class="headerlink" title="4.2 设置板子的 mac,ip 等信息"></a>4.2 设置板子的 mac,ip 等信息</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">~ # ifconfig eth0 hw ether 40:74:e0:b3:f2:64</span><br><span class="line">~ # ifconfig eth0 192.168.3.30 netmask 255.255.255.0</span><br><span class="line">IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready</span><br><span class="line">~ # hi_gmac_v200 40e0000.ethernet eth0: Link is Up - 1Gbps&#x2F;Full - flow control off</span><br><span class="line">IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready</span><br><span class="line"></span><br><span class="line">~ # route add default gw 192.168.3.1</span><br><span class="line">~ # ping 192.168.3.29</span><br><span class="line">PING 192.168.3.29 (192.168.3.29): 56 data bytes</span><br><span class="line">64 bytes from 192.168.3.29: seq&#x3D;0 ttl&#x3D;64 time&#x3D;43.142 ms</span><br><span class="line">64 bytes from 192.168.3.29: seq&#x3D;1 ttl&#x3D;64 time&#x3D;62.610 ms</span><br><span class="line">64 bytes from 192.168.3.29: seq&#x3D;2 ttl&#x3D;64 time&#x3D;76.662 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-板子上挂载-nfs-文件系统"><a href="#4-3-板子上挂载-nfs-文件系统" class="headerlink" title="4.3 板子上挂载 nfs 文件系统"></a>4.3 板子上挂载 nfs 文件系统</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~ # mount -t nfs -o nolock -o tcp -o rsize&#x3D;32768,wsize&#x3D;32768 192.168.3.29:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK &#x2F;mnt</span><br><span class="line">~ # ls &#x2F;mnt</span><br><span class="line">osdrv            scripts          sdk.unpack       smp_image_glibc</span><br><span class="line">package          sdk.cleanup      smp</span><br><span class="line">~ #</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-编译运行-sample"><a href="#5-编译运行-sample" class="headerlink" title="5. 编译运行 sample"></a>5. 编译运行 sample</h2><h3 id="5-1-编译-sample"><a href="#5-1-编译-sample" class="headerlink" title="5.1 编译 sample"></a>5.1 编译 sample</h3><p>海思 sdk 里面带了一些 sample:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample$ ls</span><br><span class="line">audio  awb_online_calibration  dis  fisheye  lsc_online_cali  Makefile.param  region      smp_linux.mak  svp  traffic_capture  vdec  vgs</span><br><span class="line">avs    common                  dpu  hifb     Makefile         pciv            scene_auto  snap           tde  uvc_app          venc  vio</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample$</span><br></pre></td></tr></table></figure>
+
+<p>我们先试着在上面跑个简单的 vio sample 看看。vio sample 的功能是从摄像头输出，然后输出到 hdmi。<br>编译的方法很简单，进入 sample/vio 目录，直接 make 就行。编译成功的话，会在 vio 目录生成一个 sample_vio_main 文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample$ cd vio</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample&#x2F;vio$ ls</span><br><span class="line">Makefile  res  sample_vio.h  sample_vio_main.c  smp</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample&#x2F;vio$ make</span><br><span class="line">...</span><br><span class="line">qiushao@qiushao-pc:&#x2F;media&#x2F;qiushao&#x2F;source-code&#x2F;Hi3519AV100_SDK&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample&#x2F;vio$ ls</span><br><span class="line">Makefile  res  sample_vio.h  sample_vio_main  sample_vio_main.c  sample_vio_main.o  smp</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-加载设备驱动"><a href="#5-2-加载设备驱动" class="headerlink" title="5.2 加载设备驱动"></a>5.2 加载设备驱动</h3><p>现在我们又回到板子上进行操作。<br>在运行 sample 之前我们需要先加载 hisi 的驱动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#x2F; # cd &#x2F;mnt&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;ko</span><br><span class="line">&#x2F;mnt&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;ko # .&#x2F;load3519av100 -i -sensor0 imx334</span><br><span class="line">mmz_start: 0x32000000, mmz_size: 1760M</span><br><span class="line">sys_config: loading out-of-tree module taints kernel.</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;sensr0: imx334&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;sensr1: imx334&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;sensr2: imx334&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;sensr3: imx334&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;sensr4: imx334&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">Module himedia: init ok</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-运行-sample"><a href="#5-3-运行-sample" class="headerlink" title="5.3 运行 sample"></a>5.3 运行 sample</h3><p>驱动加载成功之后，就可以开始运行 sample 啦</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;mnt&#x2F;smp&#x2F;a53_linux&#x2F;mpp # cd sample&#x2F;vio&#x2F;</span><br><span class="line">&#x2F;mnt&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample&#x2F;vio # .&#x2F;sample_vio_main</span><br><span class="line">Usage : .&#x2F;sample_vio_main &lt;index&gt; &lt;intf&gt;</span><br><span class="line">index:</span><br><span class="line">         0)VI(Online) - VPSS(Online) - VO.</span><br><span class="line">         1)VI(Offline)- VPSS(Offline) - VO. LDC+DIS+SPREAD.</span><br><span class="line">         2)VI(Offline)- VPSS(Online) - VO.  Double pipe.</span><br><span class="line">         3)VI(Online)- VPSS(Offline) - VO.  Double chn.</span><br><span class="line">         4)Resolute Ratio Switch.</span><br><span class="line">         5)GDC - VPSS LowDelay.</span><br><span class="line">         6)Double WDR Pipe.</span><br><span class="line">         7)FPN Calibrate &amp; Correction.</span><br><span class="line">         8)WDR Switch.</span><br><span class="line">         9)90&#x2F;180&#x2F;270 Rotate.</span><br><span class="line">         10)Mipi Demux Yuv.</span><br><span class="line">         11)UserPic.</span><br><span class="line">intf:</span><br><span class="line">         0) vo HDMI output, default.</span><br><span class="line">         1) vo BT1120 output.</span><br><span class="line">&#x2F;mnt&#x2F;smp&#x2F;a53_linux&#x2F;mpp&#x2F;sample&#x2F;vio # .&#x2F;sample_vio_main 0</span><br><span class="line">[SAMPLE_COMM_VI_SetMipiAttr]-1408: &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; MipiDev 0, SetMipiAttr enWDRMode: 0</span><br><span class="line">linear mode</span><br><span class="line">&#x3D;&#x3D;&#x3D;Imx334 8M30fps 12bit LINE Init OK!&#x3D;&#x3D;&#x3D;</span><br><span class="line">[SAMPLE_COMM_ISP_Thread]-187: ISP Dev 0 running !</span><br><span class="line">[SAMPLE_COMM_VO_StartChn]-544: u32Width:1920, u32Height:1080, u32Square:1</span><br><span class="line">---------------press Enter key to exit!---------------</span><br></pre></td></tr></table></figure>
+
+<p>至此，系统就已经运行起来了， sample 也运行起来了。后面我们再来逐步学习 camera 系统相关的开发知识。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/" title="Hi3519AV100 sdk 介绍" target="_blank" rel="external">http://qiushao.net/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/04/22/hdmi/hdmi-edid-reslution-setting/" title="hdmi edid 分辨率设置"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/04/12/Linux/busybox-rx/" title="busybox rx 传输文件"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

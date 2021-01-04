@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android-io统计 | 一叶知秋</title>
+  <meta name="description" content="年前遇到客户的板子 emmc 被写坏的问题，当时还没时间去研究分析，现在疫情在家就把之前遇到的问题慢慢研究一下。emmc 是有一定使用寿命的，它的寿命跟擦写次数相关的。正常来说应该在５，６年以上。但这个客户才使用了半年多就坏了。怀疑是某个进程在疯狂的写入磁盘数据，导致擦写次数达到寿命期限。下面介绍一些查看 emmc io　状态的工具方法。我们可以用这些工具方法来查看 emmc 是不是擦写寿命到了，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-io统计">
+<meta property="og:url" content="http://qiushao.net/2020/02/11/Android/iostat/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="年前遇到客户的板子 emmc 被写坏的问题，当时还没时间去研究分析，现在疫情在家就把之前遇到的问题慢慢研究一下。emmc 是有一定使用寿命的，它的寿命跟擦写次数相关的。正常来说应该在５，６年以上。但这个客户才使用了半年多就坏了。怀疑是某个进程在疯狂的写入磁盘数据，导致擦写次数达到寿命期限。下面介绍一些查看 emmc io　状态的工具方法。我们可以用这些工具方法来查看 emmc 是不是擦写寿命到了，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-11T02:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.740Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/11/Android/iostat/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-emmc-擦写次数和判断-emmc-使用寿命是否到期方法"><span class="toc-text">1. emmc 擦写次数和判断 emmc 使用寿命是否到期方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-适用于大部分机芯："><span class="toc-text">1.1 适用于大部分机芯：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-适合Mstar机芯："><span class="toc-text">1.2 适合Mstar机芯：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-emmc-理论寿命与实际寿命验证"><span class="toc-text">1.3 emmc 理论寿命与实际寿命验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-查看系统整体的-io-状态"><span class="toc-text">2. 查看系统整体的 io 状态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-iostat"><span class="toc-text">2.1 iostat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-iotop"><span class="toc-text">2.2 iotop</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-查看某个进程的-io-总量"><span class="toc-text">3. 查看某个进程的 io 总量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-查看某个进程打开的文件"><span class="toc-text">4. 查看某个进程打开的文件</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android/iostat" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android-io统计
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/11/Android/iostat/" class="article-date">
+	  <time datetime="2020-02-11T02:00:00.000Z" itemprop="datePublished">2020-02-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/11/Android/iostat/" class="leancloud_visitors"  data-flag-title="Android-io统计">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/11/Android/iostat/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>年前遇到客户的板子 emmc 被写坏的问题，当时还没时间去研究分析，现在疫情在家就把之前遇到的问题慢慢研究一下。<br>emmc 是有一定使用寿命的，它的寿命跟擦写次数相关的。正常来说应该在５，６年以上。但这个客户才使用了半年多就坏了。怀疑是某个进程在疯狂的写入磁盘数据，导致擦写次数达到寿命期限。<br>下面介绍一些查看 emmc io　状态的工具方法。我们可以用这些工具方法来查看 emmc 是不是擦写寿命到了，找出到底是哪个应用把 emmc 写坏了。</p>
+<h2 id="1-emmc-擦写次数和判断-emmc-使用寿命是否到期方法"><a href="#1-emmc-擦写次数和判断-emmc-使用寿命是否到期方法" class="headerlink" title="1. emmc 擦写次数和判断 emmc 使用寿命是否到期方法"></a>1. emmc 擦写次数和判断 emmc 使用寿命是否到期方法</h2><h3 id="1-1-适用于大部分机芯："><a href="#1-1-适用于大部分机芯：" class="headerlink" title="1.1 适用于大部分机芯："></a>1.1 适用于大部分机芯：</h3><p>在系统启动之后查看 emmc 擦写次数，串口打印信息输入命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;sys&#x2F;kernel&#x2F;debug&#x2F;mmc0&#x2F;mmc0:0001&#x2F;ext_csd</span><br></pre></td></tr></table></figure>
+<p>执行命令后会出现一长串的数字，将这些数字拷贝到文本文档中，用文本编辑工具打开，然后查看第537-538位数字/字母（即268byte)。</p>
+<p>对于这个数字的解释如下:</p>
+<ul>
+<li>如果此值是00，则表示这个机芯不支持这种方法来查询EMMC擦写次数。</li>
+<li>01-0A为正常的范围，其他数值都不正常。 这个数值只是百分比，不是明确次数。例如 0x01 表示使用了 0% - 10% 寿命，依次类推。</li>
+<li>如果此值是0B，则便是这颗EMMC的擦写次数已经超过最大擦写次数。这种情况EMMC的状态不稳定，可能就会出现开不了机的情况了。</li>
+</ul>
+<h3 id="1-2-适合Mstar机芯："><a href="#1-2-适合Mstar机芯：" class="headerlink" title="1.2 适合Mstar机芯："></a>1.2 适合Mstar机芯：</h3><p>开机后一直按住电脑上的Enter键，进入 mboot，然后输入命令 mmc ecsd ，然后查看ecsd[268]的数值，例如ecsd[268]:0x1，表示擦写次数在10%以内。<br>方法2看到的数值和方法1是一致的。只是对于开机启动不了的机芯板来说，更加实用。</p>
+<h3 id="1-3-emmc-理论寿命与实际寿命验证"><a href="#1-3-emmc-理论寿命与实际寿命验证" class="headerlink" title="1.3 emmc 理论寿命与实际寿命验证"></a>1.3 emmc 理论寿命与实际寿命验证</h3><p>emmc 理论寿命可以从 emmc 厂家提供的规则书上获取。<br>我们在实际生产要使用某款 emmc 芯片的之前，都需要对 emmc 的寿命进行验证。一般板子的芯片方案商都会提供验证工具，验证方法。<br>本质上就是暴力写 emmc，看在暴力写入情况下，能写多久。这类实验，测试一次都要进行一两个月左右。</p>
+<h2 id="2-查看系统整体的-io-状态"><a href="#2-查看系统整体的-io-状态" class="headerlink" title="2. 查看系统整体的 io 状态"></a>2. 查看系统整体的 io 状态</h2><h3 id="2-1-iostat"><a href="#2-1-iostat" class="headerlink" title="2.1 iostat"></a>2.1 iostat</h3><p>用法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # busybox iostat --help                                         </span><br><span class="line">BusyBox v1.26.2 (2020-02-10 02:26:18 UTC) multi-call binary.</span><br><span class="line"></span><br><span class="line">Usage: iostat [-c] [-d] [-t] [-z] [-k|-m] [ALL|BLOCKDEV...] [INTERVAL [COUNT]]</span><br><span class="line"></span><br><span class="line">Report CPU and I&#x2F;O statistics</span><br><span class="line"></span><br><span class="line">        -c      Show CPU utilization</span><br><span class="line">        -d      Show device utilization</span><br><span class="line">        -t      Print current time</span><br><span class="line">        -z      Omit devices with no activity</span><br><span class="line">        -k      Use kb&#x2F;s</span><br><span class="line">        -m      Use Mb&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>比如说我们想查看当前系统的 io 状态，以 kb/s　作为单位:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # busybox iostat -d -k                                          </span><br><span class="line">Linux 4.9.44_s5 (localhost)     02&#x2F;11&#x2F;20        _aarch64_       (4 CPU)</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read&#x2F;s    kB_wrtn&#x2F;s    kB_read    kB_wrtn</span><br><span class="line">zram0             0.01         0.02         0.00        176          4</span><br><span class="line">mmcblk0           5.21        35.64        47.65     299644     400596</span><br><span class="line">mmcblk0p1         0.66         0.00         0.00          0          0</span><br><span class="line">mmcblk0p7         0.00         0.00         0.01          0         48</span><br><span class="line">mmcblk0p10        0.00         0.00         0.00         32          0</span><br><span class="line">mmcblk0p16        0.01         0.05         0.01        402         60</span><br><span class="line">mmcblk0p18        0.01         0.10         0.01        806         68</span><br><span class="line">mmcblk0p20        0.24        15.19         0.11     127717        928</span><br><span class="line">mmcblk0p21        0.02         1.00         0.00       8421          0</span><br><span class="line">mmcblk0p22        0.00         0.02         0.00        130         12</span><br><span class="line">mmcblk0p23        0.00         0.04         0.01        362         44</span><br><span class="line">mmcblk0p25        4.28        19.24        47.51     161774     399436</span><br><span class="line">sda               0.03         1.37         0.00      11546          0</span><br><span class="line"></span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>其中 mmcblk0 代码整个 emmc，　mmcblk0pxx　代表某个分区，　可以通过以下方法来查找对应的分区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ls -l &#x2F;dev&#x2F;block&#x2F;platform&#x2F;soc&#x2F;f9830000.emmc&#x2F;by-name&#x2F;                           &lt;</span><br><span class="line">...</span><br><span class="line">lrwxrwxrwx 1 root root 21 1970-01-01 08:00 system -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p20</span><br><span class="line">lrwxrwxrwx 1 root root 20 1970-01-01 08:00 tconparam -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p8</span><br><span class="line">lrwxrwxrwx 1 root root 20 1970-01-01 08:00 trustedcore -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p9</span><br><span class="line">lrwxrwxrwx 1 root root 21 1970-01-01 08:00 userdata -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p25</span><br><span class="line">lrwxrwxrwx 1 root root 21 1970-01-01 08:00 vendor -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p21</span><br><span class="line">lrwxrwxrwx 1 root root 21 1970-01-01 08:00 versioninfo -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p11</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>我们看到　mmcblk0p25　对应的是 userdata 分区。<br>综合以上知道当前系统只有 userdata　有写入，　写入速度为 47 KB/s。</p>
+<h3 id="2-2-iotop"><a href="#2-2-iotop" class="headerlink" title="2.2 iotop"></a>2.2 iotop</h3><p>iostat　只能查看系统的整体 io　状态，当 io 状态异常高时，　不能定位是哪个进程引起的问题，　这时我们可以使用 iotop 这个工具来查看每个进程的 io 占用比例。<br>使用方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # iotop --help</span><br><span class="line">Usage: iotop [-h] [-P] [-d &lt;delay&gt;] [-n &lt;cycles&gt;] [-s &lt;column&gt;]</span><br><span class="line">   -a  Show byte count instead of rate</span><br><span class="line">   -d  Set the delay between refreshes in seconds.</span><br><span class="line">   -h  Display this help screen.</span><br><span class="line">   -m  Set the number of processes or threads to show</span><br><span class="line">   -n  Set the number of refreshes before exiting.</span><br><span class="line">   -P  Show processes instead of the default threads.</span><br><span class="line">   -s  Set the column to sort by:</span><br><span class="line">       pid, read, write, total, io, swap, sched, mem or delay.</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>比如我们查看前10个io占用最大的进程，就可以使用以下方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">130|KKHi3751V810:&#x2F; # iotop -m 10 -P -s write                                   </span><br><span class="line">                          --- IO (KiB&#x2F;s) ---  ----------- delayed on ----------</span><br><span class="line">   PID Command            read  write  total  IO     swap   sched  mem    total</span><br><span class="line"> 25227 :filedownloader       0   7208   7208  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line"> 24323 logcat                0     12     12  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     1 init                  0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     2 kthreadd              0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     3 ksoftirqd&#x2F;0           0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     5 kworker&#x2F;0:0H          0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     7 rcu_preempt           0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     8 rcu_sched             0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">     9 rcu_bh                0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">    10 migration&#x2F;0           0      0      0  0.00%  0.00%  0.00%  0.00%  0.00%</span><br><span class="line">       TOTAL                 0   7220   7220                0     12     12</span><br></pre></td></tr></table></figure>
+
+<p>从结果可以看到　25227 :filedownloader　这个进程 io 占用最高，写入速度为 7208KB/s。因为这时我正在下载文件。</p>
+<h2 id="3-查看某个进程的-io-总量"><a href="#3-查看某个进程的-io-总量" class="headerlink" title="3. 查看某个进程的 io 总量"></a>3. 查看某个进程的 io 总量</h2><p>iotop　只可以查看某个时间点的 io 速率，　我们需要统计某个进程总共的 io 总量时就得使用　<code>cat /proc/$pid/io</code> 这个方法了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F;proc&#x2F;25227 # cat io</span><br><span class="line">rchar: 170665</span><br><span class="line">wchar: 81578559</span><br><span class="line">syscr: 555</span><br><span class="line">syscw: 13095</span><br><span class="line">read_bytes: 36864</span><br><span class="line">write_bytes: 82153472</span><br><span class="line">cancelled_write_bytes: 0</span><br><span class="line">KKHi3751V810:&#x2F;proc&#x2F;25227 #</span><br></pre></td></tr></table></figure>
+
+<p>各字段的解析如下：<br>rchar: 170665         // 读出的总字节数，read()或者pread()中的长度参数总和(pagecache中统计而来，不代表实际磁盘的读入)<br>wchar: 81578559       // 写入的总字节数，write()或者pwrite()中的长度参数总和<br>syscr: 555            // read()或者pread()总的调用次数<br>syscw: 13095          // write()或者pwrite()总的调用次数<br>read_bytes: 36864     // 实际从磁盘中读取的字节总数<br>write_bytes: 82153472 // 实际写入到磁盘中的字节总数<br>cancelled_write_bytes: 0 // 由于截断pagecache导致应该发生而没有发生的写入字节数</p>
+<p>实际写入磁盘的数据总量为　write_bytes: 82153472　字节。</p>
+<h2 id="4-查看某个进程打开的文件"><a href="#4-查看某个进程打开的文件" class="headerlink" title="4. 查看某个进程打开的文件"></a>4. 查看某个进程打开的文件</h2><p>当我们发现某个进程的 io 异常时，想了解一下这个进程是在对哪个文件进行读写导致的，可以使用以下方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F;proc&#x2F;24323&#x2F;fd # ls -l</span><br><span class="line">total 0</span><br><span class="line">lrwx------ 1 root root 64 2020-02-11 12:50 0 -&gt; &#x2F;dev&#x2F;pts&#x2F;0</span><br><span class="line">l-wx------ 1 root root 64 2020-02-11 12:50 1 -&gt; &#x2F;data&#x2F;io.log</span><br><span class="line">lrwx------ 1 root root 64 2020-02-11 12:50 12 -&gt; socket:[9872]</span><br><span class="line">lrwx------ 1 root root 64 2020-02-11 12:50 2 -&gt; &#x2F;dev&#x2F;pts&#x2F;0</span><br><span class="line">lrwx------ 1 root root 64 2020-02-11 12:28 3 -&gt; socket:[382495]</span><br><span class="line">KKHi3751V810:&#x2F;proc&#x2F;24323&#x2F;fd #</span><br></pre></td></tr></table></figure>
+
+<p>/proc/$pid/fd 目录下保存了这个进程打开的所有文件描述符。我们可以用 ls -l 来查看这些文件描述符指向的实际文件。这个例子中文件描述符 1 就表示文件　/data/io.log。<br>我们再通过 strace 来查看某个进程的系统调用，看看是不是一直在调用　write　接口写文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F;proc&#x2F;24323&#x2F;fd # strace -p 24323                                  </span><br><span class="line">strace: Process 24323 attached</span><br><span class="line">recvfrom(3, &quot;\204\0\34\0\302k\0\0\302k\0\0\3053B^\200\263&#125;\34\0\0\0\0\0\0\0\0\4str&quot;..., 5120, 0, NULL, NULL) &#x3D; 160</span><br><span class="line">write(1, &quot;02-11 12:55:33.478 27586 27586 I&quot;..., 167) &#x3D; 167</span><br><span class="line">recvfrom(3, &quot;\264\0\34\0\302k\0\0\302k\0\0\3053B^@z\253\34\0\0\0\0\0\0\0\0\4str&quot;..., 5120, 0, NULL, NULL) &#x3D; 208</span><br><span class="line">write(1, &quot;02-11 12:55:33.481 27586 27586 I&quot;..., 215) &#x3D; 215</span><br><span class="line">recvfrom(3, &quot;\r\1\34\0\224\n\0\0\320\f\0\0\3063B^CS\303\22\3\0\0\0\350\3\0\0\5Con&quot;..., 5120, 0, NULL, NULL) &#x3D; 297</span><br><span class="line">write(1, &quot;02-11 12:55:34.314  2708  3280 W&quot;..., 302) &#x3D; 302</span><br><span class="line">recvfrom(3, &quot;r\0\34\0u\10\0\0\275\t\0\0\3063B^\354\253\327\22\3\0\0\0\350\3\0\0\3AMS&quot;..., 5120, 0, NULL, NULL) &#x3D; 142</span><br><span class="line">write(1, &quot;02-11 12:55:34.316  2165  2493 D&quot;..., 152) &#x3D; 152</span><br><span class="line">recvfrom(3, &quot;i\4\34\0u\10\0\0\275\t\0\0\3063B^\307&#96;\350\22\0\0\0\0\350\3\0\0\5Pac&quot;..., 5120, 0, NULL, NULL) &#x3D; 1157</span><br><span class="line">write(1, &quot;02-11 12:55:34.317  2165  2493 W&quot;..., 1749) &#x3D; 1749</span><br><span class="line">madvise(0x7a6ac2e000, 28672, MADV_DONTNEED) &#x3D; 0</span><br></pre></td></tr></table></figure>
+
+<p>从以上 log 看，我们知道 24323 这个进程一直在往文件描述符 1 里面写内容，　而从 ls -l /proc/24323/fd 的结果中我们知道文件描述符 1 代表的是 /data/io.log　文件。<br>我们从 log 上还可以看出写入的部分内容和数据大小。</p>
+<p>至此，所有的工具都介绍完啦，以后再遇到 io 的问题，我们就可以灵活运用这些工具来分析问题了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/11/Android/iostat/" title="Android-io统计" target="_blank" rel="external">http://qiushao.net/2020/02/11/Android/iostat/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/12/Android/emmc-performance-test/" title="Android-emmc性能测试"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/09/Android/android-service-debug-skill/" title="Android-服务阻塞调试小技巧"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

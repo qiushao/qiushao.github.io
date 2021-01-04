@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发入门-9.添加native系统服务 | 一叶知秋</title>
+  <meta name="description" content="上一小节我们学习了 java 层的系统服务，但有时候出于性能方面的考虑，有些服务是需要使用 c++ 来实现的，比如音视频编解码，图形绘制等。 Android 系统原生的 MediaPlayerService 和 SurfaceFlinger 就是使用 c++ 实现的 Native 系统服务。这一小节我们就来学习一下如何添加一个 HelloNativeService。 1. 声明服务接口我们先在 $">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发入门-9.添加native系统服务">
+<meta property="og:url" content="http://qiushao.net/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="上一小节我们学习了 java 层的系统服务，但有时候出于性能方面的考虑，有些服务是需要使用 c++ 来实现的，比如音视频编解码，图形绘制等。 Android 系统原生的 MediaPlayerService 和 SurfaceFlinger 就是使用 c++ 实现的 Native 系统服务。这一小节我们就来学习一下如何添加一个 HelloNativeService。 1. 声明服务接口我们先在 $">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-29T12:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-声明服务接口"><span class="toc-text">1. 声明服务接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-实现服务功能"><span class="toc-text">2. 实现服务功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-添加-main-cpp"><span class="toc-text">3. 添加 main.cpp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Android-bp"><span class="toc-text">4. Android.bp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-selinux-规则设置"><span class="toc-text">5. selinux 规则设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-添加-HelloNativeService-te"><span class="toc-text">5.1 添加 HelloNativeService.te</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-修改-file-contexts"><span class="toc-text">5.2 修改 file_contexts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-修改-service-contexts"><span class="toc-text">5.3 修改 service_contexts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-修改-service-te"><span class="toc-text">5.4 修改 service.te</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-开机自动运行"><span class="toc-text">6. 开机自动运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-编写-client-调用服务"><span class="toc-text">7. 编写 client 调用服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-编译运行"><span class="toc-text">8. 编译运行</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发入门/9-添加native系统服务" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发入门-9.添加native系统服务
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="article-date">
+	  <time datetime="2019-12-29T12:00:00.000Z" itemprop="datePublished">2019-12-29</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="leancloud_visitors"  data-flag-title="Android系统开发入门-9.添加native系统服务">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>上一小节我们学习了 java 层的系统服务，但有时候出于性能方面的考虑，有些服务是需要使用 c++ 来实现的，比如音视频编解码，图形绘制等。 Android 系统原生的 MediaPlayerService 和 SurfaceFlinger 就是使用 c++ 实现的 Native 系统服务。这一小节我们就来学习一下如何添加一个 HelloNativeService。</p>
+<h2 id="1-声明服务接口"><a href="#1-声明服务接口" class="headerlink" title="1. 声明服务接口"></a>1. 声明服务接口</h2><p>我们先在 $device 目录下创建 HelloNativeService 目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd device&#x2F;qiushao&#x2F;pure</span><br><span class="line">mkdir -p models&#x2F;HelloNativeService</span><br></pre></td></tr></table></figure>
+
+<p>然后创建 service 的头文件 HelloNativeService.h</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#ifndef ANDROID_10_HELLONATIVESERVICE_H</span><br><span class="line">#define ANDROID_10_HELLONATIVESERVICE_H</span><br><span class="line"></span><br><span class="line">#include &lt;binder&#x2F;IInterface.h&gt;</span><br><span class="line">#include &lt;binder&#x2F;Parcel.h&gt;</span><br><span class="line">#include &lt;utils&#x2F;Errors.h&gt;</span><br><span class="line">using namespace android;</span><br><span class="line">class HelloNativeService: public BBinder &#123;</span><br><span class="line">public:</span><br><span class="line">    HelloNativeService();</span><br><span class="line">    static int instantiate();</span><br><span class="line">    virtual status_t onTransact(uint32_t, const Parcel&amp;, Parcel*, uint32_t);</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line">#endif &#x2F;&#x2F;ANDROID_10_HELLONATIVESERVICE_H</span><br></pre></td></tr></table></figure>
+
+<p>这里我们直接继承的是 BBinder， 而不是像其他教程一样又 BpInterface， 又 BnInterface 的，还把 BpInterface 跟 BnInterface 的实现放到同一个 cpp 文件中， 把 client 跟 server 的代码放到同一个文件中，个人感觉把简单的事情复杂化了。</p>
+<h2 id="2-实现服务功能"><a href="#2-实现服务功能" class="headerlink" title="2. 实现服务功能"></a>2. 实现服务功能</h2><p>创建文件 HelloNativeService.cpp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;android&#x2F;log.h&gt;</span><br><span class="line">#include &lt;binder&#x2F;IServiceManager.h&gt;</span><br><span class="line">#include &lt;binder&#x2F;IPCThreadState.h&gt;</span><br><span class="line">#include &quot;HelloNativeService.h&quot;</span><br><span class="line"></span><br><span class="line">#define LOG_TAG &quot;HelloNativeService&quot;</span><br><span class="line">#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)</span><br><span class="line"></span><br><span class="line">enum &#123;</span><br><span class="line">    CMD_SAY_HELLO &#x3D; 1,</span><br><span class="line">    CMD_CAL_SUM &#x3D; 2</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">static void sayHello(const char *name) &#123;</span><br><span class="line">    LOGD(&quot;hello %s from HelloNativeService&quot;, name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static int sum(int a, int b) &#123;</span><br><span class="line">    return a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">HelloNativeService::HelloNativeService() &#123;</span><br><span class="line">    LOGD(&quot;HelloNativeService created&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int HelloNativeService::instantiate() &#123;</span><br><span class="line">    int r &#x3D; defaultServiceManager()-&gt;addService(String16(&quot;HelloNativeService&quot;),new HelloNativeService());</span><br><span class="line">    LOGD(&quot;add HelloNativeService r &#x3D; %d&quot;, r);</span><br><span class="line">    return r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">status_t HelloNativeService::onTransact(uint32_t code, const Parcel &amp;request, Parcel *reply, uint32_t flag) &#123;</span><br><span class="line">    switch (code) &#123;</span><br><span class="line">        case CMD_SAY_HELLO:</span><br><span class="line">            sayHello(request.readCString());</span><br><span class="line">            return NO_ERROR;</span><br><span class="line"></span><br><span class="line">        case CMD_CAL_SUM:</span><br><span class="line">            int a &#x3D; request.readInt32();</span><br><span class="line">            int b &#x3D; request.readInt32();</span><br><span class="line">            reply-&gt;writeInt32(sum(a, b));</span><br><span class="line">            return NO_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    return BBinder::onTransact(code, request, reply, flag);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中最重要的是 onTransact 函数的实现，这是一个回调函数，当 client 端通过 binder 调用 server 功能的时候， server 端的 onTransact 回调函数就会被调用。<br>各参数理解如下：</p>
+<ul>
+<li>code : 表示要执行的动作，类似Handler发送的Message的what。code指示了当前远程操作的命令，IBinder定义了像INTERFACE_TRANSACTION、PING_TRANSACTION 这样的几个通用命令。自己使用的命令的标识值需要在FIRST_CALL_TRANSACTION和LAST_CALL_TRANSACTION之间。</li>
+<li>request， reply ： request 和 reply 参数相当于普通函数里的调用参数和返回值。Parcel类型是可以跨进程的数据。</li>
+<li>flag ： 参数 flags 只有 0 和 FLAG_ONEWAY 两种。0 表示阻塞调用， FLAG_ONEWAY 表示异步调用。这个参数不需要我们在服务端处理， Binder 框架会自动处理。</li>
+</ul>
+<h2 id="3-添加-main-cpp"><a href="#3-添加-main-cpp" class="headerlink" title="3. 添加 main.cpp"></a>3. 添加 main.cpp</h2><p>前面我们定义了服务接口而已，这个服务也是需要依赖在某个进程才能运行的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;binder&#x2F;IServiceManager.h&gt;</span><br><span class="line">#include &lt;binder&#x2F;IPCThreadState.h&gt;</span><br><span class="line">#include &quot;HelloNativeService.h&quot;</span><br><span class="line"></span><br><span class="line">using namespace android;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[]) &#123;</span><br><span class="line">    sp&lt;ProcessState&gt; proc(ProcessState::self());</span><br><span class="line">    </span><br><span class="line">    HelloNativeService::instantiate();</span><br><span class="line"></span><br><span class="line">    ProcessState::self()-&gt;startThreadPool();</span><br><span class="line">    IPCThreadState::self()-&gt;joinThreadPool();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上都是样板代码，具体 ProcessState 的功能作用是什么这里就不展开了。</p>
+<h2 id="4-Android-bp"><a href="#4-Android-bp" class="headerlink" title="4. Android.bp"></a>4. Android.bp</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;</span><br><span class="line">    name: &quot;HelloNativeService&quot;,</span><br><span class="line">    srcs: [&quot;main.cpp&quot;, &quot;HelloNativeService.cpp&quot;],</span><br><span class="line"></span><br><span class="line">    shared_libs: [</span><br><span class="line">        &quot;liblog&quot;,</span><br><span class="line">        &quot;libcutils&quot;,</span><br><span class="line">        &quot;libutils&quot;,</span><br><span class="line">        &quot;libbinder&quot;,</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-selinux-规则设置"><a href="#5-selinux-规则设置" class="headerlink" title="5. selinux 规则设置"></a>5. selinux 规则设置</h2><p>为了简单起见，我们直接修改系统默认的 sepolicy 规则路径了。</p>
+<h3 id="5-1-添加-HelloNativeService-te"><a href="#5-1-添加-HelloNativeService-te" class="headerlink" title="5.1 添加 HelloNativeService.te"></a>5.1 添加 HelloNativeService.te</h3><p>system/sepolicy/private/HelloNativeService.te 和 system/sepolicy/prebuilts/api/29.0/private/HelloNativeService.te 文件内容保持一致</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">type HelloNativeService, domain;</span><br><span class="line">typeattribute HelloNativeService coredomain;</span><br><span class="line">type HelloNativeService_exec, system_file_type, exec_type, file_type;</span><br><span class="line">binder_use(HelloNativeService)</span><br><span class="line">init_daemon_domain(HelloNativeService)</span><br><span class="line"></span><br><span class="line">allow HelloNativeService HelloNativeService_service:service_manager &#123; add find &#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-修改-file-contexts"><a href="#5-2-修改-file-contexts" class="headerlink" title="5.2 修改 file_contexts"></a>5.2 修改 file_contexts</h3><p>system/sepolicy/private/file_contexts 和 system/sepolicy/prebuilts/api/29.0/private/file_contexts 文件内容保持一致<br>添加以下配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;system&#x2F;bin&#x2F;HelloNativeService u:object_r:HelloNativeService_exec:s0</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-修改-service-contexts"><a href="#5-3-修改-service-contexts" class="headerlink" title="5.3 修改 service_contexts"></a>5.3 修改 service_contexts</h3><p>system/sepolicy/private/service_contexts 和 system/sepolicy/prebuilts/api/29.0/private/service_contexts 文件内容保持一致<br>添加以下配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HelloNativeService u:object_r:HelloNativeService_service:s0</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-4-修改-service-te"><a href="#5-4-修改-service-te" class="headerlink" title="5.4 修改 service.te"></a>5.4 修改 service.te</h3><p>system/sepolicy/private/service.te 和 system/sepolicy/prebuilts/api/29.0/private/service.te<br>添加以下配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type HelloNativeService_service,    service_manager_type;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-开机自动运行"><a href="#6-开机自动运行" class="headerlink" title="6. 开机自动运行"></a>6. 开机自动运行</h2><p>在 device/qiushao/pure 目录添加rc文件 init.ranchu.rc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">service HelloNativeService &#x2F;system&#x2F;bin&#x2F;HelloNativeService</span><br><span class="line">    class core</span><br><span class="line">    user root</span><br><span class="line">    group root</span><br><span class="line">    seclabel u:r:HelloNativeService:s0</span><br></pre></td></tr></table></figure>
+
+<p>在 pure.mk 中添加以下配置， <strong>这个配置需要添加在 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86_64.mk) 之前。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_COPY_FILES +&#x3D; device&#x2F;qiushao&#x2F;pure&#x2F;init.ranchu.rc:root&#x2F;init.ranchu.rc</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="7-编写-client-调用服务"><a href="#7-编写-client-调用服务" class="headerlink" title="7. 编写 client 调用服务"></a>7. 编写 client 调用服务</h2><p>我们把测试代码跟 service 放在同一个目录，直接在 HelloNativeService 目录下创建 HelloNativeTest.cpp 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;binder&#x2F;IServiceManager.h&gt;</span><br><span class="line">#include &lt;binder&#x2F;Parcel.h&gt;</span><br><span class="line">#include &lt;utils&#x2F;Errors.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">using namespace android;</span><br><span class="line"></span><br><span class="line">enum &#123;</span><br><span class="line">    CMD_SAY_HELLO &#x3D; 1,</span><br><span class="line">    CMD_CAL_SUM &#x3D; 2</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">static sp&lt;IBinder&gt; service;</span><br><span class="line"></span><br><span class="line">static void test_sayHello() &#123;</span><br><span class="line">    Parcel request, reply;</span><br><span class="line">    request.writeCString(&quot;qiushao&quot;);</span><br><span class="line">    service-&gt;transact(CMD_SAY_HELLO, request, &amp;reply);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static void test_calSum() &#123;</span><br><span class="line">    Parcel request, reply;</span><br><span class="line">    request.writeInt32(2);</span><br><span class="line">    request.writeInt32(3);</span><br><span class="line">    service-&gt;transact(CMD_CAL_SUM, request, &amp;reply);</span><br><span class="line">    int sum &#x3D; reply.readInt32();</span><br><span class="line">    printf(&quot;sum of 2 + 3 &#x3D; %d\n&quot;, sum);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main () &#123;</span><br><span class="line">    service &#x3D; defaultServiceManager()-&gt;getService(String16(&quot;HelloNativeService&quot;));</span><br><span class="line">    test_sayHello();</span><br><span class="line">    test_calSum();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Android.bp 中添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;</span><br><span class="line">    name: &quot;HelloNativeTest&quot;,</span><br><span class="line">    srcs: [&quot;HelloNativeTest.cpp&quot;],</span><br><span class="line"></span><br><span class="line">    shared_libs: [</span><br><span class="line">        &quot;liblog&quot;,</span><br><span class="line">        &quot;libcutils&quot;,</span><br><span class="line">        &quot;libutils&quot;,</span><br><span class="line">        &quot;libbinder&quot;,</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-编译运行"><a href="#8-编译运行" class="headerlink" title="8. 编译运行"></a>8. 编译运行</h2><p>经过以上步骤，我们的 native 服务和测试 demo 就完成了，目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models$ tree HelloNativeService&#x2F;</span><br><span class="line">HelloNativeService&#x2F;</span><br><span class="line">├── Android.bp</span><br><span class="line">├── HelloNativeService.cpp</span><br><span class="line">├── HelloNativeService.h</span><br><span class="line">├── HelloNativeTest.cpp</span><br><span class="line">└── main.cpp</span><br><span class="line"></span><br><span class="line">0 directories, 5 files</span><br></pre></td></tr></table></figure>
+
+<p>我们还需要把刚刚添加的这两个模块添加到 PRODUCT_PACKAGES</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_PACKAGES +&#x3D; HelloNativeService HelloNativeTest</span><br></pre></td></tr></table></figure>
+
+<p>然后编译运行，查看服务列表，可以看到我们的 HelloNativeService 已经在运行状态了。<br>然后执行 HelloNativeTest，服务端正确返回了计算结果。<br>查看一下 logcat， HelloNativeService 也正确收到了 HelloNativeTest 传递过来的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10$ adb shell</span><br><span class="line">pure:&#x2F; # service list | grep -i hello                                          </span><br><span class="line">15      HelloService: [android.pure.IHelloService]</span><br><span class="line">161     HelloNativeService: []</span><br><span class="line">pure:&#x2F; # </span><br><span class="line">pure:&#x2F; # HelloNativeTest</span><br><span class="line">sum of 2 + 3 &#x3D; 5</span><br><span class="line">pure:&#x2F; # </span><br><span class="line">pure:&#x2F; # logcat -s HelloNativeService</span><br><span class="line">--------- beginning of main</span><br><span class="line">--------- beginning of system</span><br><span class="line">01-05 00:03:19.788  1661  1661 D HelloNativeService: HelloNativeService created</span><br><span class="line">01-05 00:03:19.788  1661  1661 D HelloNativeService: add HelloNativeService r &#x3D; 0&#x2F;n</span><br><span class="line">01-05 00:05:50.011  1661  1670 D HelloNativeService: hello qiushao from HelloNativeService</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" title="Android系统开发入门-9.添加native系统服务" target="_blank" rel="external">http://qiushao.net/2019/12/29/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/9-%E6%B7%BB%E5%8A%A0native%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/12/31/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/10-native%E6%9C%8D%E5%8A%A1%E5%9B%9E%E8%B0%83/" title="Android系统开发入门-10.native服务回调"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/12/22/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/8-java%E6%9C%8D%E5%8A%A1%E5%9B%9E%E8%B0%83/" title="Android系统开发入门-8.java服务回调"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

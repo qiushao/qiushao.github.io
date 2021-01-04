@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发进阶-init.rc 详解 | 一叶知秋</title>
+  <meta name="description" content="init 是 Android 系统启动的第一个用户空间进程，它的主要工作是对系统进行初始化，然后启动系统的各种核心服务。我们知道，Android 可能运行在各种不同的产品上，不同的产品所需要启动的服务也是有很大的差异的。为了满足不同产品的需求，init 进程把一部分初始化工作交给 init.rc 配置文件来管理。init.rc 以 Android Init Language 作为语法，下文我们简称">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发进阶-init.rc 详解">
+<meta property="og:url" content="http://qiushao.net/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="init 是 Android 系统启动的第一个用户空间进程，它的主要工作是对系统进行初始化，然后启动系统的各种核心服务。我们知道，Android 可能运行在各种不同的产品上，不同的产品所需要启动的服务也是有很大的差异的。为了满足不同产品的需求，init 进程把一部分初始化工作交给 init.rc 配置文件来管理。init.rc 以 Android Init Language 作为语法，下文我们简称">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/init.rc.png">
+<meta property="article:published_time" content="2020-03-01T04:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/init.rc.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android-Init-Language"><span class="toc-text">Android Init Language</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Init-rc-Files"><span class="toc-text">Init .rc Files</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Actions"><span class="toc-text">Actions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Services"><span class="toc-text">Services</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Options"><span class="toc-text">Options</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Triggers"><span class="toc-text">Triggers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Commands"><span class="toc-text">Commands</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Properties"><span class="toc-text">Properties</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Boot-timing"><span class="toc-text">Boot timing</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bootcharting"><span class="toc-text">Bootcharting</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Comparing-two-bootcharts"><span class="toc-text">Comparing two bootcharts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Systrace"><span class="toc-text">Systrace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debugging-init"><span class="toc-text">Debugging init</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Host-Init-Script-Verification"><span class="toc-text">Host Init Script Verification</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Early-Init-Boot-Sequence"><span class="toc-text">Early Init Boot Sequence</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发进阶/init.rc介绍" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发进阶-init.rc 详解
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/" class="article-date">
+	  <time datetime="2020-03-01T04:00:00.000Z" itemprop="datePublished">2020-03-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/" class="leancloud_visitors"  data-flag-title="Android系统开发进阶-init.rc 详解">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>init 是 Android 系统启动的第一个用户空间进程，它的主要工作是对系统进行初始化，然后启动系统的各种核心服务。我们知道，Android 可能运行在各种不同的产品上，不同的产品所需要启动的服务也是有很大的差异的。为了满足不同产品的需求，init 进程把一部分初始化工作交给 init.rc 配置文件来管理。init.rc 以 Android Init Language 作为语法，下文我们简称 Android Init Language 为 init 语言。配置文件的主入口文件是 /init.rc，这个文件会通过 import 引入其他的配置文件。本文中，我们统称这些文件为 init.rc。下面我们就来详细介绍一下 init.rc 的语法细节。</p>
+<p>我们先来看一下 init.rc 的语法结构图：<br><img src="/images/init.rc.png" alt="init.rc"></p>
+<p>init.rc 由一个个 section 组成，　每一个 section 定义了一个 Action, 或者一个 Service。<br>Action 由 trigger 和 一组 command 组成。trigger 表示触发这个 Action 的条件， command 表示这个 Action 被触发后所执行的一系列动作。<br>Service 描述了一个服务的名字，执行路径，启动参数等信息。还可以通过 option 来约定服务的一些行为，权限等。比如是否只启动一次，服务进程的 uid, gid等。</p>
+<p>init.rc 的所有语法介绍都可以在 Android/system/core/init/README.md 这个文件里面查找到，下面的大部分内容都是参考这个文档，顺便整理，扩展一下。</p>
+<h2 id="Android-Init-Language"><a href="#Android-Init-Language" class="headerlink" title="Android Init Language"></a>Android Init Language</h2><p>The Android Init Language 主要由５种语法类型组成:<br>Actions, Commands, Services, Options, 和 Imports.</p>
+<p>每一行是一个语句，单词之间用空格分开，如果单词中有空格可以用反斜杠 <code>\</code> 转义，也可以用双引号 <code>&quot;&quot;</code> 来引用文本避免和空格冲突，如果一行语句太长可以用反斜杠 <code>\</code> 换行， 如果一行以 <code>#</code> 开头(当然 <code>#</code> 前面可以是空白符: space, tab)，则表示这行是注释。</p>
+<p>在 init.rc 中我们可以使用系统属性 property，其使用方法跟 shell 语法中的变量引用是一样的，比如：<code>import /init.recovery.${ro.hardware}.rc</code>。其中 <code>ro.hardware</code> 就是一个系统属性，我们通过 <code>${property}</code> 这种形式来引用。</p>
+<p>每个 Action 和 Service 都定义了一个 Section, 所有的 Commands 和 Options 从属于紧挨着的 Actions 或 Services， <strong>定义在第一个 Section 前的 Commands 和 Options 将被忽略掉</strong>。Service 的名称都唯一的， 如果定义了两个名称一样的 Service，那第二个 Service 将被忽略掉并打印错误日志。</p>
+<h2 id="Init-rc-Files"><a href="#Init-rc-Files" class="headerlink" title="Init .rc Files"></a>Init .rc Files</h2><p>Android Init Language 是用后缀为 <code>.rc</code> 的纯文本编写的, 而且是由多个分布在不同目录下的 .rc 文件组成, 如下所述:<br>/init.rc 是最主要的一个 .rc 文件， 它由 init 进程在开始执行的时候加载，主要负责系统初始化。</p>
+<p>系统通过 init 进程的第一阶段 mount 机制会挂载 /system, /vendor 分区。这里简要说明一下， init 进程的启动是分为三个阶段的: </p>
+<ul>
+<li>FirstStageMain 主是要挂载文件系统，包括虚拟文件系统(/dev, /sys, /proc等), 和部分实际的文件系统(/sytem, /vendor, /odm等)。还有一部分文件系统是在第三阶段通过 mount_all fstab 来挂载的，比如说 /data。</li>
+<li>SetupSelinux 设置 Selinux 环境</li>
+<li>SecondStageMain 这个阶段才会加载 init.rc 文件</li>
+</ul>
+<p>init 进程在加载完 /init.rc 文件之后，会接着加载 /{system,vendor,odm,product}/etc/init/ 这些目录下的所有 .rc 文件：<br>/system/etc/init/  用于系统本身，比如 SurfaceFlinger, MediaService, and logcatd<br>/vendor/etc/init/  用于SoC(系统级核心厂商，如高通), 为他们提供一些核心功能和服务<br>/odm/etc/init/     用于设备制造商（odm定制厂商，如华为、小米），为他们的传感器或外围设备提供一些核心功能和服务<br>/product/etc/init/ 用于产品机型的配置</p>
+<p>一些旧的设备是没有第一个阶段的挂载文件系统机制的，那些设备的 .rc 加载流程是这样的：</p>
+<ol>
+<li>/init.rc 会 import soc 厂商提供的 .rc 文件： /init.${ro.hardware}.rc</li>
+<li>/init.${ro.hardware}.rc 里面会有 mount_all 指令。当执行到 mount_all 指令时，init 进程会挂载所有文件系统，然后加载 /{system,vendor,odm}/etc/init/ 这些目录下的所有 .rc 文件。</li>
+</ol>
+<p>system, vendor, odm, 或者 product 分区下的所有 binaries services 都有一个对应的 .rc 文件。这些 .rc 文件都放在各分区的 $partion/etc/init 目录下。Android.mk 中提供了一个 <code>LOCAL_INIT_RC</code> 配置， Android.bp 中也提供了一个 <code>init_rc</code> 配置。这两个配置可以为服务指定它的 .rc 文件。这里需要说明的是 service bin 编译到哪个分区，它对应的 .rc 文件也会编译到对应分区的 etc/init 目录。比如 system/core 目录下的 logd 模块，它的 Android.bp 如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;</span><br><span class="line">    name: &quot;logd&quot;,</span><br><span class="line">    init_rc: [&quot;logd.rc&quot;],</span><br><span class="line"></span><br><span class="line">    srcs: [&quot;main.cpp&quot;],</span><br><span class="line"></span><br><span class="line">    static_libs: [</span><br><span class="line">        &quot;liblog&quot;,</span><br><span class="line">        &quot;liblogd&quot;,</span><br><span class="line">    ],</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>init_rc: [&quot;logd.rc&quot;]</code> 配置指定了 logd 服务对应的 .rc 文件为当前目录下的 logd.rc。logd 会被编译到 /system/bin 目录，logd.rc 文件则会被编译到 /system/etc/init 目录。<br>将 .rc 根据不同服务分拆到不同文件中，要比之前放在单个 <code>init.rc</code> 文件好。 这种方案确保 init 进程读取的 service 和 action 信息能和同目录下的 Services 二进制文件更加符合, 不再像以前单个 init.rc 那样。另外，这样还可以解决多个 services 加入到系统时发生的冲突，因为他们都拆分到了不同的文件中。</p>
+<p>在 mount_all 命令中有 “early” 和 “late” 两个可选项，当 early 设置的时候，init 进程将跳过被 latemount 标记的挂载操作，并触发 fs encryption state 事件，<br>当 late 被设置的时候，init 进程只会执行 latemount 标记的挂载操作，但是会跳过导入的 .rc 文件的执行. 默认情况下，不设置任何选项， init 进程将执行所有挂载操作</p>
+<h2 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h2><p>Actions 由一行行的命令序列组成。 trigger 用来决定什么时候触发这些命令, 当一个事件满足 trigger 的触发条件时， 这个 action 就会被加入到处理队列中（除非队列中已经存在）。<br>队列中的 action 按顺序取出执行， action 中的命令按顺序执行。 这些命令主要用来执行一些操作（设备创建/销毁，属性设置，进程重启等）。<br>Actions的格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">on &lt;trigger&gt; [&amp;&amp; &lt;trigger&gt;]*</span><br><span class="line">   &lt;command&gt;</span><br><span class="line">   &lt;command&gt;</span><br><span class="line">   &lt;command&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Actions 被加进队列的顺序是由包含这个 Action 的文件被 init 解析的顺序（import 的顺序）决定的。同一个 .rc 文件的多个 Action 命令也是出现在前面的优先入队列。<br>比如一个 .rc 文件有以下 Actions:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">on boot</span><br><span class="line">   setprop a 1</span><br><span class="line">   setprop b </span><br><span class="line">on boot &amp;&amp; property:foobar&#x3D;true</span><br><span class="line">   setprop c 1</span><br><span class="line">   setprop d 2</span><br><span class="line">on boot</span><br><span class="line">   setprop e 1</span><br><span class="line">   setprop f 2</span><br></pre></td></tr></table></figure>
+
+<p>当 boot 事件被触发，且 property <code>foobar</code> 的值为 true 时，这些命令被执行的顺序是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setprop a 1</span><br><span class="line">setprop b 2</span><br><span class="line">setprop c 1</span><br><span class="line">setprop d 2</span><br><span class="line">setprop e 1</span><br><span class="line">setprop f 2</span><br></pre></td></tr></table></figure>
+
+<h2 id="Services"><a href="#Services" class="headerlink" title="Services"></a>Services</h2><p>Services 是 init 进程启动的程序, 我们可以配置 Services 在挂掉时是否自动重启。Services 的格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">service &lt;name&gt; &lt;pathname&gt; [ &lt;argument&gt; ]*</span><br><span class="line">   &lt;option&gt;</span><br><span class="line">   &lt;option&gt;</span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>name : 服务名，也是服务运行的进程名</li>
+<li>pathname : 服务的可执行程序入口</li>
+<li>argument : 服务运行的参数</li>
+</ul>
+<h2 id="Options"><a href="#Options" class="headerlink" title="Options"></a>Options</h2><p>Options是Services的参数配置. 它们影响Service如何运行及运行时机。下面对所有的 Options 进行说明：</p>
+<ul>
+<li><p><code>capabilities [ &lt;capability&gt;\* ]</code><br>执行服务的时候设置 capability。关于 <code>capability</code> 的概念，简单来说，就是一种权限控制机制，相对于 uid, gid 来说更细粒度的权限控制。详细的权限列表请参考 <a href="http://man7.org/linux/man-pages/man7/capabilities.7.html" target="_blank" rel="noopener">capabilities</a>。参数中的 <code>capability</code> 不需要 <code>CAP_</code> 前缀， 比如 <code>NET_ADMIN</code>，或者 <code>SETPCAP</code>。如果没有设置任何权限，则所有的权限都会被移除掉，即使这个服务是以 root 用户运行的也一样。</p>
+</li>
+<li><p><code>class &lt;name&gt; [ &lt;name&gt;\* ]</code><br>为服务指定 class 名字。 同一个 class 名字的服务会被一起启动或退出, 默认值是 <code>default</code>, 第二个 name 可以不设置， 用于service组。<br>开机动画和关机动画服务都应该包含 <code>animation</code> 这个 class。因为开机动画在系统启动过程中启动得非常早，然后在关机的时候又需要运行到最后一个关机阶段。在运行动画的过程中不能保证 /data 分区是已经挂载可用的了。开机动画和关机动画服务可以操作 /data 分区下的文件，但不能一直打开 /data 分区下的文件。而且当 /data 分区还没挂载时，也不能影响服务的运行。</p>
+</li>
+<li><p><code>console [&lt;console&gt;]</code><br>这个选项表明服务需要一个控制台。 第二个参数 console 的意思是可以设置你想要的控制台类型，默认控制台是 /dev/console, /dev 这个前缀通常是被省略的， 比如你要设置控制台 /dev/tty0, 那么只需要设置为console tty0 即可。</p>
+</li>
+<li><p><code>critical</code><br>表示服务是严格模式。 如果这个服务在4分钟内或者启动完成前退出超过4次，那么设备将重启进入 bootloader 模式。</p>
+</li>
+<li><p><code>disabled</code><br>这个服务不会随着 class 一起启动。只能通过服务名来显式启动。比如 foobar 服务的 class 是 core, 且是 disabled 的，当执行 <code>class_start core</code> 时，foobar 服务是不会被启动的。 foobar 服务只能通过 <code>start foobar</code> 这种方法来启动。</p>
+</li>
+<li><p><code>enter_namespace &lt;type&gt; &lt;path&gt;</code><br>Enters the namespace of type <em>type</em> located at <em>path</em>. Only network namespaces are supported with <em>type</em> set to “net”. Note that only one namespace of a given <em>type</em> may be entered.</p>
+</li>
+<li><p><code>file &lt;path&gt; &lt;type&gt;</code><br>根据文件路径 <code>path</code> 来打开文件，然后把文件描述符 <code>fd</code> 传递给服务进程。<code>type</code> 表示打工文件的方式，只有三种取值 <code>r</code>, <code>w</code>, <code>rw</code>。对于 native 程序来说，可以通过 libcutils 库提供的 <code>android_get_control_file()</code> 函数来获取传递过来的文件描述符。举个例子， logd.rc 部分内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">service logd &#x2F;system&#x2F;bin&#x2F;logd</span><br><span class="line">    socket logd stream 0666 logd logd</span><br><span class="line">    socket logdr seqpacket 0666 logd logd</span><br><span class="line">    socket logdw dgram+passcred 0222 logd logd</span><br><span class="line">    file &#x2F;proc&#x2F;kmsg r</span><br><span class="line">    file &#x2F;dev&#x2F;kmsg w</span><br><span class="line">    user logd</span><br></pre></td></tr></table></figure>
+<p>其中通过 <code>file /proc/kmsg r</code> 以只读方式打开了设备文件 /proc/kmsg, 然后在代码中这么获取打开的文件, 见 sytem/core/logd/main.cpp main 函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> dev_kmsg[] = <span class="string">"/dev/kmsg"</span>;</span><br><span class="line">fdDmesg = android_get_control_file(dev_kmsg);</span><br><span class="line"><span class="keyword">if</span> (fdDmesg &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    fdDmesg = TEMP_FAILURE_RETRY(<span class="built_in">open</span>(dev_kmsg, O_WRONLY | O_CLOEXEC));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可能有点奇怪，为什么要通过 file 这个选项来打开文件，而不直接在代码里面通过 open() 函数来打开呢？我觉得主要是权限问题，还是以 logd 为例子。/dev/kmsg 的权限是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pure:&#x2F; # ls -l &#x2F;dev&#x2F;kmsg </span><br><span class="line">crw------- 1 root root 1,  11 2020-02-27 21:49 &#x2F;dev&#x2F;kmsg</span><br></pre></td></tr></table></figure>
+<p>只有 root 用户可读写。而 logd 服务是以 <code>user logd</code> 选项来启动的，自然没有权限用 open() 函数来打开 /dev/kmsg 这个设备文件。file 选项则可以通过 init 进程把文件打开，然后把文件描述符传递给子进程， 从而解决了权限的问题。</p>
+</li>
+<li><p><code>group &lt;groupname&gt; [ &lt;groupname&gt;\* ]</code><br>在启动 Service 前将 Service 的用户组改为第一个 groupname, 第一个 groupname 是必须有的， 第二个 groupname 可以不设置，用于追加组（通过setgroups）。目前默认的用户组是 root 组。但我觉得为了安全起见，默认用户组应该是 nobody 才对。</p>
+</li>
+<li><p><code>interface &lt;interface name&gt; &lt;instance name&gt;</code><br>将这个服务进程与这个进程提供的一系列 services 关联起来。<code>interface name</code> 参数必须是全限定名。这个配置的作用是允许 hwservicemanager 惰性启动服务进程。（我的理解是，这个服务不会开机自动启动，需要等其他进程显式的调用这个服务时，才会启动）。如果有多个 interfaces, 则多次使用 <code>interface</code> 这个选项来列举出来。比如 /vendor/etc/init/android.hardware.drm@1.0-service.rc ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">service vendor.drm-hal-1-0 &#x2F;vendor&#x2F;bin&#x2F;hw&#x2F;android.hardware.drm@1.0-service</span><br><span class="line">    interface android.hardware.drm@1.0::ICryptoFactory default</span><br><span class="line">    interface android.hardware.drm@1.0::IDrmFactory default</span><br><span class="line">    class hal</span><br><span class="line">    user media</span><br><span class="line">    group mediadrm drmrpc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>ioprio &lt;class&gt; &lt;priority&gt;</code><br>通过 SYS_ioprio_set 系统调用来设置此服务的 IO 优先级和 IO 优先级类别。</p>
+<ul>
+<li><code>class</code> 优先级类别必须是 <code>rt</code>(real-time)，<code>be</code>(best-effort) 或 <code>idle</code> 之一。 </li>
+<li><code>priority</code> 优先级必须为 0 到 7 之间的整数。</li>
+</ul>
+</li>
+</ul>
+<p><code>keycodes &lt;keycode&gt; [ &lt;keycode&gt;\* ]</code><br>设置触发此服务的按键，可以是组合按键。如果这个组合键被按下了，这个服务就会启动。一般用来启动 bugreport 服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">service bugreport &#x2F;system&#x2F;bin&#x2F;dumpstate -d -p -B -z \</span><br><span class="line">        -o &#x2F;data&#x2F;user_de&#x2F;0&#x2F;com.android.shell&#x2F;files&#x2F;bugreports&#x2F;bugreport</span><br><span class="line">    class main</span><br><span class="line">    disabled</span><br><span class="line">    oneshot</span><br><span class="line">    keycodes 114 115 116</span><br></pre></td></tr></table></figure>
+
+<p>我们也可以用一个 property 来替代键值列表。这种情况下只需要提供一个 property 即可。这个 property 的值为：以逗号分隔的键值列表；或者 “none” 表示不禁用组合键启动服务。<br>比如： <code>keycodes ${some.property.name:-none}</code>。 some.property.name 的值为 “123,124,125”。因为 keycodes 在 init 进程中是很早被处理的。所以只有在 PRODUCT_DEFAULT_PROPERTY_OVERRIDES 定义的 property 才可以使用。目前我还没见过这种用法，也不明白为什么要有这种用法。</p>
+<ul>
+<li><p><code>memcg.limit_in_bytes &lt;value&gt;</code> and <code>memcg.limit_percent &lt;value&gt;</code><br>这个主要是用来设置服务的内存使用限制。当服务的内存使用超出了限制，则会触发 oom kill。具体原理请搜索 <code>cgroup memory</code> 相关的知识。<br>limit_in_bytes 指按字节来限制； limit_percent 指按物理内存的百分比来限制。value 的值必须要大于 0。<br>这个配置需要 /dev/memcg 节点被挂载才会生效。</p>
+</li>
+<li><p><code>memcg.limit_property &lt;value&gt;</code><br>通过 property 来设置 <code>memory.limit_in_bytes</code> 的值。这里 value 的值为一个 property 名。当设置了 memcg.limit_property 时，memcg.limit_in_bytes 和 memcg.limit_percent 的值将会被覆盖。</p>
+</li>
+<li><p><code>memcg.soft_limit_in_bytes &lt;value&gt;</code><br>soft_limit_in_bytes: 内存软限制。<br>如果超过了 memcg.limit_in_bytes 所定义的限制，那么进程会被 oom killer 干掉或者被暂停，这相当于硬限制，因为进程无法申请超过自身 cgroup 限制的内存，但是软限制确是可以突破的。<br>我们假定一个场景，如果你的实体机上有四个 cgroup，实体机的内存总量是64G，那么一般情况我们会考虑给每个 cgroup 限制到16G内存。但是现实情况并不会这么理想，首先实体机上其他进程和内核会占用部分内存，这将导致实际上每个 cgroup 都不会真的有16G内存可用，如果四个 cgroup 都尽量占用内存的话，他们可能谁都不会到达内存的上限触发超限的行为，这可能将导致进程都抢不到内存而被饿死。</p>
+</li>
+</ul>
+<p>类似的情况还可能发上在内存超卖的环境中，比如，我们仍然只有64G内存，但是确开了8个cgroup，每个都限制了16G内存。这样每个 cgroup 分配的内存之和达到了128G，但是实际内存量只有64G。这种情况是出于绝大多数应用可能不会占用满所有的内存来考虑的，这样就可以把本来属于它的那份内存”借用”给其它 cgroup。如果全局内存已经耗尽了，但是某些 cgroup 还没达到他的内存使用上限，而它们此时如果要申请内存的话，此时该从哪里回收内存？如果我们配置了 memcg.soft_limit_in_bytes，那么内核将去回收那些内存超过了这个软限制的 cgroup 的内存，尽量缩减它们的内存占用达到软限制的量以下 ，以便让没有达到软限制的 cgroup 有内存可以用。在没有这样的内存竞争以及没有达到硬限制的情况下，软限制是不会生效的。还有，软限制的起作用时间可能会比较长，毕竟内核要平衡多个cgroup的内存使用。</p>
+<p>根据软限制的这些特点，我们应该明白如果想要软限制生效，应该把它的值设置成小于硬限制。</p>
+<ul>
+<li><p><code>memcg.swappiness &lt;value&gt;</code><br>swappiness 的值的大小对如何使用 swap 分区是有着很大的联系的。swappiness=0 的时候表示最大限度使用物理内存，然后才是 swap 空间，swappiness＝100 的时候表示积极的使用 swap 分区，并且把内存上的数据及时的搬运到 swap 空间里面。不过在 Android 系统上好像没有见过 swap 分区。</p>
+</li>
+<li><p><code>namespace &lt;pid|mnt&gt;</code><br>当 fork 这个 service 时，设置 pid 或 mnt namespace。目前也没发现哪个服务有用到这个 option。</p>
+</li>
+<li><p><code>oneshot</code><br>当服务退出的时候，不自动重启。适用于那些开机只运行一次的服务。</p>
+</li>
+<li><p><code>onrestart</code><br>在服务重启的时候执行一个命令。这个命令并不是 shell 命令哦，具体可以执行的命令有哪些，文章后面会介绍。</p>
+</li>
+<li><p><code>oom_score_adjust &lt;value&gt;</code><br>设置服务的 /proc/$pid/oom_score_adj 的值为 value,在 -1000 ～ 1000之间。值越大，越可能被 oom Killer 杀掉。</p>
+</li>
+<li><p><code>override</code><br>指定此服务要覆盖之前定义的同名服务。前面我们有说过，服务名是唯一的，重复定义的话，后面的定义会被忽略。但我们可以通过 override 来使用后面定义的服务来覆盖前面的。一般的使用场景是使用 /odm 分区定义的服务来覆盖 /vendor 分区定义的同名服务。init 进程将以最后解析到的服务定义为准，因此我们要特别关注 init.rc 文件被解析的顺序。</p>
+</li>
+<li><p><code>priority &lt;priority&gt;</code><br>设置服务的 cpu 调试优先级。取值范围为 -20 ~ 19。默认值是 0。实质上是通过 setpriority() 函数调用来设置优先级。</p>
+</li>
+<li><p><code>restart_period &lt;seconds&gt;</code><br>如果一个非 oneshot 的服务退出了，它将会在设置的 period 时间周期内重新启动。为了限制服务的崩溃频率，默认周期是 5 秒。对于一些本应该周期运行的服务来说，我们可以增加这个周期。比如说，可以设置成 3600 来指定服务每小时运行一次。或者指定为 86400 来指定服务每天运行一次。</p>
+</li>
+<li><p><code>rlimit &lt;resource&gt; &lt;cur&gt; &lt;max&gt;</code><br>rlimit 是 resource limit 的意思。每个进程在运行时系统不会无限制的允许单个进程不断的消耗资源，因此都会设置资源限制。Linux 系统中使用 resource limit 来表示，每个进程都可以设置不同的资源限制，rlimit 的设置是会传递给子进程的，也就是以这个 service 为根节点的进程树上的所有进程都会受这个设置的影响。关于 rlimit 的介绍请自行搜索。</p>
+</li>
+<li><p><code>seclabel &lt;seclabel&gt;</code><br>在启动 Service 前设置指定的 seclabel，默认使用init的安全策略。 主要用于在 rootfs 上启动的 service，比如 ueventd, adbd。 在系统分区上运行的 service 有自己的 SELinux安全策略。</p>
+</li>
+<li><p><code>setenv &lt;name&gt; &lt;value&gt;</code><br>设置进程的环境变量。</p>
+</li>
+<li><p><code>shutdown &lt;shutdown_behavior&gt;</code><br>设置关机时这个服务的行为。如果没有设置，这个服务在关机时将会被 SIGTERM 和 SIGKILL 杀掉。如果指定了 <code>shutdown critical</code>，则这个服务在关机过程中不会被杀掉，直接关机超时。<br>如果这个服务指定了 <code>shutdown critical</code>，且在开始关机时这个服务没有在运行，则这个服务将会被启动。servicemanager， vold 等服务设置了这个 option。</p>
+</li>
+<li><p><code>sigstop</code><br>在服务被启动的时候马上发送 SIGSTOP 信号给这个服务。这个选项一般是用来调试的。文章后面介绍 debugging 的时候会说明怎么使用这个选项。</p>
+</li>
+<li><p><code>socket &lt;name&gt; &lt;type&gt; &lt;perm&gt; [ &lt;user&gt; [ &lt;group&gt; [ &lt;seclabel&gt; ] ] ]</code><br>创建一个 unix domain socket, 路径为 <code>/dev/socket/name</code> , 并将fd返回给Service。 type 只能是 “dgram”, “stream” or “seqpacket”。<br>user 和 group 默认值是 0。 seclabel 是这个 socket 的 SELinux security context, 它的默认值是 service 的security context或者基于其可执行文件的security context。<br>在代码中，可以通过 libcutils 库提供的 android_get_control_socket 函数来获取这个 socket 的 fd。logd 服务就使用到了这个 option。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">service logd &#x2F;system&#x2F;bin&#x2F;logd</span><br><span class="line">    socket logd stream 0666 logd logd</span><br><span class="line">    socket logdr seqpacket 0666 logd logd</span><br><span class="line">    socket logdw dgram+passcred 0222 logd logd</span><br><span class="line">    file &#x2F;proc&#x2F;kmsg r</span><br><span class="line">    file &#x2F;dev&#x2F;kmsg w</span><br><span class="line">    user logd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>timeout_period &lt;seconds&gt;</code><br>设置一个超时周期，当到达超时周期，服务将会被 kill 掉。如果服务被设置了 oneshot 自然不会被重启。但其他非 oneshot 服务则会被自动重启。这个 option 通常和上面提到过的 restart_period 结合使用，定义一个周期性的服务。 </p>
+</li>
+<li><p><code>updatable</code></p>
+<blockquote>
+<p>Mark that the service can be overridden (via the ‘override’ option) later in<br>the boot sequence by APEXes. When a service with updatable option is started<br>before APEXes are all activated, the execution is delayed until the activation<br>is finished. A service that is not marked as updatable cannot be overridden by<br>APEXes.</p>
+</blockquote>
+</li>
+<li><p><code>user &lt;username&gt;</code><br>在启动 Service 前修改进程的所属用户, 默认启动时 user 为 root (安全起见，或许默认应该是 nobody)。<br>在Android M版本，如果一个进程想拥有 Linux capabilities（相当于Android中的权限吧），也只能通过设置这个值。 以前，一个程序要想有 Linux capabilities，必须先以root身份运行，然后再降级到所需的uid。现在已经有一套新的机制取而代之，它通过 fs_config 允许厂商赋予特殊二进制文件 Linux capabilities。 这套机制的说明文档在 <a href="https://source.android.google.cn/devices/tech/config/filesystem.html" target="_blank" rel="noopener">https://source.android.google.cn/devices/tech/config/filesystem.html</a>。 当使用这套新的机制时，程序可以通过 user 参数选择自己所需的 uid, 而不需要以 root 权限运行. 在 Android O 版本，程序可以通过 capabilities option 直接申请所需的能力，参见上面的 capabilities 说明。</p>
+</li>
+<li><p><code>writepid &lt;file&gt; [ &lt;file&gt;\* ]</code><br>当 Service 调用 for 时将子进程的 pid 写入到指定文件. 用于 cgroup/cpuset 的使用，当 /dev/cpuset/ 下面没有文件但 ro.cpuset.default 的值却不为空时, 将pid的值写入到 /dev/cpuset/${ro.cpuset.default}/tasks 文件中。</p>
+</li>
+</ul>
+<h2 id="Triggers"><a href="#Triggers" class="headerlink" title="Triggers"></a>Triggers</h2><p>Triggers 的作用是用来触发 Actions 的执行。Triggers 可以分为 event triggers 和 property triggers。<br>event triggers 由 trigger 命令 或者在 init 中使用 QueueEventTrigger 函数触发。它的格式是个简单的字符串，比如’boot’ 或 ‘late-init’。<br>property triggers 是在 property 被设置或发生改变时触发。 格式是<code>on property:property_name=property_value</code>。<br>一个 Action 可以有多个 property triggers, 但是只能有一个 event trigger。比如：<br><code>on boot &amp;&amp; property:a=b</code>　定义的 Action 只有在 <code>boot</code> 这个 event trigger 被触发，且 property a = b 时，这个 Action 才会执行。<br><code>on property:a=b &amp;&amp; property:c=d</code> 定义的 Action 在以下三种情况都会执行:</p>
+<ol>
+<li>系统启动时 property a=b 且 property c=d。</li>
+<li>系统运行过程中， 当 property a 的值变成 b, 且这个时候 property c 的值已经是 d.</li>
+<li>系统运行过程中， 当 property c 的值变成 d, 且这个时候 property a 的值已经是 b.</li>
+</ol>
+<h2 id="Commands"><a href="#Commands" class="headerlink" title="Commands"></a>Commands</h2><p>Command 是 Action 被触发后，可以执行的一系列命令。这些命令并不是 shell 命令。下面介绍一下都有哪些命令可以使用。</p>
+<ul>
+<li><p><code>bootchart [start|stop]</code><br>启动或者停止 bootchart。这两个 command 出现在 init.rc 这个文件中，但只有在 /data/bootchart/enabled 这个文件存在的时候 bootchart 才会执行。否则 bootchart start/stop 不做任何操作。</p>
+</li>
+<li><p><code>chmod &lt;octal-mode&gt; &lt;path&gt;</code><br>修改文件的权限，这个跟我们使用 shell 命令的格式是一样的。权限以 8 进制数指定。</p>
+</li>
+<li><p><code>chown &lt;owner&gt; &lt;group&gt; &lt;path&gt;</code><br>修改文件属主。格式跟 shell 命令有点差别。 shell 命令的格式是 chown [user][:[group]] <path></p>
+</li>
+<li><p><code>class_start &lt;serviceclass&gt;</code><br>启动所有 class 是 <code>&lt;serviceclass&gt;</code> 的 service(如果服务未启动的话，才启动)。</p>
+</li>
+<li><p><code>class_start_post_data &lt;serviceclass&gt;</code><br>与 <code>class_start</code> 相似， 但是只考虑那些在 /data 分区被挂载之后才启动的服务， 或者系统运行过程中 <code>class_reset_post_data</code> 命令被调用。这个命令只适用于开启了 FDE(Full-Disk Encryption 全盘加密) 的设备。</p>
+</li>
+<li><p><code>class_stop &lt;serviceclass&gt;</code><br>停止所有 class 为 <code>&lt;serviceclass&gt;</code> 且正在运行的服务。并且把这些服务设置为 disable。也就是不能再通过 class_star 来启动，只能通过 start service_name 这种指定服务名的方式显式启动。</p>
+</li>
+<li><p><code>class_reset &lt;serviceclass&gt;</code><br>停止所有 class 为 <code>&lt;serviceclass&gt;</code> 且正在运行的服务。但不会 disable 这些服务。这些服务还可以通过 <code>class_start</code> 来启动。</p>
+</li>
+<li><p><code>class_reset_post_data &lt;serviceclass&gt;</code><br>与 <code>class_reset</code> 相似，但是只考虑那些在 /data 分区被挂载之后才启动的服务。这个命令只适用于开启了 FDE(Full-Disk Encryption 全盘加密) 的设备。</p>
+</li>
+<li><p><code>class_restart &lt;serviceclass&gt;</code><br>重启所有 class 是 <code>&lt;serviceclass&gt;</code> 的服务。</p>
+</li>
+<li><p><code>copy &lt;src&gt; &lt;dst&gt;</code><br>复制一个文件，与 write 命令相似，但适用于二进制文件或者大文件拷贝。<br>对于 src 文件来说，不允许从符号链接文件复制，也不可以从 world-writable(other用户可写) 或者 group-writable(组用户可写) 的文件复制。 linux 的文件权限位可以分为三组：文件属主权限，文件属主所在的用户组的权限，其他用户的权限。<br>对于 dst 文件来说，如果文件不存在的话，创建的文件默认权限是 0600。如果文件已经存在的普通文件，则这个文件会被清空。</p>
+</li>
+<li><p><code>domainname &lt;name&gt;</code><br>设置 domain name.</p>
+</li>
+<li><p><code>enable &lt;servicename&gt;</code><br>把一个 disable 的服务设置成 enable 状态。</p>
+</li>
+<li><p><code>exec [ &lt;seclabel&gt; [ &lt;user&gt; [ &lt;group&gt;\* ] ] ] -- &lt;command&gt; [ &lt;argument&gt;\* ]</code><br>新建一个子进程并运行一个带指定参数的命令。 命令跟在 <code>--</code> 后面，以便前面可以指定 seclabel（安全策略），user(所有者)，group(用户组)等选项。<br>直到这个命令运行完才可以运行其他命令。seclabel 可以设置为 <code>-</code> 表示用默认值， argument 可以使用属性扩展形式 ${property}。<br>直到子进程新建完毕，init进程才继续执行.</p>
+</li>
+</ul>
+<ul>
+<li><p><code>exec_background [ &lt;seclabel&gt; [ &lt;user&gt; [ &lt;group&gt;\* ] ] ] -- &lt;command&gt; [ &lt;argument&gt;\* ]</code><br>与 exec 相似，差别在于 exec_background 不会阻塞 init 进程的运行。</p>
+</li>
+<li><p><code>exec_start &lt;service&gt;</code><br>与 exec 相似，但 exec_start 使用的是定义好的 service。</p>
+</li>
+<li><p><code>export &lt;name&gt; &lt;value&gt;</code><br>设置全局环境变量。在执行这个命令之后再启动的所有进程都会继承这个环境变量。</p>
+</li>
+<li><p><code>hostname &lt;name&gt;</code><br>设置 hostname</p>
+</li>
+<li><p><code>ifup &lt;interface&gt;</code><br>启动指定的网络接口</p>
+</li>
+<li><p><code>insmod [-f] &lt;path&gt; [&lt;options&gt;]</code><br>安装 path 指定的内核驱动模块(ko 文件)。<br><code>-f</code> 参数：即使当前运行的内核版本与模块编译的内核版本不一致，也强制安装这个驱动模块。</p>
+</li>
+<li><p><code>load_system_props</code><br>这个命令已经被 deprecated 了。</p>
+</li>
+<li><p><code>load_persist_props</code><br>当 /data 分区被 decrypted 之后， 加载 /data 分区下的 persistent 属性。在 init.rc 这个文件里面有执行这个命令。</p>
+</li>
+<li><p><code>loglevel &lt;level&gt;</code><br>设置 kernel 打印等级。level 可以使用属性扩展形式 ${property}。</p>
+</li>
+<li><p><code>mark_post_data</code><br>/data 分区被挂载后，马上用这个命令来标志。用来实现 <code>class_reset_post_data</code> 和 <code>class_start_post_data</code> 命令。</p>
+</li>
+<li><p><code>mkdir &lt;path&gt; [mode] [owner] [group]</code><br>创建目录。如果没有提供[mode] [owner] [group]的话，则默认权限是 755，默认用户，和组是 root。如果目录已经存在了，则目录的权限和用户属主会被更新。</p>
+</li>
+<li><p><code>mount_all &lt;fstab&gt; [ &lt;path&gt; ]\* [--&lt;option&gt;]</code><br>调用 fs_mgr_mount_all 来挂载 fstab 指定的分区。挂载完之后，马上 import 这些分区 etc/init/ 目录下面的 .rc 文件。</p>
+</li>
+<li><p><code>mount &lt;type&gt; &lt;device&gt; &lt;dir&gt; [ &lt;flag&gt;\* ] [&lt;options&gt;]</code><br>挂载 type 类型的 device 设备到 dir 目录。<br>flag 包括 “ro”, “rw”, “remount”, “noatime” 等。<br>options 包括 “barrier=1”, “noauto_da_alloc”, “discard” 等，使用逗号分隔，比如：barrier=1,noauto_da_alloc</p>
+</li>
+<li><p><code>restart &lt;service&gt;</code><br>重启服务。如果服务正在运行，先 stop 再 start，如果服务没有运行则只需要 start。</p>
+</li>
+<li><p><code>rm &lt;path&gt;</code><br>删除指定文件，实际上是调用 unlink 函数。可以使用 <code>exec -- rm path</code> 来替代。需要确保 path 所在的分区已经被挂载。</p>
+</li>
+<li><p><code>rmdir &lt;path&gt;</code><br>删除指定目录，实际上是调用 rmdir 函数。</p>
+</li>
+<li><p><code>readahead &lt;file|dir&gt; [--fully]</code><br>调用 readahead 函数把文件或目录下的文件加载到页面缓冲区。–fully option 表示加载整个文件。<br>Linux的文件预读 readahead，指Linux系统内核将指定文件的某区域预读进页缓存起来，便于接下来对该区域进行读取时，不会因缺页（page fault）而阻塞。因为从内存读取比从磁盘读取要快很多。预读可以有效的减少磁盘的寻道次数和应用程序的I/O等待时间，是改进磁盘读I/O性能的重要优化手段之一。</p>
+</li>
+<li><p><code>setprop &lt;name&gt; &lt;value&gt;</code><br>设置 property。value 可以使用 property 扩展形式 ${property}。</p>
+</li>
+<li><p><code>setrlimit &lt;resource&gt; &lt;cur&gt; &lt;max&gt;</code><br>设置资源限制。同上面 service option 里面提到的 rlimit。<br>cur 和 max 可以设置为 ‘unlimited’ 或者 ‘-1’ 表示不做限制。</p>
+</li>
+<li><p><code>start &lt;service&gt;</code><br>如果指定服务没有在运行的话，则启动这个服务。</p>
+</li>
+<li><p><code>stop &lt;service&gt;</code><br>如果指定的服务正在运行的话，则停止这个服务。</p>
+</li>
+<li><p><code>symlink &lt;target&gt; &lt;path&gt;</code><br>创建软链接。</p>
+</li>
+<li><p><code>sysclktz &lt;mins_west_of_gmt&gt;</code><br>设置系统时区。</p>
+</li>
+<li><p><code>trigger &lt;event&gt;</code><br>触发一个 event 事件。</p>
+</li>
+<li><p><code>umount &lt;path&gt;</code><br>umount 分区</p>
+</li>
+<li><p><code>wait &lt;path&gt; [ &lt;timeout&gt; ]</code><br>查看指定路径是否存在。 如果发现则返回, 可以设置超时时间，默认值是5秒。这个命令会阻塞 init 进程的运行。之前优化开机速度时，就发现有人在 init.rc 里面用了 wait 命令，导致系统启动慢了几秒。</p>
+</li>
+<li><p><code>wait_for_prop &lt;name&gt; &lt;value&gt;</code><br>等待 property 的值变成 <code>&lt;value&gt;</code>。这个也会阻塞 init 进程的运行。</p>
+</li>
+<li><p><code>write &lt;path&gt; &lt;content&gt;</code><br>打开 path 路径指定的文件，然后调用 write 函数往文件中写一个字符串 content。如果文件路径不存在，则会新创建一个文件。如果文件已经存在了，则文件会被清空。<code>content</code> 的值可以使用 property 扩展形式 ${property}。</p>
+</li>
+</ul>
+<p>Imports<br>import 我觉得可以按 c 语言的 include 头文件来理解即可。主要是为了把配置文件按模块进行拆分，方便维护。</p>
+<hr>
+<p><code>import &lt;path&gt;</code><br>导入 init rc 文件，　以括展当前文件的配置。如果 path 是个目录， 则导入这个目录下所有.rc文件，但是不会递归查找。</p>
+<h2 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h2><p>init 进程通过以下 property 可以提供一个状态信息:</p>
+<ul>
+<li><code>init.svc.&lt;name&gt;</code><br>一个服务的运行状态：”stopped”, “stopping”, “running”, “restarting”</li>
+</ul>
+<h2 id="Boot-timing"><a href="#Boot-timing" class="headerlink" title="Boot timing"></a>Boot timing</h2><p>init 进程记录了一些启动过程中的耗时信息在 property 里面。</p>
+<ul>
+<li><p><code>ro.boottime.init</code><br>从 boot 开始到 init 进程初始化第一阶段开始的时间，单位为 ns。</p>
+</li>
+<li><p><code>ro.boottime.init.selinux</code><br>从初始化第一阶段开始到初始化 selinux 的耗时。其实也就是 init 进程第一阶段初始化的耗时了。</p>
+</li>
+<li><p><code>ro.boottime.init.cold_boot_wait</code><br>ueventd 的冷启动耗时。</p>
+</li>
+</ul>
+<p><code>ro.boottime.&lt;service-name&gt;</code><br>从 boot 到 service 第一次启动的时间。</p>
+<p>后面的部分内容跟 init.rc 文件的语法没有什么关系了，就不再展开了。后续再单独在其他文章中讨论以下部分的内容。<br>看完以上的介绍，相信同学们应该对 init.rc 文件有了大概的了解了。编写自己的服务，或者 Action 应该不成问题了。</p>
+<h2 id="Bootcharting"><a href="#Bootcharting" class="headerlink" title="Bootcharting"></a>Bootcharting</h2><p>This version of init contains code to perform “bootcharting”: generating log<br>files that can be later processed by the tools provided by <a href="http://www.bootchart.org/" target="_blank" rel="noopener">http://www.bootchart.org/</a>.</p>
+<p>On the emulator, use the -bootchart <em>timeout</em> option to boot with bootcharting<br>activated for <em>timeout</em> seconds.</p>
+<p>On a device:</p>
+<pre><code>adb shell &apos;touch /data/bootchart/enabled&apos;</code></pre><p>Don’t forget to delete this file when you’re done collecting data!</p>
+<p>The log files are written to /data/bootchart/. A script is provided to<br>retrieve them and create a bootchart.tgz file that can be used with the<br>bootchart command-line utility:</p>
+<pre><code>sudo apt-get install pybootchartgui
+# grab-bootchart.sh uses $ANDROID_SERIAL.
+$ANDROID_BUILD_TOP/system/core/init/grab-bootchart.sh</code></pre><p>One thing to watch for is that the bootchart will show init as if it started<br>running at 0s. You’ll have to look at dmesg to work out when the kernel<br>actually started init.</p>
+<h2 id="Comparing-two-bootcharts"><a href="#Comparing-two-bootcharts" class="headerlink" title="Comparing two bootcharts"></a>Comparing two bootcharts</h2><p>A handy script named compare-bootcharts.py can be used to compare the<br>start/end time of selected processes. The aforementioned grab-bootchart.sh<br>will leave a bootchart tarball named bootchart.tgz at /tmp/android-bootchart.<br>If two such barballs are preserved on the host machine under different<br>directories, the script can list the timestamps differences. For example:</p>
+<p>Usage: system/core/init/compare-bootcharts.py <em>base-bootchart-dir</em> <em>exp-bootchart-dir</em></p>
+<pre><code>process: baseline experiment (delta) - Unit is ms (a jiffy is 10 ms on the system)
+------------------------------------
+/init: 50 40 (-10)
+/system/bin/surfaceflinger: 4320 4470 (+150)
+/system/bin/bootanimation: 6980 6990 (+10)
+zygote64: 10410 10640 (+230)
+zygote: 10410 10640 (+230)
+system_server: 15350 15150 (-200)
+bootanimation ends at: 33790 31230 (-2560)</code></pre><h2 id="Systrace"><a href="#Systrace" class="headerlink" title="Systrace"></a>Systrace</h2><p>Systrace (<a href="http://developer.android.com/tools/help/systrace.html" target="_blank" rel="noopener">http://developer.android.com/tools/help/systrace.html</a>) can be<br>used for obtaining performance analysis reports during boot<br>time on userdebug or eng builds.</p>
+<p>Here is an example of trace events of “wm” and “am” categories:</p>
+<pre><code>$ANDROID_BUILD_TOP/external/chromium-trace/systrace.py \
+      wm am --boot</code></pre><p>This command will cause the device to reboot. After the device is rebooted and<br>the boot sequence has finished, the trace report is obtained from the device<br>and written as trace.html on the host by hitting Ctrl+C.</p>
+<p>Limitation: recording trace events is started after persistent properties are loaded, so<br>the trace events that are emitted before that are not recorded. Several<br>services such as vold, surfaceflinger, and servicemanager are affected by this<br>limitation since they are started before persistent properties are loaded.<br>Zygote initialization and the processes that are forked from the zygote are not<br>affected.</p>
+<h2 id="Debugging-init"><a href="#Debugging-init" class="headerlink" title="Debugging init"></a>Debugging init</h2><p>Launching init services without init is not recommended as init sets up a significant amount of<br>environment (user, groups, security label, capabilities, etc) that is hard to replicate manually.</p>
+<p>If it is required to debug a service from its very start, the <code>sigstop</code> service option is added.<br>This option will send SIGSTOP to a service immediately before calling exec. This gives a window<br>where developers can attach a debugger, strace, etc before continuing the service with SIGCONT.</p>
+<p>This flag can also be dynamically controled via the ctl.sigstop_on and ctl.sigstop_off properties.</p>
+<p>Below is an example of dynamically debugging logd via the above:</p>
+<pre><code>stop logd
+setprop ctl.sigstop_on logd
+start logd
+ps -e | grep logd
+&gt; logd          4343     1   18156   1684 do_signal_stop 538280 T init
+gdbclient.py -p 4343
+b main
+c
+c
+c
+&gt; Breakpoint 1, main (argc=1, argv=0x7ff8c9a488) at system/core/logd/main.cpp:427</code></pre><p>Below is an example of doing the same but with strace</p>
+<pre><code>stop logd
+setprop ctl.sigstop_on logd
+start logd
+ps -e | grep logd
+&gt; logd          4343     1   18156   1684 do_signal_stop 538280 T init
+strace -p 4343
+
+(From a different shell)
+kill -SIGCONT 4343
+
+&gt; strace runs</code></pre><h2 id="Host-Init-Script-Verification"><a href="#Host-Init-Script-Verification" class="headerlink" title="Host Init Script Verification"></a>Host Init Script Verification</h2><p>Init scripts are checked for correctness during build time. Specifically the below is checked.</p>
+<p>1) Well formatted action, service and import sections, e.g. no actions without a preceding ‘on’<br>line, and no extraneous lines after an ‘import’ statement.<br>2) All commands map to a valid keyword and the argument count is within the correct range.<br>3) All service options are valid. This is stricter than how commands are checked as the service<br>options’ arguments are fully parsed, e.g. UIDs and GIDs must resolve.</p>
+<p>There are other parts of init scripts that are only parsed at runtime and therefore not checked<br>during build time, among them are the below.</p>
+<p>1) The validity of the arguments of commands, e.g. no checking if file paths actually exist, if<br>SELinux would permit the operation, or if the UIDs and GIDs resolve.<br>2) No checking if a service exists or has a valid SELinux domain defined<br>3) No checking if a service has not been previously defined in a different init script.</p>
+<h2 id="Early-Init-Boot-Sequence"><a href="#Early-Init-Boot-Sequence" class="headerlink" title="Early Init Boot Sequence"></a>Early Init Boot Sequence</h2><p>The early init boot sequence is broken up into three stages: first stage init, SELinux setup, and<br>second stage init.</p>
+<p>First stage init is responsible for setting up the bare minimum requirements to load the rest of the<br>system. Specifically this includes mounting /dev, /proc, mounting ‘early mount’ partitions (which<br>needs to include all partitions that contain system code, for example system and vendor), and moving<br>the system.img mount to / for devices with a ramdisk.</p>
+<p>Note that in Android Q, system.img always contains TARGET_ROOT_OUT and always is mounted at / by the<br>time first stage init finishes. Android Q will also require dynamic partitions and therefore will<br>require using a ramdisk to boot Android. The recovery ramdisk can be used to boot to Android instead<br>of a dedicated ramdisk as well.</p>
+<p>First stage init has three variations depending on the device configuration:</p>
+<p>1) For system-as-root devices, first stage init is part of /system/bin/init and a symlink at /init<br>points to /system/bin/init for backwards compatibility. These devices do not need to do anything to<br>mount system.img, since it is by definition already mounted as the rootfs by the kernel.</p>
+<p>2) For devices with a ramdisk, first stage init is a static executable located at /init. These<br>devices mount system.img as /system then perform a switch root operation to move the mount at<br>/system to /. The contents of the ramdisk are freed after mounting has completed.</p>
+<p>3) For devices that use recovery as a ramdisk, first stage init it contained within the shared init<br>located at /init within the recovery ramdisk. These devices first switch root to<br>/first_stage_ramdisk to remove the recovery components from the environment, then proceed the same<br>as 2). Note that the decision to boot normally into Android instead of booting<br>into recovery mode is made if androidboot.force_normal_boot=1 is present in the<br>kernel commandline.</p>
+<p>Once first stage init finishes it execs /system/bin/init with the “selinux_setup” argument. This<br>phase is where SELinux is optionally compiled and loaded onto the system. selinux.cpp contains more<br>information on the specifics of this process.</p>
+<p>Lastly once that phase finishes, it execs /system/bin/init again with the “second_stage”<br>argument. At this point the main phase of init runs and continues the boot process via the init.rc<br>scripts.</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/" title="Android系统开发进阶-init.rc 详解" target="_blank" rel="external">http://qiushao.net/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/03/10/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Android系统开发进阶-init 进程启动流程"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/03/01/Linux/ubuntu-upgrade-kernel/" title="ubuntu 18.04 升级 Linux 5.4 内核"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

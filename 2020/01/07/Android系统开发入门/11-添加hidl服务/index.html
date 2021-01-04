@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发入门-11.添加hidl服务 | 一叶知秋</title>
+  <meta name="description" content="Android 8.0 之后，google　为了解决 Android 版本碎片化问题, 推出了 treble 架构，参考 Android Treble架构解析。核心思想就是 vendor 分区和 system 分区的隔离。把厂商的更改限制在 vendor 分区，system 分区由 google 把控。system 分区需要访问 vendor 分区的话，需要通过 hidl 的形式来访问。 网上有很">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发入门-11.添加hidl服务">
+<meta property="og:url" content="http://qiushao.net/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="Android 8.0 之后，google　为了解决 Android 版本碎片化问题, 推出了 treble 架构，参考 Android Treble架构解析。核心思想就是 vendor 分区和 system 分区的隔离。把厂商的更改限制在 vendor 分区，system 分区由 google 把控。system 分区需要访问 vendor 分区的话，需要通过 hidl 的形式来访问。 网上有很">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-07T10:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-添加-hal-目录"><span class="toc-text">1. 添加 hal 目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-定义-hal-接口"><span class="toc-text">2. 定义 hal 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-根据-hal-自动生成-cpp-实现"><span class="toc-text">3. 根据 .hal 自动生成 cpp 实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-开机自动启动服务"><span class="toc-text">4. 开机自动启动服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-生成-Android-bp"><span class="toc-text">5. 生成 Android.bp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-自动生成-hal-接口的-Android-bp"><span class="toc-text">6. 自动生成 hal 接口的 Android.bp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-更新-current-txt"><span class="toc-text">7. 更新 current.txt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-模块编译"><span class="toc-text">8. 模块编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-更新-manifest-xml"><span class="toc-text">9. 更新 manifest.xml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-添加到-PRODUCT-PACKAGES"><span class="toc-text">10. 添加到 PRODUCT_PACKAGES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-添加-selinux-规则"><span class="toc-text">11. 添加 selinux 规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-编写-client-调用服务"><span class="toc-text">12. 编写 client 调用服务</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发入门/11-添加hidl服务" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发入门-11.添加hidl服务
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/" class="article-date">
+	  <time datetime="2020-01-07T10:00:00.000Z" itemprop="datePublished">2020-01-07</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/" class="leancloud_visitors"  data-flag-title="Android系统开发入门-11.添加hidl服务">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>Android 8.0 之后，google　为了解决 Android 版本碎片化问题, 推出了 treble 架构，参考 <a href="https://blog.csdn.net/xiaosayidao/article/details/75577940" target="_blank" rel="noopener">Android Treble架构解析</a>。核心思想就是 vendor 分区和 system 分区的隔离。把厂商的更改限制在 vendor 分区，system 分区由 google 把控。system 分区需要访问 vendor 分区的话，需要通过 hidl 的形式来访问。 网上有很多介绍 hidl 的文章，但没有一篇是介绍得比较全面的，都会遗漏一些小细节，由于这样，那样的小细节，自己到处找资料，折腾了两天才把 hidl 的demo 跑起来。以下作详细的记录，手把手教你从零创建自己的 hidl 服务。关于什么是 hidl ，及为什么要用 hidl 的理论知识这里就不作介绍了，可以参考官网的介绍 : <a href="https://source.android.google.cn/devices/architecture/hidl?hl=zh-cn" target="_blank" rel="noopener">hidl概览</a></p>
+<h3 id="1-添加-hal-目录"><a href="#1-添加-hal-目录" class="headerlink" title="1. 添加 hal 目录"></a>1. 添加 hal 目录</h3><p>网上的 demo 全部都是直接在 android/hardware/interfaces 目录下添加了，<br>但我觉得最好是在自己的 device 目录下添加比较好维护一点。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p device/qiushao/pure/models/hidl/tvserver/1.0</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-定义-hal-接口"><a href="#2-定义-hal-接口" class="headerlink" title="2. 定义 hal 接口"></a>2. 定义 hal 接口</h3><p>在 device/qiushao/pure/models/hidl/tvserver/1.0 目录下创建文件 ITVServer.hal</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> device.qiushao.pure.tvserver@<span class="number">1.0</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ITVServer</span> </span>&#123;</span><br><span class="line">    hello(string name) generates (string result);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-根据-hal-自动生成-cpp-实现"><a href="#3-根据-hal-自动生成-cpp-实现" class="headerlink" title="3. 根据 .hal 自动生成 cpp 实现"></a>3. 根据 .hal 自动生成 cpp 实现</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10$ PACKAGE=device.qiushao.pure.tvserver@1.0</span><br><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10$ LOC=device/qiushao/pure/models/hidl/tvserver/1.0/default</span><br><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10$ hidl-gen -o <span class="variable">$LOC</span> -Lc++-impl -rdevice.qiushao.pure:device/qiushao/pure/models/hidl <span class="variable">$PACKAGE</span></span><br></pre></td></tr></table></figure>
+
+<p>执行完以上命令之后在 default 目录下生成了 TVServer.h 和 TVServer.cpp 这两个文件<br>我们需要对 TVServer.cpp 实现进行完善，只需要对我们定义的 hello 接口进行实现就行了，修改如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Return&lt;void&gt; TVServer::hello(const hidl_string&amp; name, hello_cb _hidl_cb) &#123;</span><br><span class="line">    char buf[100];</span><br><span class="line">    ::memset(buf, 0, 100);</span><br><span class="line">    ::snprintf(buf, 100, &quot;hello %s from TVServer&quot;, name.c_str());</span><br><span class="line">    hidl_string result(buf);</span><br><span class="line">    _hidl_cb(result);</span><br><span class="line">    return Void();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们还需要一个进程来容纳我们的服务，创建一个 main.cpp 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;hidl&#x2F;HidlTransportSupport.h&gt;</span><br><span class="line">#include &lt;utils&#x2F;Looper.h&gt;</span><br><span class="line">#include &lt;utils&#x2F;StrongPointer.h&gt;</span><br><span class="line">#include &quot;TVServer.h&quot;</span><br><span class="line">using android::hardware::configureRpcThreadpool;</span><br><span class="line">using android::hardware::joinRpcThreadpool;</span><br><span class="line">using device::qiushao::pure::tvserver::V1_0::ITVServer;</span><br><span class="line">using device::qiushao::pure::tvserver::V1_0::implementation::TVServer;</span><br><span class="line"></span><br><span class="line">int main(int argc, char **argv) &#123;</span><br><span class="line">    &#x2F;&#x2F; sleep for a second, wait &#x2F;data&#x2F;vendor to be mounted</span><br><span class="line">    sleep(1);</span><br><span class="line"></span><br><span class="line">    configureRpcThreadpool(4, true &#x2F;* callerWillJoin *&#x2F;);</span><br><span class="line"></span><br><span class="line">    android::sp&lt;ITVServer&gt; service &#x3D; new TVServer();</span><br><span class="line">    android::status_t ret &#x3D; service-&gt;registerAsService();</span><br><span class="line"></span><br><span class="line">    if (ret !&#x3D; android::NO_ERROR) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    joinRpcThreadpool();</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="4-开机自动启动服务"><a href="#4-开机自动启动服务" class="headerlink" title="4. 开机自动启动服务"></a>4. 开机自动启动服务</h3><p>在 tvserver/1.0/default 目录下创建 <a href="mailto:device.qiushao.pure.tvserver@1.0-service.rc">device.qiushao.pure.tvserver@1.0-service.rc</a> 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">service tvserver &#x2F;vendor&#x2F;bin&#x2F;hw&#x2F;device.qiushao.pure.tvserver@1.0-service</span><br><span class="line">	class hal</span><br><span class="line">	user root</span><br><span class="line">	group root</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-生成-Android-bp"><a href="#5-生成-Android-bp" class="headerlink" title="5. 生成 Android.bp"></a>5. 生成 Android.bp</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hidl-gen -o <span class="variable">$LOC</span> -Landroidbp-impl -rdevice.qiushao.pure:device/qiushao/pure/models/hidl <span class="variable">$PACKAGE</span></span><br></pre></td></tr></table></figure>
+
+<p>在 Android 9.0 之后，查看自动生成的 Android.bp 文件，里面有些提示，说明自动生成的文件还需要稍作修改，我们修改如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;</span><br><span class="line">    name: &quot;device.qiushao.pure.tvserver@1.0-service&quot;,</span><br><span class="line">    init_rc: [&quot;device.qiushao.pure.tvserver@1.0-service.rc&quot;],</span><br><span class="line">    relative_install_path: &quot;hw&quot;,</span><br><span class="line">    vendor: true,</span><br><span class="line">    srcs: [</span><br><span class="line">        &quot;TVServer.cpp&quot;,</span><br><span class="line">        &quot;main.cpp&quot;,</span><br><span class="line">    ],</span><br><span class="line">    shared_libs: [</span><br><span class="line">        &quot;libhidlbase&quot;,</span><br><span class="line">        &quot;libhidltransport&quot;,</span><br><span class="line">        &quot;libutils&quot;,</span><br><span class="line">        &quot;device.qiushao.pure.tvserver@1.0&quot;,</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中 <a href="mailto:device.qiushao.pure.tvserver@1.0-service.rc">device.qiushao.pure.tvserver@1.0-service.rc</a> 文件会被安装到 /vendor/etc/init/ 目录。系统启动时会自动加载这个目录下的所有 rc 文件。</p>
+<p>此时目录结构是这样的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10/device/qiushao/pure/models/hidl$ tree tvserver/</span><br><span class="line">tvserver/</span><br><span class="line">└── 1.0</span><br><span class="line">    ├── default</span><br><span class="line">    │   ├── Android.bp</span><br><span class="line">    │   ├── main.cpp</span><br><span class="line">    │   ├── TVServer.cpp</span><br><span class="line">    │   └── TVServer.h</span><br><span class="line">    │   └── device.qiushao.pure.tvserver@1.0-service.rc</span><br><span class="line">    └── ITVServer.hal</span><br><span class="line"></span><br><span class="line">2 directories, 6 files</span><br><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10/device/qiushao/pure/models/hidl$</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-自动生成-hal-接口的-Android-bp"><a href="#6-自动生成-hal-接口的-Android-bp" class="headerlink" title="6. 自动生成 hal 接口的 Android.bp"></a>6. 自动生成 hal 接口的 Android.bp</h3><p>这里需要用到 update-makefiles.sh 这个脚本，我们可以从 $(TOP)/hardware/interfaces 里面 copy 一份过来放到 device/qiushao/pure/models/hidl 目录，稍作修改即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Script to update Android make-files for HAL and VTS modules.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$ANDROID_BUILD_TOP</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Missing ANDROID_BUILD_TOP env variable. Run 'lunch' first."</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> <span class="variable">$ANDROID_BUILD_TOP</span>/system/tools/hidl/update-makefiles-helper.sh</span><br><span class="line"></span><br><span class="line">do_makefiles_update \</span><br><span class="line">  <span class="string">"device.qiushao.pure:device/qiushao/pure/models/hidl"</span></span><br></pre></td></tr></table></figure>
+
+<p>然后在 Android 根目录执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./device/qiushao/pure/models/hidl/update-makefiles.sh</span><br></pre></td></tr></table></figure>
+
+<p>这个命令生成了 device/qiushao/pure/models/hidl/tvserver/1.0/Android.bp 这个文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; This file is autogenerated by hidl-gen -Landroidbp.</span><br><span class="line"></span><br><span class="line">hidl_interface &#123;</span><br><span class="line">    name: &quot;device.qiushao.pure.tvserver@1.0&quot;,</span><br><span class="line">    root: &quot;device.qiushao.pure&quot;,</span><br><span class="line">    product_specific: true,</span><br><span class="line">    srcs: [</span><br><span class="line">        &quot;ITVServer.hal&quot;,</span><br><span class="line">    ],</span><br><span class="line">    interfaces: [</span><br><span class="line">        &quot;android.hidl.base@1.0&quot;,</span><br><span class="line">    ],</span><br><span class="line">    gen_java: true,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们需要在这个文件最前面添加以下配置才行，不然会编译不过：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hidl_package_root &#123;</span><br><span class="line">    name: &quot;device.qiushao.pure&quot;,</span><br><span class="line">    path: &quot;device&#x2F;qiushao&#x2F;pure&#x2F;models&#x2F;hidl&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>目前目录结构是这样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10/device/qiushao/pure/models/hidl$ tree </span><br><span class="line">.</span><br><span class="line">├── tvserver</span><br><span class="line">│   └── 1.0</span><br><span class="line">│       ├── Android.bp</span><br><span class="line">│       ├── default</span><br><span class="line">│       │   ├── Android.bp</span><br><span class="line">│       │   ├── main.cpp</span><br><span class="line">│       │   ├── TVServer.cpp</span><br><span class="line">│       │   └── TVServer.h</span><br><span class="line">│       │   └── device.qiushao.pure.tvserver@1.0-service.rc</span><br><span class="line">│       └── ITVServer.hal</span><br><span class="line">└── update-makefiles.sh</span><br><span class="line"></span><br><span class="line">3 directories, 9 files</span><br><span class="line">qiushao@qiushao-pc:~/<span class="built_in">source</span>/android-10/device/qiushao/pure/models/hidl$</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-更新-current-txt"><a href="#7-更新-current-txt" class="headerlink" title="7. 更新 current.txt"></a>7. 更新 current.txt</h3><p>current.txt 记录了所有 hal 接口的 hash 值，接口有变化时，同时需要更新 current.txt 中的 hash 值<br>在 interfaces 目录下新建 current.txt 文件，随便写个 hash 值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123456 device.qiushao.pure.tvserver@1.0::ITVServer</span><br></pre></td></tr></table></figure>
+
+<p>再执行一遍 update-makefiles.sh，这个时候就会发现提示 hash 值不正确了，同时会给出正确的 hash 值，我们把正确的 hash 值替换到 current.txt 即可。</p>
+<h3 id="8-模块编译"><a href="#8-模块编译" class="headerlink" title="8. 模块编译"></a>8. 模块编译</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mmm device/qiushao/pure/models/hidl/tvserver/1.0</span><br></pre></td></tr></table></figure>
+
+<p>编译完成后，可以发现 $(TARGET_OUT)/vendor/bin/hw 目录下生成了我们的服务 <a href="mailto:device.qiushao.pure.tvserver@1.0-service">device.qiushao.pure.tvserver@1.0-service</a></p>
+<h3 id="9-更新-manifest-xml"><a href="#9-更新-manifest-xml" class="headerlink" title="9. 更新 manifest.xml"></a>9. 更新 manifest.xml</h3><p>复制 device/generic/goldfish/manifest.xml 到 device/qiushao/pure/manifest.xml<br>manifest.xml 中加上</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">hal</span> <span class="attr">format</span>=<span class="string">"hidl"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>device.qiushao.pure.tvserver<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">transport</span>&gt;</span>hwbinder<span class="tag">&lt;/<span class="name">transport</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">interface</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>ITVServer<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">instance</span>&gt;</span>default<span class="tag">&lt;/<span class="name">instance</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">hal</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>pure/product_copy_files.mk　中加上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_COPY_FILES +&#x3D; \</span><br><span class="line">    device&#x2F;qiushao&#x2F;pure&#x2F;manifest.xml:vendor&#x2F;manifest.xml</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-添加到-PRODUCT-PACKAGES"><a href="#10-添加到-PRODUCT-PACKAGES" class="headerlink" title="10. 添加到 PRODUCT_PACKAGES"></a>10. 添加到 PRODUCT_PACKAGES</h3><p>修改 device.mk 增加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_PACKAGES +&#x3D; \</span><br><span class="line">    device.qiushao.pure.tvserver@1.0-service</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-添加-selinux-规则"><a href="#11-添加-selinux-规则" class="headerlink" title="11. 添加 selinux 规则"></a>11. 添加 selinux 规则</h3><p>系统原生的 selinux 规则在 system/sepolicy 目录下，<br>我们可以直接修改里面的规则，但不推荐这么做，最好是在 device　目录下添加厂商自己的规则。<br>在 BoardConfig.mk 里面添加:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BOARD_SEPOLICY_DIRS +&#x3D; device&#x2F;qiushao&#x2F;pure&#x2F;sepolicy</span><br></pre></td></tr></table></figure>
+
+<p>然后我们就可以在 pure/sepolicy 目录下添加我们的 selinux 规则了。</p>
+<p>新增 tvserver.te </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">type tvserver, domain;</span><br><span class="line"></span><br><span class="line">type tvserver_exec, exec_type, vendor_file_type, file_type;</span><br><span class="line">hwbinder_use(tvserver);</span><br><span class="line">init_daemon_domain(tvserver)</span><br><span class="line">add_hwservice(tvserver, tvserver_hwservice)</span><br><span class="line"></span><br><span class="line">allow tvserver hwservicemanager_prop:file &#123;map read open getattr&#125;;</span><br><span class="line">allow tvserver system_file:dir &#123;read open getattr search&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>新增 file_contexts</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;vendor&#x2F;bin&#x2F;hw&#x2F;device.qiushao.pure.tvserver@1.0-service    u:object_r:tvserver_exec:s0</span><br></pre></td></tr></table></figure>
+
+<p>新增 hwservice.te</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type tvserver_hwservice, hwservice_manager_type;</span><br></pre></td></tr></table></figure>
+
+<p>新增 hwservice_contexts</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">device.qiushao.pure.tvserver::ITVServer u:object_r:tvserver_hwservice:s0</span><br></pre></td></tr></table></figure>
+
+<p>然后去编译整个系统， 运行，嘿，我们的服务跑起来了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">130|pure:&#x2F; # ps -A | grep qiushao</span><br><span class="line">root          1648     1   15420   3864 futex_wait_queue_me 0 S device.qiushao.pure.tvserver@1.0-service</span><br><span class="line">pure:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-编写-client-调用服务"><a href="#12-编写-client-调用服务" class="headerlink" title="12. 编写 client 调用服务"></a>12. 编写 client 调用服务</h3><p>在 1.0 目录下增加 test 目录，新建 TVServerTest.cpp 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;device&#x2F;qiushao&#x2F;pure&#x2F;tvserver&#x2F;1.0&#x2F;ITVServer.h&gt;</span><br><span class="line">#include &lt;hidl&#x2F;Status.h&gt;</span><br><span class="line">#include &lt;utils&#x2F;misc.h&gt;</span><br><span class="line">#include &lt;hidl&#x2F;HidlSupport.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">using ::android::hardware::hidl_string;</span><br><span class="line">using ::android::sp;</span><br><span class="line">using device::qiushao::pure::tvserver::V1_0::ITVServer;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    android::sp&lt;ITVServer&gt; service &#x3D; ITVServer::getService();</span><br><span class="line">    if (service &#x3D;&#x3D; nullptr)&#123;</span><br><span class="line">        printf(&quot;Failed to get service\n&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    service-&gt;hello(&quot;qiushao&quot;, [&amp;](hidl_string result)&#123;</span><br><span class="line">        printf(&quot;%s\n&quot;, result.c_str());</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新建 Android.bp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;</span><br><span class="line">    name: &quot;TVServerTest&quot;,</span><br><span class="line">    vendor: true,</span><br><span class="line">    srcs: [&quot;TVServerTest.cpp&quot;],</span><br><span class="line"></span><br><span class="line">    shared_libs: [</span><br><span class="line">        &quot;liblog&quot;,</span><br><span class="line">        &quot;libhardware&quot;,</span><br><span class="line">        &quot;libhidlbase&quot;,</span><br><span class="line">        &quot;libhidltransport&quot;,</span><br><span class="line">        &quot;libutils&quot;,</span><br><span class="line">        &quot;device.qiushao.pure.tvserver@1.0&quot;,</span><br><span class="line">    ],</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 device.mk 中加上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_PACKAGES +&#x3D; \</span><br><span class="line">    TVServerTest</span><br></pre></td></tr></table></figure>
+
+<p>然后整编译系统，运行:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pure:/ <span class="comment"># TVServerTest                              </span></span><br><span class="line">hello qiushao from TVServer</span><br><span class="line">pure:/ <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<p>成功调用了 hidl 服务。</p>
+<p>最终代码目录结构是这样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models&#x2F;hidl$ tree</span><br><span class="line">.</span><br><span class="line">├── current.txt</span><br><span class="line">├── tvserver</span><br><span class="line">│   └── 1.0</span><br><span class="line">│       ├── Android.bp</span><br><span class="line">│       ├── default</span><br><span class="line">│       │   ├── Android.bp</span><br><span class="line">│       │   ├── device.qiushao.pure.tvserver@1.0-service.rc</span><br><span class="line">│       │   ├── main.cpp</span><br><span class="line">│       │   ├── TVServer.cpp</span><br><span class="line">│       │   └── TVServer.h</span><br><span class="line">│       ├── ITVServer.hal</span><br><span class="line">│       └── test</span><br><span class="line">│           ├── Android.bp</span><br><span class="line">│           └── TVServerTest.cpp</span><br><span class="line">└── update-makefiles.sh</span><br><span class="line"></span><br><span class="line">4 directories, 11 files</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models&#x2F;hidl$</span><br></pre></td></tr></table></figure>
+
+<p>经过了这么多的步骤终于完成了一个 hidl 的 hello world。<br>以后我们只要在这个框架上慢慢添加功能就行了。</p>
+<p>网上大部分文章会忽略掉 current.txt, manifest.xml, selinux 及在 device/product 目录下添加模块的这些问题，导致自己跟着那些文章实现的时候，总是遇到各种问题，希望这篇记录能够帮助到想创建 hidl 服务的同学。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/" title="Android系统开发入门-11.添加hidl服务" target="_blank" rel="external">http://qiushao.net/2020/01/07/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/11-%E6%B7%BB%E5%8A%A0hidl%E6%9C%8D%E5%8A%A1/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/01/10/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/12-hidl%E6%9C%8D%E5%8A%A1%E5%9B%9E%E8%B0%83/" title="Android系统开发入门-12.hidl服务回调"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/12/31/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/10-native%E6%9C%8D%E5%8A%A1%E5%9B%9E%E8%B0%83/" title="Android系统开发入门-10.native服务回调"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

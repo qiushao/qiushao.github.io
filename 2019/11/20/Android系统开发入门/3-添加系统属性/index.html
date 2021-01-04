@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发入门-3.添加系统属性 | 一叶知秋</title>
+  <meta name="description" content="在 Android 系统中有一个 Property Service 服务， 这个服务对外提供了两个接口：  SystemProperties.get(String key, String def) 读取系统属性 SystemProperties.set(String key, String val) 设置系统属性  有两个命令行对这两个接口进行了封装，我们可以直接在adb shell 中输入：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发入门-3.添加系统属性">
+<meta property="og:url" content="http://qiushao.net/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="在 Android 系统中有一个 Property Service 服务， 这个服务对外提供了两个接口：  SystemProperties.get(String key, String def) 读取系统属性 SystemProperties.set(String key, String val) 设置系统属性  有两个命令行对这两个接口进行了封装，我们可以直接在adb shell 中输入：">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-11-20T14:26:26.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特殊前缀属性"><span class="toc-text">特殊前缀属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统属性默认值配置文件"><span class="toc-text">系统属性默认值配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加系统属性到-system-build-prop"><span class="toc-text">添加系统属性到 &#x2F;system&#x2F;build.prop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加系统属性到-vendor-build-prop"><span class="toc-text">添加系统属性到 &#x2F;vendor&#x2F;build.prop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟机验证"><span class="toc-text">虚拟机验证</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发入门/3-添加系统属性" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发入门-3.添加系统属性
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/" class="article-date">
+	  <time datetime="2019-11-20T14:26:26.000Z" itemprop="datePublished">2019-11-20</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/" class="leancloud_visitors"  data-flag-title="Android系统开发入门-3.添加系统属性">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>在 Android 系统中有一个 Property Service 服务， 这个服务对外提供了两个接口：</p>
+<ul>
+<li>SystemProperties.get(String key, String def) 读取系统属性</li>
+<li>SystemProperties.set(String key, String val) 设置系统属性</li>
+</ul>
+<p>有两个命令行对这两个接口进行了封装，我们可以直接在adb shell 中输入：</p>
+<ul>
+<li>getprop key 读取系统属性</li>
+<li>setprop key val 设置系统属性</li>
+</ul>
+<p>系统属性可以简单的理解为系统层级的全局变量，以 key-value 的形式保存， key-value 都是字符串。<br>这些属性可能是有些资源的使用状态，进程的执行状态，系统的特有属性等。<br>本文不会去分析系统属性服务的构架原理之类的东西，这些东西后面有时间再整理。<br>这里先从编译系统的角度介绍应该怎么添加一个系统属性。比如增加一个系统版本号信息。<br>在添加系统属性之前，我们先要了解一下系统属性的命名规则及系统属性文件路径。</p>
+<h2 id="特殊前缀属性"><a href="#特殊前缀属性" class="headerlink" title="特殊前缀属性"></a>特殊前缀属性</h2><ul>
+<li>ro ：只读属性，不能修改。</li>
+<li>persist ：修改属性后，重启依然有效。数据会保存到 /data/property 目录。其他前缀的属性被设置后，只是保存在内在中而已，并没有保存到磁盘，所以重启后就恢复默认值了。</li>
+<li>ctrl ：用来启动和停止服务。每一项服务必须在 init.rc 中定义。init 一旦收到设置 ctrl.start 属性的请求，属性服务将使用该属性值作为服务名找到该服务，启动该服务。这项服务的启动结果将会放入 init.svc.&lt;服务名&gt; 属性中。</li>
+</ul>
+<h2 id="系统属性默认值配置文件"><a href="#系统属性默认值配置文件" class="headerlink" title="系统属性默认值配置文件"></a>系统属性默认值配置文件</h2><p>系统启动的时候会从几个配置文件中加载属性的默认值，大概有以下几个文件， 在不同 Android 版本系统上可能不一样：</p>
+<ul>
+<li>/default.prop 或者是 /prop.default， </li>
+<li>/vendor/default.prop</li>
+<li>/system/build.prop</li>
+<li>/vendor/build.prop</li>
+<li>/data/local.prop</li>
+<li>/data/property/*</li>
+</ul>
+<p>系统会按先后顺序依次加载以上文件，后加载的属性将覆盖原先的值。<br>default.prop 的值是通过 build/tools 目录下的 buildinfo.sh 和 vendor_buildinfo.sh 生成的。<br>要修改的话，就要修改编译系统了，这种方法不好维护，不推荐。<br>一般来说我们可以把属性加到 /system/build.prop 或者 /vendor/build.prop。</p>
+<h2 id="添加系统属性到-system-build-prop"><a href="#添加系统属性到-system-build-prop" class="headerlink" title="添加系统属性到 /system/build.prop"></a>添加系统属性到 /system/build.prop</h2><p>只要在 $TARGET_DEVICE_DIR 目录创建一个 system.prop 文件，在里面添加属性即可。<br>编译系统会把 $(TARGET_DEVICE_DIR)/system.prop 添加到 /system/build.prop 文件中去。<br>在 device/qiushao/pure 目录下添加文件 system.prop:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ro.pure.version&#x3D;1.0</span><br></pre></td></tr></table></figure>
+
+<p>然后重新编译系统， 编译完之后查看 out/target/product/pure/system/build.prop 文件， 发现并没有我们添加的属性。<br>原来在 Android 9.0 之后，google不推荐把厂家定制的 property 加到 /system 分区了。<br>只是在 device/qiushao/pure 目录下添加 system.prop 文件是没有作用的。</p>
+<p>具体原因见 build/make/core/Makefile 391 行左右代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ifdef TARGET_SYSTEM_PROP</span><br><span class="line">system_prop_file :&#x3D; $(TARGET_SYSTEM_PROP)</span><br><span class="line">$(info TARGET_SYSTEM_PROP &#x3D; $(TARGET_SYSTEM_PROP))</span><br><span class="line">else</span><br><span class="line">system_prop_file :&#x3D; $(wildcard $(TARGET_DEVICE_DIR)&#x2F;system.prop)</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+
+<p>我们在这里加了个 log ， 然后编译系统，发现 TARGET_SYSTEM_PROP 已经定义过了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">build&#x2F;make&#x2F;core&#x2F;Makefile was modified, regenerating...</span><br><span class="line">[ 99% 450&#x2F;451] finishing build rules ...</span><br><span class="line">TARGET_SYSTEM_PROP &#x3D; build&#x2F;make&#x2F;target&#x2F;board&#x2F;gsi_system.prop</span><br></pre></td></tr></table></figure>
+
+<p>因此，如果我们一定要把属性加到 /system/build.prop 的话，还需要在 device/qiushao/pure/BoardConfig.mk 添加以下配置才可以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TARGET_SYSTEM_PROP +&#x3D; device&#x2F;qiushao&#x2F;pure&#x2F;system.prop</span><br></pre></td></tr></table></figure>
+
+<p>添加之后，重新编译，再查看 out/target/product/pure/system/build.prop 文件，发现我们添加的属性已经在里面了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10$ cat out&#x2F;target&#x2F;product&#x2F;pure&#x2F;system&#x2F;build.prop  | grep ro.pure</span><br><span class="line">ro.pure.version&#x3D;1.0</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10$</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加系统属性到-vendor-build-prop"><a href="#添加系统属性到-vendor-build-prop" class="headerlink" title="添加系统属性到 /vendor/build.prop"></a>添加系统属性到 /vendor/build.prop</h2><p>虽然通过上面的方法可以将属性添加到 /system/build.prop，但在 Android9.0 之后，更推荐把厂家私有属性添加到 /vendor/build.prop 中。<br>通过 PRODUCT_PROPERTY_OVERRIDES 变量添加即可。编译系统会把 PRODUCT_PROPERTY_OVERRIDES 变量的值添加到 /vendor/build.prop 文件中去。<br>具体代码位置在编译系统的 build/make/core/Makefile 文件 476 行左右：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># -----------------------------------------------------------------</span><br><span class="line"># vendor build.prop</span><br><span class="line">#</span><br><span class="line"># For verifying that the vendor build is what we think it is</span><br><span class="line">INSTALLED_VENDOR_BUILD_PROP_TARGET :&#x3D; $(TARGET_OUT_VENDOR)&#x2F;build.prop</span><br><span class="line">ALL_DEFAULT_INSTALLED_MODULES +&#x3D; $(INSTALLED_VENDOR_BUILD_PROP_TARGET)</span><br><span class="line"></span><br><span class="line">ifdef property_overrides_split_enabled</span><br><span class="line">FINAL_VENDOR_BUILD_PROPERTIES +&#x3D; \</span><br><span class="line">    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))</span><br><span class="line">FINAL_VENDOR_BUILD_PROPERTIES :&#x3D; $(call uniq-pairs-by-first-component, \</span><br><span class="line">    $(FINAL_VENDOR_BUILD_PROPERTIES),&#x3D;)</span><br><span class="line">endif  # property_overrides_split_enabled</span><br></pre></td></tr></table></figure>
+
+<p>在 device/qiushao/pure/pure.mk 中添加以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_PROPERTY_OVERRIDES +&#x3D; \</span><br><span class="line">    ro.vendor.pure.name&#x3D;qiushao \</span><br><span class="line">    persist.vendor.pure.name&#x3D;qiushao \</span><br><span class="line">    vendor.pure.name&#x3D;qiushao</span><br></pre></td></tr></table></figure>
+
+<p>然后重新编译系统，查看 out/target/product/pure/vendor/build.prop 发现属性已经添加进去了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10$ cat out&#x2F;target&#x2F;product&#x2F;pure&#x2F;vendor&#x2F;build.prop | grep pure.name</span><br><span class="line">ro.vendor.pure.name&#x3D;qiushao</span><br><span class="line">persist.vendor.pure.name&#x3D;qiushao</span><br><span class="line">vendor.pure.name&#x3D;qiushao</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10$</span><br></pre></td></tr></table></figure>
+
+<h2 id="虚拟机验证"><a href="#虚拟机验证" class="headerlink" title="虚拟机验证"></a>虚拟机验证</h2><p>启动虚拟机后，再另外启动一个终端使用 adb shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pure:&#x2F; # getprop ro.pure.version </span><br><span class="line">1.0</span><br><span class="line">pure:&#x2F; # getprop ro.vendor.pure.name</span><br><span class="line">qiushao</span><br><span class="line">pure:&#x2F; # getprop persist.vendor.pure.name </span><br><span class="line">qiushao</span><br><span class="line">pure:&#x2F; # getprop vendor.pure.name </span><br><span class="line">qiushao</span><br><span class="line">pure:&#x2F; # setprop ro.pure.version 2.0 </span><br><span class="line">setprop: failed to set property &#39;ro.pure.version&#39; to &#39;2.0&#39;</span><br><span class="line">pure:&#x2F; # setprop persist.vendor.pure.name shaoqiu</span><br><span class="line">pure:&#x2F; # setprop vendor.pure.name shaoqiu</span><br><span class="line">pure:&#x2F; # getprop persist.vendor.pure.name</span><br><span class="line">shaoqiu</span><br><span class="line">pure:&#x2F; # getprop vendor.pure.name</span><br><span class="line">shaoqiu</span><br><span class="line">pure:&#x2F; # reboot</span><br></pre></td></tr></table></figure>
+
+<p>我们先用 getprop 命令读取了我们添加的属性，都可以正常读取。<br>然后我们尝试用 setprop 命令改写属性的值， 发现 ro 前缀的属性改写失败了，其他属性可以改写成功。<br>然后我们重启一下系统再重新读取：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pure:&#x2F; # getprop persist.vendor.pure.name</span><br><span class="line">shaoqiu</span><br><span class="line">pure:&#x2F; # getprop vendor.pure.name</span><br><span class="line">qiushao</span><br><span class="line">pure:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>我们发现 persist 前缀的属性跟重启前的值一致，而非 persist 前缀的值恢复原样了。<br>从这几个实验来看我们之前的结论一样。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/" title="Android系统开发入门-3.添加系统属性" target="_blank" rel="external">http://qiushao.net/2019/11/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/3-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/11/22/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/4-%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9D%97/" title="Android系统开发入门-4.添加自定义模块"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/11/19/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/2-%E6%B7%BB%E5%8A%A0product/" title="Android系统开发入门-2.添加product"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

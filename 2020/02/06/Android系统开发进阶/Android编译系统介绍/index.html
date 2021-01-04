@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发进阶-Android编译系统介绍 | 一叶知秋</title>
+  <meta name="description" content="1. 编译系统变化Android 最初是用 Android.mk 来定义模块的， Android.mk 本质上就是 Makefile。随着 Android 工程越来越大，包含的模块越来越多，以 Makefile 组织的项目编译花费的时间越来越多。google 在 Android 7.0 开始引入了 ninja 编译系统。相对于 make 来说 ninja 在大的项目管理中速度和并行方面有突出的优势">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发进阶-Android编译系统介绍">
+<meta property="og:url" content="http://qiushao.net/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="1. 编译系统变化Android 最初是用 Android.mk 来定义模块的， Android.mk 本质上就是 Makefile。随着 Android 工程越来越大，包含的模块越来越多，以 Makefile 组织的项目编译花费的时间越来越多。google 在 Android 7.0 开始引入了 ninja 编译系统。相对于 make 来说 ninja 在大的项目管理中速度和并行方面有突出的优势">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/build-system-androidmk-to-ninja.png">
+<meta property="article:published_time" content="2020-02-06T02:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/build-system-androidmk-to-ninja.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-编译系统变化"><span class="toc-text">1. 编译系统变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-编译参数配置"><span class="toc-text">2. 编译参数配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-平台级-Board-参数配置"><span class="toc-text">2.1 平台级(Board)参数配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-产品级-Product-的参数配置"><span class="toc-text">2.2 产品级(Product)的参数配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-模块级-Module-参数配置"><span class="toc-text">2.3 模块级(Module)参数配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-Android-mk"><span class="toc-text">2.3.1 Android.mk</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-3-Android-bp"><span class="toc-text">2.3.3 Android.bp</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-编译流程"><span class="toc-text">3. 编译流程</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发进阶/Android编译系统介绍" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发进阶-Android编译系统介绍
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/" class="article-date">
+	  <time datetime="2020-02-06T02:00:00.000Z" itemprop="datePublished">2020-02-06</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/" class="leancloud_visitors"  data-flag-title="Android系统开发进阶-Android编译系统介绍">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="1-编译系统变化"><a href="#1-编译系统变化" class="headerlink" title="1. 编译系统变化"></a>1. 编译系统变化</h2><p>Android 最初是用 Android.mk 来定义模块的， Android.mk 本质上就是 Makefile。随着 Android 工程越来越大，包含的模块越来越多，以 Makefile 组织的项目编译花费的时间越来越多。google 在 Android 7.0 开始引入了 ninja 编译系统。相对于 make 来说 ninja 在大的项目管理中速度和并行方面有突出的优势，因此 google 采用了 ninja 来取代之前使用的 make。关于 ninja 的介绍，请参考 <a href="https://blog.csdn.net/yujiawang/article/details/72627121" target="_blank" rel="noopener">ninja 构建系统</a> 和 <a href="https://ninja-build.org/manual.html" target="_blank" rel="noopener">ninja 官方说明文档</a>。由于 Android.mk 的数量巨大且复杂，不可能把所有的 Android.mk 改写成 ninja 的构建规则，因此 google 搞了个 kati 工具，用于将 Androd.mk 转换成 ninja 的构建规则文件 build.ninja，再使用 ninja 来进行构建工作。</p>
+<p>Android 8.0 开始，google 引入了 Android.bp 文件来替代之前的 Android.mk 文件，Android.bp 只是纯粹的配置文件，不包括分支、循环等流程控制， 本质上就是一个 json 配置文件。同时还引入 Soong 这个工具，用于将 Android.bp 转换为 ninja 的构建规则文件 build.ninja，再使用 ninja 来进行构建工作。但之前的模块全部是用 Android.mk 来定义的，google 不可能一下子把所有模块都修改成 Android.bp，只能逐步替换，目前 Android 10 上还有少部分 Android.mk 的模块，按这进度，估计要到 Android 12 才能完全替换成 Android.bp 了。无论是 Android.mk 还是 Android.bp 最后都是转化成 ninja 的构建规则，再进行编译的。 各种文件跟工具的关系如下：<br><img src="/images/build-system-androidmk-to-ninja.png" alt="build-system-androidmk-to-ninja"></p>
+<h2 id="2-编译参数配置"><a href="#2-编译参数配置" class="headerlink" title="2. 编译参数配置"></a>2. 编译参数配置</h2><p>Android编译系统的配置，可以分为三个层级，从下到上依次是:</p>
+<h3 id="2-1-平台级-Board-参数配置"><a href="#2-1-平台级-Board-参数配置" class="headerlink" title="2.1 平台级(Board)参数配置"></a>2.1 平台级(Board)参数配置</h3><p>平台级配置主要在 BoardConfig.mk 文件中参数主要有以下几个类别的配置：</p>
+<ul>
+<li>CPU 体系结构: TARGET_ARCH, TARGET_CPU_ABI, TARGET_ARCH_VARIANT等。配置 CPU 是 x86 架构还是 arm 架构， arm 架构下又分好几个版本。编译系统会根据这个配置去加载对应 CPU 构架的 mk:build/core/combo/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk</li>
+<li>内核参数配置： BOARD_KERNEL_BASE， BOARD_KERNEL_PAGESIZE， BOARD_KERNEL_CMDLINE 等， 这些参数最终会被打包到 boot 分区的镜像文件中(boot.img)，作为内核的启动参数。</li>
+<li>分区镜像: TARGET_USERIMAGES_USE_EXT4, BOARD_BOOTIMAGE_PARTITION_SIZE, BOARD_SYSTEMIMAGE_PARTITION_SIZE 等与分区格式、分区大小相关的参数。system， vendor 等分区的大小就是在这里面配置的。</li>
+<li>外设参数配置： 蓝牙， wifi 等外接设备的参数配置。</li>
+</ul>
+<h3 id="2-2-产品级-Product-的参数配置"><a href="#2-2-产品级-Product-的参数配置" class="headerlink" title="2.2 产品级(Product)的参数配置"></a>2.2 产品级(Product)的参数配置</h3><p>同一块板子可以做不同的产品，各产品之间的差异主要是软件方面的差异，比如内置的应用不一样， 默认语言不一样等。AndroidProducts.mk 文件中的 PRODUCT_MAKEFILES 列出了所有产品的配置文件。<br>每一个产品都会有一个对应的 $(PRODUCT_NAME).mk 文件， 这个产品的所有配置都在里面列出，主要的配置项目如下：</p>
+<ul>
+<li>PRODUCT_NAME : 产品名， 我们通过 lunch 选择的产品， 就要与这个配置保持一致, 同时产品的 mk 文件也要命名为 $(PRODUCT_NAME).mk。</li>
+<li>PRODUCT_DEVICE : 板子的名称，编译系统会使用该名称查找 BoardConfig.mk。产品的输出目录也是根据该名称创建 out/target/product/$PRODUCT_DEVICE。</li>
+<li>PRODUCT_BRAND ： 对软件进行自定义所针对的品牌（如果有），例如运营商。</li>
+<li>PRODUCT_MANUFACTURER ： 制造商的名称， 会赋值给 ro.product.manufacturer 属性。 </li>
+<li>PRODUCT_MODEL ： 最终产品的最终用户可见名称， 或者叫机型名。</li>
+<li>PRODUCT_LOCALES ： 以空格分隔的列表，用于列出由双字母语言代码和双字母国家/地区代码组成的代码对，以便说明针对用户的一些设置，例如界面语言和时间、日期以及货币格式。PRODUCT_LOCALES 中列出的第一个语言区域会被用作产品的默认语言区域。</li>
+<li>PRODUCT_PACKAGES : 列出要安装的 APK 和模块。</li>
+<li>PRODUCT_COPY_FILES : 预置文件列表，例如 source_path:destination_path。在编译相应产品时，应将源路径下的文件复制到目标路径。</li>
+<li>PRODUCT_PROPERTY_OVERRIDES : 系统属性列表（采用“key=value”格式）列表。</li>
+<li>PRODUCT_PACKAGE_OVERLAYS ： 资源 overlay 目录。</li>
+</ul>
+<p>以上是一个产品的常见配置， 基本上每一个产品都会用到这些配置， 作为一个系统 rom 开发者， 我们要非常熟悉这些配置的作用。<br>对于产品的配置还有一个重要的配置：编译类型（TARGET_BUILD_TYPE）， 这个配置是我们在 lunch 选择要编译的产品的时候选择的。<br>我们在添加产品的时候有以下配置，把产品添加到 lunch 的选择列表中，其中的形式就是 $(PRODUCT_NAME)-$(TARGET_BUILD_TYPE)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">COMMON_LUNCH_CHOICES :&#x3D; \</span><br><span class="line">    pure-eng \</span><br><span class="line">    pure-userdebug \</span><br><span class="line">    pure-user</span><br></pre></td></tr></table></figure>
+
+<p>编译类型的取值范围为：eng, user, userdebug。这三者的区别如下：</p>
+<ul>
+<li><ol>
+<li>eng 工程师版本， 主要用于开发调试阶段:<ul>
+<li>安装带有 eng 或 debug 标记的模块。 </li>
+<li>除了带有标记的模块之外，还会根据产品定义文件安装相应模块。</li>
+<li>ro.secure=0</li>
+<li>ro.debuggable=1</li>
+<li>ro.kernel.android.checkjni=1</li>
+<li>adb 默认处于启用状态。</li>
+<li>WITH_DEXPREOPT 可以设置为 false， 即在编译时不对系统映像上安装的 DEX 代码调用 dex2oat。 具体作用下面单独讲。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>user 用户发布版本:<ul>
+<li>安装带有 user 标记的模块。</li>
+<li>除了带有标记的模块之外，还会根据产品定义文件安装相应模块。</li>
+<li>ro.secure=1</li>
+<li>ro.debuggable=0</li>
+<li>adb 默认处于停用状态。</li>
+<li>WITH_DEXPREOPT 只能为 true， 不能设置为 false。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>userdebug 用户调试版本， 除了以下几点之外，其余均与 user 相同：<ul>
+<li>还会安装带有 debug 标记的模块。</li>
+<li>ro.debuggable=1</li>
+<li>adb 默认处于启用状态。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>WITH_DEXPREOPT 意思为预优化， 也就是把 Android 在启动或 APP 在运行时所需要做的一些事情，把这些事情转移到编译 APK 时完成，来达到更快的 Android 系统启动速度和更快的APP运行速度。Android 在首次启动和首次安装应用时，需要将字节码翻译成机器码，这样 Android 系统的启动速度将会大大减慢，如果没有预优化，APP 的运行速度也会加上翻译所需要的时间。所以，这个翻译的工作需要转移到编译上面来，也就是所，在编译 APK 文件时，将会预先对 APK 进行翻译的优化，然后再打包到系统里面去，这样 Android 系统在首次启动时，就不再需要花费大量的时间去翻译 APK 的字节码。</p>
+<p>WITH_DEXPREOPT 虽然能够提高系统的首次开机速度和APP的首次运行速度， 但是会大大增加镜像的大小，从经验上来看，会增加1.5倍左右。而且 jar 经过预优化之后， 就没法简单的直接替换生效了。我们在开发过程经常需要修改 framework.jar, services.jar 等， 如果系统不是 eng 版本，替换之后是不生效的， 需要重新编译升级。所以为了提高开发验证速度， 我们需要替换 jar 包的话，就要使用 eng 版本的系统。</p>
+<h3 id="2-3-模块级-Module-参数配置"><a href="#2-3-模块级-Module-参数配置" class="headerlink" title="2.3 模块级(Module)参数配置"></a>2.3 模块级(Module)参数配置</h3><p>目前模块配置有两种形式，Android.mk 和 Android.bp。这两种模块定义系统是独立的，也就是 <strong>Android.mk 中定义的模块，不能被 Android.bp 中的模块依赖。</strong> 我们分别讨论一下这两种模块配置形式。</p>
+<h4 id="2-3-1-Android-mk"><a href="#2-3-1-Android-mk" class="headerlink" title="2.3.1 Android.mk"></a>2.3.1 Android.mk</h4><p>一个模块最基本的四个要素为：模块名，　源文件列表，　依赖关系，　模块类型。对于 Android.mk 模块来说，这几个基本要素的配置方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH :&#x3D; $(call my-dir)  </span><br><span class="line">include $(CLEAR_VARS)  </span><br><span class="line">LOCAL_MODULE    :&#x3D; hello          # 模块名</span><br><span class="line">LOCAL_SRC_FILES :&#x3D; hello.cpp 　　　# 源文件列表</span><br><span class="line">LOCAL_SHARED_LIBRARIES :&#x3D; liblog  # 依赖关系</span><br><span class="line">LOCAL_xxx       :&#x3D; xxx  </span><br><span class="line">include $(BUILD_EXECUTABLE)       # 模块类型</span><br></pre></td></tr></table></figure>
+
+<p>一个模块通常以以下两行配置作为开头：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH :&#x3D; $(call my-dir) </span><br><span class="line">include $(CLEAR_VARS)</span><br></pre></td></tr></table></figure>
+
+<p>这两行配置的作用是：</p>
+<ul>
+<li>设置当前模块的编译路径为当前文件夹路径。</li>
+<li>清理（可能由其他模块设置过的）编译环境中用到的变量。具体来说是重置除了 LOCAL_PATH 之外的所有以 LOCAL_ 开头的编译环境变量。</li>
+</ul>
+<p>Android 源码是一个非常庞大的系统，包含了成千上万个模块，各模块之间的依赖关系也很复杂。为了方便模块的编译， Android 开发团队最初在 Makefile 的基础上，开发了一套编译系统，在这套编译系统下，我们要定义一个模块变得非常简单，只需要定义一系列的编译环境变量就行了，根本不用关心具体的编译细节。下面举例解析一下部分重要的编译环境变量：</p>
+<ul>
+<li>LOCAL_MODULE：当前模块的名称，这个名称在系统中应当是唯一的，模块间的依赖关系就是通过这个名称来引用的。编译系统会自动添加适当的后缀。例如，libfoo，要产生动态库，则生成libfoo.so。</li>
+<li>LOCAL_SRC_FILES：当前模块包含的所有源代码文件。</li>
+<li>LOCAL_C_INCLUDES：C 或 C++ 语言需要的头文件的路径。</li>
+<li>LOCAL_STATIC_LIBRARIES：当前模块依赖的静态库。</li>
+<li>LOCAL_SHARED_LIBRARIES：当前模块依赖的动态库。</li>
+<li>LOCAL_CFLAGS：提供给 C/C++ 编译器的额外编译参数。</li>
+<li>LOCAL_JAVA_LIBRARIES：当前模块依赖的 Java 共享库。</li>
+<li>LOCAL_STATIC_JAVA_LIBRARIES：当前模块依赖的 Java 静态库。</li>
+<li>LOCAL_CERTIFICATE： APK 签名类型。</li>
+<li>LOCAL_DEX_PREOPT： 禁止对当前模块进行预优化。</li>
+<li>LOCAL_JACK_ENABLED： 禁止使用Jack编译工具链编译该模块。</li>
+<li>LOCAL_MODULE_TAGS：当前模块所包含的标签，一个模块可以包含多个标签。标签的值可能是 user，eng, debug, optional。其中，optional 是默认标签。标签是提供给编译类型使用的。具体的规则见上面的 2.2 小节（产品级(Product)的参数配置 ）中对编译类型的解析。 在 Android 10 中取消了 eng, debug 这两种类型，具体说明见路径 Android/build/make/Changes.md 中的说明。</li>
+</ul>
+<p>除此以外，Build 系统中还定义了一些便捷的函数以便在 Android.mk 中使用，包括：</p>
+<ul>
+<li>$(call all-java-files-under, <src>)：获取指定目录下的所有 Java 文件。</li>
+<li>$(call all-c-files-under, <src>)：获取指定目录下的所有 C 语言文件。</li>
+<li>$(call all-Iaidl-files-under, <src>) ：获取指定目录下的所有 AIDL 文件。</li>
+<li>$(call all-makefiles-under, <folder>)：获取指定目录下的所有 Make 文件。</li>
+</ul>
+<p>定义完  LOCAL_XXX 变量之后， 最后一步是 <code>include $(BUILD_XXX)</code><br>其中 BUILD_XXX 的可选项在 build/make/core/config.mk 文件中有定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">CLEAR_VARS:&#x3D; $(BUILD_SYSTEM)&#x2F;clear_vars.mk</span><br><span class="line">BUILD_HOST_STATIC_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;host_static_library.mk</span><br><span class="line">BUILD_HOST_SHARED_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;host_shared_library.mk</span><br><span class="line">BUILD_STATIC_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;static_library.mk</span><br><span class="line">BUILD_HEADER_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;header_library.mk</span><br><span class="line">BUILD_AUX_STATIC_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;aux_static_library.mk</span><br><span class="line">BUILD_AUX_EXECUTABLE:&#x3D; $(BUILD_SYSTEM)&#x2F;aux_executable.mk</span><br><span class="line">BUILD_SHARED_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;shared_library.mk</span><br><span class="line">BUILD_EXECUTABLE:&#x3D; $(BUILD_SYSTEM)&#x2F;executable.mk</span><br><span class="line">BUILD_HOST_EXECUTABLE:&#x3D; $(BUILD_SYSTEM)&#x2F;host_executable.mk</span><br><span class="line">BUILD_PACKAGE:&#x3D; $(BUILD_SYSTEM)&#x2F;package.mk</span><br><span class="line">BUILD_PHONY_PACKAGE:&#x3D; $(BUILD_SYSTEM)&#x2F;phony_package.mk</span><br><span class="line">BUILD_RRO_PACKAGE:&#x3D; $(BUILD_SYSTEM)&#x2F;build_rro_package.mk</span><br><span class="line">BUILD_HOST_PREBUILT:&#x3D; $(BUILD_SYSTEM)&#x2F;host_prebuilt.mk</span><br><span class="line">BUILD_PREBUILT:&#x3D; $(BUILD_SYSTEM)&#x2F;prebuilt.mk</span><br><span class="line">BUILD_MULTI_PREBUILT:&#x3D; $(BUILD_SYSTEM)&#x2F;multi_prebuilt.mk</span><br><span class="line">BUILD_JAVA_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;java_library.mk</span><br><span class="line">BUILD_STATIC_JAVA_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;static_java_library.mk</span><br><span class="line">BUILD_HOST_JAVA_LIBRARY:&#x3D; $(BUILD_SYSTEM)&#x2F;host_java_library.mk</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>可见 BUILD_XXX 变量都是一个 mk 文件路径，每一个 BUILD_XXX 定义了一种编译规则。<br>当我们 include $(BUILD_XXX) ，编译系统就根据前面所定义的 LOCAL_XXX 变量，来定义模块的目标， 依赖关系，及编译命令，编译参数等。<br><strong>需要注意的是，这个时候只是定义了模块的目标而已，并没有开始编译。</strong></p>
+<h4 id="2-3-3-Android-bp"><a href="#2-3-3-Android-bp" class="headerlink" title="2.3.3 Android.bp"></a>2.3.3 Android.bp</h4><p>对于 Android.bp 模块来说，四个基本要素的配置方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;              &#x2F;&#x2F; 模块类型</span><br><span class="line">    name: &quot;hello&quot;,       &#x2F;&#x2F; 模块名</span><br><span class="line">    srcs: [&quot;hello.cpp&quot;], &#x2F;&#x2F; 源文件列表</span><br><span class="line">    shared_libs: [       &#x2F;&#x2F; 依赖关系</span><br><span class="line">        &quot;liblog&quot;,</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Android.bp 支持的模块类型基本上跟 Android.mk 是一样的。它们的对应关系如下（Android/build/soong/androidmk/cmd/androidmk/android.go）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">var moduleTypes &#x3D; map[string]string&#123;</span><br><span class="line">        &quot;BUILD_SHARED_LIBRARY&quot;:        &quot;cc_library_shared&quot;,</span><br><span class="line">        &quot;BUILD_STATIC_LIBRARY&quot;:        &quot;cc_library_static&quot;,</span><br><span class="line">        &quot;BUILD_HOST_SHARED_LIBRARY&quot;:   &quot;cc_library_host_shared&quot;,</span><br><span class="line">        &quot;BUILD_HOST_STATIC_LIBRARY&quot;:   &quot;cc_library_host_static&quot;,</span><br><span class="line">        &quot;BUILD_HEADER_LIBRARY&quot;:        &quot;cc_library_headers&quot;,</span><br><span class="line">        &quot;BUILD_EXECUTABLE&quot;:            &quot;cc_binary&quot;,</span><br><span class="line">        &quot;BUILD_HOST_EXECUTABLE&quot;:       &quot;cc_binary_host&quot;,</span><br><span class="line">        &quot;BUILD_NATIVE_TEST&quot;:           &quot;cc_test&quot;,</span><br><span class="line">        &quot;BUILD_HOST_NATIVE_TEST&quot;:      &quot;cc_test_host&quot;,</span><br><span class="line">        &quot;BUILD_NATIVE_BENCHMARK&quot;:      &quot;cc_benchmark&quot;,</span><br><span class="line">        &quot;BUILD_HOST_NATIVE_BENCHMARK&quot;: &quot;cc_benchmark_host&quot;,</span><br><span class="line"></span><br><span class="line">        &quot;BUILD_JAVA_LIBRARY&quot;:             &quot;java_library_installable&quot;, &#x2F;&#x2F; will be rewritten to java_library by bpfix</span><br><span class="line">        &quot;BUILD_STATIC_JAVA_LIBRARY&quot;:      &quot;java_library&quot;,</span><br><span class="line">        &quot;BUILD_HOST_JAVA_LIBRARY&quot;:        &quot;java_library_host&quot;,</span><br><span class="line">        &quot;BUILD_HOST_DALVIK_JAVA_LIBRARY&quot;: &quot;java_library_host_dalvik&quot;,</span><br><span class="line">        &quot;BUILD_PACKAGE&quot;:                  &quot;android_app&quot;,</span><br><span class="line"></span><br><span class="line">        &quot;BUILD_CTS_EXECUTABLE&quot;:          &quot;cc_binary&quot;,               &#x2F;&#x2F; will be further massaged by bpfix depending on the output path</span><br><span class="line">        &quot;BUILD_CTS_SUPPORT_PACKAGE&quot;:     &quot;cts_support_package&quot;,     &#x2F;&#x2F; will be rewritten to android_test by bpfix</span><br><span class="line">        &quot;BUILD_CTS_PACKAGE&quot;:             &quot;cts_package&quot;,             &#x2F;&#x2F; will be rewritten to android_test by bpfix</span><br><span class="line">        &quot;BUILD_CTS_TARGET_JAVA_LIBRARY&quot;: &quot;cts_target_java_library&quot;, &#x2F;&#x2F; will be rewritten to java_library by bpfix</span><br><span class="line">        &quot;BUILD_CTS_HOST_JAVA_LIBRARY&quot;:   &quot;cts_host_java_library&quot;,   &#x2F;&#x2F; will be rewritten to java_library_host by bpfix</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var prebuiltTypes &#x3D; map[string]string&#123;</span><br><span class="line">        &quot;SHARED_LIBRARIES&quot;: &quot;cc_prebuilt_library_shared&quot;,</span><br><span class="line">        &quot;STATIC_LIBRARIES&quot;: &quot;cc_prebuilt_library_static&quot;,</span><br><span class="line">        &quot;EXECUTABLES&quot;:      &quot;cc_prebuilt_binary&quot;,</span><br><span class="line">        &quot;JAVA_LIBRARIES&quot;:   &quot;java_import&quot;,</span><br><span class="line">        &quot;ETC&quot;:              &quot;prebuilt_etc&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每一种模块类型都有很多配置选项，这里就不一一列举了，请参考 <a href="http://119.29.209.28/Android/soong/" target="_blank" rel="noopener">soong官方文档</a></p>
+<p>需要注意的是目前 Android.bp 还不支持预置APK模块。所以我们还是需要 Android.mk 来定义预置 APK。</p>
+<h2 id="3-编译流程"><a href="#3-编译流程" class="headerlink" title="3. 编译流程"></a>3. 编译流程</h2><p>我们编译 Android 系统一般有三个步骤：</p>
+<ul>
+<li><ol>
+<li>source build/envsetup.sh　：　配置编译环境</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>lunch　：　选择要编译的产品</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>make -j　：　开始编译</li>
+</ol>
+</li>
+</ul>
+<p>我们接下来就从这三步骤入手，　分析一下编译系统的源码，　梳理一下系统的编译流程，　看看编译系统是怎么根据我们上面的模块，产品，平台配置等信息最终编译成各个系统镜像的。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/" title="Android系统开发进阶-Android编译系统介绍" target="_blank" rel="external">http://qiushao.net/2020/02/06/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/09/Android/android-service-debug-skill/" title="Android-服务阻塞调试小技巧"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/05/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/15-Anroid.bp%E6%9D%A1%E4%BB%B6%E7%BC%96%E8%AF%91/" title="Android系统开发入门-15.Android.bp 条件编译"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

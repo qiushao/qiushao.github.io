@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android-logcat统计各进程的log输出 | 一叶知秋</title>
+  <meta name="description" content="logd 是 Android 的日志系统，其基本构架如下： 本质上也是个 c&#x2F;s　构架。应用作为客户端往服务端 logd 写数据，　logd 作为服务端收到数据后会把数据写到 LogBuf 中。logcat 作为另外一个客户端，从 LogBuf 中读取数据。这个其实也是个生产者&#x2F;消费者模型。应用可以看作生产者，logcat 可以看作是消费者，logd 可以看作是消息队列。LogBuf 也是有一定大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-logcat统计各进程的log输出">
+<meta property="og:url" content="http://qiushao.net/2020/02/13/Android/logcat-stat/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="logd 是 Android 的日志系统，其基本构架如下： 本质上也是个 c&#x2F;s　构架。应用作为客户端往服务端 logd 写数据，　logd 作为服务端收到数据后会把数据写到 LogBuf 中。logcat 作为另外一个客户端，从 LogBuf 中读取数据。这个其实也是个生产者&#x2F;消费者模型。应用可以看作生产者，logcat 可以看作是消费者，logd 可以看作是消息队列。LogBuf 也是有一定大">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/logd-arch.png">
+<meta property="article:published_time" content="2020-02-13T02:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/logd-arch.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/13/Android/logcat-stat/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android/logcat-stat" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android-logcat统计各进程的log输出
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/13/Android/logcat-stat/" class="article-date">
+	  <time datetime="2020-02-13T02:00:00.000Z" itemprop="datePublished">2020-02-13</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/13/Android/logcat-stat/" class="leancloud_visitors"  data-flag-title="Android-logcat统计各进程的log输出">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/13/Android/logcat-stat/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>logd 是 Android 的日志系统，其基本构架如下：<br><img src="/images/logd-arch.png" alt="logd-arch"></p>
+<p>本质上也是个 c/s　构架。应用作为客户端往服务端 logd 写数据，　logd 作为服务端收到数据后会把数据写到 LogBuf 中。logcat 作为另外一个客户端，从 LogBuf 中读取数据。这个其实也是个生产者/消费者模型。应用可以看作生产者，logcat 可以看作是消费者，logd 可以看作是消息队列。<br>LogBuf 也是有一定大小限制的，当生产者写入 log 的速度太快，超出了 LogBuf 的容量，消费者 logcat 没来得及读取，　部分 log 就会被丢弃，因此有时候我们用 logcat 看日志可能会看不到我们关心日志。出现这种情况时，我们有两种方法来解决：</p>
+<ul>
+<li><ol>
+<li>logcat -G 50M 加大 LogBuf 的缓冲区，logcat -g 可以查看当前的缓冲区大小。</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>logcat &gt; /data/test.log　重定向到文件中，因为写入文件的速度远远大于写到终端的速度，这样可以加快消费者 logcat 的处理速度。</li>
+</ol>
+</li>
+</ul>
+<p>虽然我们可以通过以上两种方法来解决 log 丢失的问题，但我觉得本质上还是 log 太多了，应该要从根本上解决问题才行。而且 log 太多还会影响系统的性能。因此我们的目标是尽量减少 log 的输出。为了达到我们的目标，我们首先要统计一下哪些进程输出的 log 最多，然后制定一套 log 输出规范，让各应用负责人按规范执行。幸好，logd 已经帮我们统计了各进程的输出信息了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line">pure:&#x2F; # logcat -S</span><br><span class="line">size&#x2F;num main               system             crash              Total</span><br><span class="line">Total    813814&#x2F;6044        241364&#x2F;2849        0&#x2F;0                1055178&#x2F;8893</span><br><span class="line">Now      810598&#x2F;6038        234585&#x2F;2794                           1045183&#x2F;8832</span><br><span class="line">Logspan  2:17.291           2:12.983                              2:17.646</span><br><span class="line">Overhead 1148726            391049                                1712031</span><br><span class="line"></span><br><span class="line"># main log buffer 按 UID 来统计的数据，　Pruned　意思是被丢弃的行数。</span><br><span class="line">Chattiest UIDs in main log buffer:                           Size   +&#x2F;-  Pruned</span><br><span class="line">UID   PACKAGE                                               BYTES           NUM</span><br><span class="line">1000  system                                               212928  0.7%      15</span><br><span class="line">  PID&#x2F;UID   COMMAND LINE                                       &quot;             &quot;</span><br><span class="line"> 1694&#x2F;1000  system_server                                  174427             9</span><br><span class="line"> 1406&#x2F;1000  &#x2F;system&#x2F;bin&#x2F;hwservicemanager                     9934</span><br><span class="line"> 1545&#x2F;1000  &#x2F;system&#x2F;bin&#x2F;surfaceflinger                       5283</span><br><span class="line"> 1519&#x2F;1000 ...ndroid.hardware.graphics.allocator@2.0-service 3588             6</span><br><span class="line">1047  cameraserver                                         108245</span><br><span class="line">1073  network_stack                                         77144             1</span><br><span class="line">10039 com.android.calllogbackup                             74203</span><br><span class="line">0     root                                                  65947</span><br><span class="line">1001  radio                                                 45219</span><br><span class="line">1046  mediacodec                                            28506</span><br><span class="line">10078 com.android.systemui                                  27159</span><br><span class="line">10087 com.android.launcher3                                 13328</span><br><span class="line">10036 com.android.providers.media                           10845</span><br><span class="line">1041  audioserver                                            6893</span><br><span class="line">10091 com.android.camera2                                    6767</span><br><span class="line">10092 com.android.gallery3d                                  6332</span><br><span class="line">10079 com.android.dialer                                     5686  +17%</span><br><span class="line">10090 com.android.calendar                                   4668</span><br><span class="line">50039 com.android.calllogbackup                              4220</span><br><span class="line">50036 com.android.providers.media                            4215</span><br><span class="line">1013  media                                                  3494</span><br><span class="line">50101 com.android.webview                                    3401</span><br><span class="line">10095 com.android.inputmethod.latin                          3314             1</span><br><span class="line">10056 com.android.messaging                                  2823</span><br><span class="line">10052 com.android.permissioncontroller                       2329</span><br><span class="line"></span><br><span class="line"># system log buffer 中按 UID 统计的数据</span><br><span class="line">Chattiest UIDs in system log buffer:                         Size   +&#x2F;-  Pruned</span><br><span class="line">UID   PACKAGE                                               BYTES           NUM</span><br><span class="line">1000  system                                               181697  +0.3%     55</span><br><span class="line">0     root                                                  28799  -3.1%     20</span><br><span class="line">1001  radio                                                 15940  -1.4%      7</span><br><span class="line">10078 com.android.systemui                                   2579</span><br><span class="line">10097 com.android.email                                      2557</span><br><span class="line">1010  wifi                                                   2299</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 根据　PID 进程号来统计的数据</span><br><span class="line">Chattiest PIDs:                                              Size        Pruned</span><br><span class="line">  PID&#x2F;UID   COMMAND LINE                                    BYTES           NUM</span><br><span class="line"> 1694&#x2F;1000  system_server                                  416009            64</span><br><span class="line"> 2519&#x2F;1001  com.android.phone                              387115           111</span><br><span class="line"> 2458&#x2F;1073  com.android.networkstack                        75058             1</span><br><span class="line"> 2830&#x2F;10039 android.process.acore                           74329</span><br><span class="line"> 1560&#x2F;1047  &#x2F;system&#x2F;bin&#x2F;cameraserver                        29999</span><br><span class="line"> 2282&#x2F;10078 com.android.systemui                            29965</span><br><span class="line"> 1410&#x2F;0     &#x2F;system&#x2F;bin&#x2F;vold                                28365            20</span><br><span class="line"> 1599&#x2F;1001  &#x2F;vendor&#x2F;bin&#x2F;hw&#x2F;rild                             28060</span><br><span class="line"> 1593&#x2F;1046  media.codec                                     24754</span><br><span class="line"> 1564&#x2F;0     &#x2F;system&#x2F;bin&#x2F;installd                            17057</span><br><span class="line"> 2970&#x2F;10087 com.android.launcher3                           13858</span><br><span class="line"> 1502&#x2F;0     &#x2F;system&#x2F;bin&#x2F;netd                                12354</span><br><span class="line"> 3080&#x2F;10036 android.process.media                           11172</span><br><span class="line"> 1503&#x2F;0     zygote64                                        10013</span><br><span class="line"> 1406&#x2F;1000  &#x2F;system&#x2F;bin&#x2F;hwservicemanager                     9934</span><br><span class="line"> 1559&#x2F;0     &#x2F;system&#x2F;bin&#x2F;bpfloader                            9312</span><br><span class="line"> 1504&#x2F;0     zygote                                           7089</span><br><span class="line"> 3311&#x2F;10091 com.android.camera2                              6767</span><br><span class="line"> 3715&#x2F;10092 com.android.gallery3d                            5692</span><br><span class="line"> 2803&#x2F;10079 com.android.dialer                               5686</span><br><span class="line"> 1545&#x2F;1000  &#x2F;system&#x2F;bin&#x2F;surfaceflinger                       5296</span><br><span class="line"> 3286&#x2F;10090 com.android.calendar                             4668</span><br><span class="line"> 1479&#x2F;0     &#x2F;system&#x2F;bin&#x2F;apexd                                4317</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 根据 TID　线程号来统计的数据</span><br><span class="line">Chattiest TIDs:                                              Size        Pruned</span><br><span class="line">  TID&#x2F;UID   COMM                                            BYTES           NUM</span><br><span class="line"> 2519&#x2F;1001  m.android.phon                                 237838            20</span><br><span class="line"> 1694&#x2F;1000  system_server                                  137970             4</span><br><span class="line"> 3381&#x2F;10039 Worker-1                                        71269</span><br><span class="line"> 2458&#x2F;1073  id.networkstac                                  61782             1</span><br><span class="line"> 1752&#x2F;1000  ActivityManager                                 46670</span><br><span class="line"> 2663&#x2F;1001  HwBinder:2519_1                                 42183</span><br><span class="line"> 1746&#x2F;1000  android.display                                 32051</span><br><span class="line"> 1560&#x2F;1047  &#x2F;system&#x2F;bin&#x2F;cameraserver                        29999</span><br><span class="line"> 1751&#x2F;1000  android.bg                                      25443             3</span><br><span class="line"> 3029&#x2F;1001  Binder:2519_F                                   23697            35</span><br><span class="line"> 2282&#x2F;10078 com.android.systemui                            23594</span><br><span class="line"> 1822&#x2F;1000  NetworkWatchlis                                 19234</span><br><span class="line"> 1593&#x2F;1046  android.hardwar                                 19122</span><br><span class="line"> 1599&#x2F;1001  &#x2F;vendor&#x2F;bin&#x2F;hw&#x2F;rild                             18694</span><br><span class="line"> 1753&#x2F;1000  ActivityManager                                 17815</span><br><span class="line"> 2908&#x2F;1001  Binder:2519_E                                   15796            26</span><br><span class="line"> 2350&#x2F;1000  Binder:1694_4                                   14960</span><br><span class="line"> 2672&#x2F;1001  DcHandlerThread                                 14187</span><br><span class="line"> 1410&#x2F;0     &#x2F;system&#x2F;bin&#x2F;vold                                12270            20</span><br><span class="line"> 2390&#x2F;1000  Binder:1694_5                                   11318             6</span><br><span class="line"> 1719&#x2F;1000  Binder:1694_2                                   11307             7</span><br><span class="line"> 2970&#x2F;10087 re-initialized&gt;                                 10815</span><br><span class="line"> 2565&#x2F;1000  Binder:1694_8                                   10600             2</span><br><span class="line"> 2246&#x2F;1000  ConnectivitySer                                 10283             1</span><br><span class="line"> 1406&#x2F;1000  hwservicemanage                                  9934</span><br><span class="line"> 2729&#x2F;1001  Binder:2519_7                                    9717            17</span><br><span class="line"> 1503&#x2F;0     main                                             9704</span><br><span class="line"> 2243&#x2F;1000  ClientModeImpl                                   9314</span><br><span class="line"> 1559&#x2F;0     &#x2F;system&#x2F;bin&#x2F;bpfloader                            9312</span><br><span class="line"> 2780&#x2F;1001  Binder:2519_C                                    9210             2</span><br><span class="line"> 1809&#x2F;0     Binder:1564_6                                    9196</span><br><span class="line"> 2706&#x2F;1001  CellularNetwork                                  8211</span><br><span class="line"></span><br><span class="line">#　根据　TAG 来统计的数据</span><br><span class="line">Chattiest TAGs:                                              Size</span><br><span class="line">  TID&#x2F;PID&#x2F;UID   LOG_TAG NAME                                BYTES</span><br><span class="line">                StrictMode                                 235216</span><br><span class="line">                dex2oat                                    103753</span><br><span class="line">     2519&#x2F;1001  SubscriptionController                      79244</span><br><span class="line">     2519&#x2F;1001  SST                                         65952</span><br><span class="line">     2519&#x2F;1001  RILJ                                        47862</span><br><span class="line">     2519&#x2F;1001  DCT-C                                       44175</span><br><span class="line">     1694&#x2F;1000  PackageManager                              39750</span><br><span class="line">                ServiceManagement                           36339</span><br><span class="line">         &#x2F;1047 android.hardware.camera.provider@2.4-service 34224</span><br><span class="line">     1410&#x2F;0     vold                                        27758</span><br><span class="line">     1694&#x2F;1000  ActivityManager                             27459</span><br><span class="line">     1694&#x2F;1000  PackageManager.DexOptimizer                 26189</span><br><span class="line">                RefBase                                     26097</span><br><span class="line">                sysui_multi_action                          22173</span><br><span class="line">     2519&#x2F;1001  IccSmsInterfaceManager                      17960</span><br><span class="line">     1564&#x2F;0     installd                                    16945</span><br><span class="line">     1593&#x2F;1046  MediaCodecsXmlParser                        16674</span><br><span class="line">2663&#x2F;2519&#x2F;1001  RilRequest                                  16612</span><br><span class="line">     2519&#x2F;1001  DC-C-1                                      14478</span><br><span class="line">     2282&#x2F;10078 KeyguardUpdateMonitor                       14429</span><br><span class="line">     1694&#x2F;1000  Telecom                                     14258</span><br><span class="line">     2519&#x2F;1001  TelecomFramework                            14039</span><br><span class="line">     1599&#x2F;1001  RIL                                         13184</span><br><span class="line">                &lt;NULL&gt;                                      13046</span><br><span class="line">         &#x2F;1047  CamPrvdr@2.4-legacy                         11868</span><br><span class="line">     1599&#x2F;1001  AT                                          11835</span><br><span class="line">     1694&#x2F;1000  SystemServerTiming                          11492</span><br><span class="line">                ServiceManager                              10807</span><br><span class="line">     1694&#x2F;1000  system_server                               10281</span><br><span class="line">     1406&#x2F;1000  hwservicemanager                             9934</span><br><span class="line">     1559&#x2F;0     LibBpfLoader                                 9169</span><br><span class="line">     2519&#x2F;1001  NRM-C                                        9072</span><br><span class="line"></span><br><span class="line">pure:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>统计结果我们可以分为几个维度来解读：</p>
+<ul>
+<li>uid 用户id，这个数据我们可以不用关注</li>
+<li>pid 进程号，从上面的例子看 system_server 进程的 log 最多，有 416009 bytes</li>
+<li>tid 线程号，从上面的例子看 com.android.phone 这个线程的 log　最多，　有 237838 bytes。</li>
+<li>TAG 从上面的例子看　StrictMode　这个 TAG 的 log　最多，　有 235216 bytes。</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/13/Android/logcat-stat/" title="Android-logcat统计各进程的log输出" target="_blank" rel="external">http://qiushao.net/2020/02/13/Android/logcat-stat/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/14/Linux/linux-maven-aliyun/" title="Linux maven 设置阿里云镜像加速"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/12/Android/emmc-performance-test/" title="Android-emmc性能测试"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

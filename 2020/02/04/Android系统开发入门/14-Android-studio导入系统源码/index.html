@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发入门-14.Android studio 导入系统源码 | 一叶知秋</title>
+  <meta name="description" content="目前流行的阅读 Android 系统源码的工具主要有以下几种： source insight, understand, vscode, vim 等。也有同学不用导工程直接 find + grep + 文本编辑器的， 这些工具我也都用过很长一段时间， 但总有不满意的地方。后来 Android studio 发布了 3.0 版本， 开始支持 NDK 开发了，体验了一下之后，就觉得这功能不就是我想要的嘛">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发入门-14.Android studio 导入系统源码">
+<meta property="og:url" content="http://qiushao.net/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="目前流行的阅读 Android 系统源码的工具主要有以下几种： source insight, understand, vscode, vim 等。也有同学不用导工程直接 find + grep + 文本编辑器的， 这些工具我也都用过很长一段时间， 但总有不满意的地方。后来 Android studio 发布了 3.0 版本， 开始支持 NDK 开发了，体验了一下之后，就觉得这功能不就是我想要的嘛">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/sdk-manager-ndk.png">
+<meta property="article:published_time" content="2020-02-04T02:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/sdk-manager-ndk.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-准备工作"><span class="toc-text">1. 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-新建顶层-build-gradle"><span class="toc-text">2. 新建顶层 build.gradle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-导入-java-模块"><span class="toc-text">3. 导入 java 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-导入-c-模块"><span class="toc-text">4. 导入 c++ 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-settings-gradle-配置子模块"><span class="toc-text">5. settings.gradle 配置子模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-使用-Android-studio-打开工程"><span class="toc-text">6. 使用 Android studio 打开工程</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发入门/14-Android-studio导入系统源码" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发入门-14.Android studio 导入系统源码
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/" class="article-date">
+	  <time datetime="2020-02-04T02:00:00.000Z" itemprop="datePublished">2020-02-04</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/" class="leancloud_visitors"  data-flag-title="Android系统开发入门-14.Android studio 导入系统源码">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>目前流行的阅读 Android 系统源码的工具主要有以下几种： source insight, understand, vscode, vim 等。也有同学不用导工程直接 find + grep + 文本编辑器的， 这些工具我也都用过很长一段时间， 但总有不满意的地方。后来 Android studio 发布了 3.0 版本， 开始支持 NDK 开发了，体验了一下之后，就觉得这功能不就是我想要的嘛，同时写 java 和 c++ 代码。于是开始各种折腾，折腾了几个星期后，终于找到一种将 Android系统源码导入到 Android studio 的方法，使用 gradle + cmake + NDK 支持同时解析 java 和 c++ 代码。理论上来说支持任何 java, c++ 工程或者混合工程。这种方法是我个人原创的，跟官方的使用 ideagen 生成工程不一样。使用 ideagen 只能导入 java 代码，c++ 代码没法解析。但这种方法对电脑的性能要求比较高，最好满足以下条件：</p>
+<ul>
+<li><ol>
+<li>代码要下载到本机，而不是通过 samba 挂载。</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>代码最好是下载到 ssd，而不是机械硬件。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>内存最好 32G 以上。</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>Linux 系统， Windows 总会有各种乱七八糟的问题。</li>
+</ol>
+</li>
+</ul>
+<p>如果不满足以上条件，可能在查看，修改代码过程中会有卡顿出现。满足条件的话，则是飞一般的感觉。<br>下面就来演示一下源码导入过程，基于 Android studio 版本 3.4.1。</p>
+<h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h2><p>如果需要解析C/C++代码的话，则需要安装 cmake, ndk。<br>打开 SDKManager 选择 SDK Tools， 勾选 cmake 和 NDK 然后 install 即可。<br><img src="/images/sdk-manager-ndk.png" alt="SDKManager"> </p>
+<h2 id="2-新建顶层-build-gradle"><a href="#2-新建顶层-build-gradle" class="headerlink" title="2. 新建顶层 build.gradle"></a>2. 新建顶层 build.gradle</h2><p>在 Android 根目录新建一个 build.gradle 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123; url &#39;https:&#x2F;&#x2F;maven.aliyun.com&#x2F;repository&#x2F;public&#x2F;&#39; &#125;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &#39;com.android.tools.build:gradle:3.4.2&#39;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123; url &#39;https:&#x2F;&#x2F;maven.aliyun.com&#x2F;repository&#x2F;public&#x2F;&#39; &#125;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &quot;idea&quot;</span><br><span class="line">idea &#123;</span><br><span class="line">    module &#123;</span><br><span class="line">        excludeDirs &#x3D; [</span><br><span class="line">                file(&quot;.repo&quot;),</span><br><span class="line">                file(&quot;abi&quot;),</span><br><span class="line">                file(&quot;art&quot;),</span><br><span class="line">                file(&quot;bionic&quot;),</span><br><span class="line">                file(&quot;bootable&quot;),</span><br><span class="line">                file(&quot;build&quot;),</span><br><span class="line">                file(&quot;cts&quot;),</span><br><span class="line">                file(&quot;dalvik&quot;),</span><br><span class="line">                file(&quot;developers&quot;),</span><br><span class="line">                file(&quot;development&quot;),</span><br><span class="line">                file(&quot;docs&quot;),</span><br><span class="line">                file(&quot;external&quot;),</span><br><span class="line">                file(&quot;hardware&quot;),</span><br><span class="line">                file(&quot;kernel&quot;),</span><br><span class="line">                file(&quot;libcore&quot;),</span><br><span class="line">                file(&quot;libnativehelper&quot;),</span><br><span class="line">                file(&quot;ndk&quot;),</span><br><span class="line">                file(&quot;out&quot;),</span><br><span class="line">                file(&quot;packages&quot;),</span><br><span class="line">                file(&quot;pdk&quot;),</span><br><span class="line">                file(&quot;platform_testing&quot;),</span><br><span class="line">                file(&quot;prebuilts&quot;),</span><br><span class="line">                file(&quot;sdk&quot;),</span><br><span class="line">                file(&quot;system&quot;),</span><br><span class="line">                file(&quot;test&quot;),</span><br><span class="line">                file(&quot;toolchain&quot;),</span><br><span class="line">                file(&quot;tools&quot;)</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个文件与普通的 Android 应用的顶层 build.gradle 文件的差别就是多加了一个 apply plugin: “idea”， 然后在配置 idea 插件的 excludeDirs。即忽略哪些不目录。这些目录被忽略之后，Android studio 就不会扫描分析里面的文件了。因为 Android 源码非常庞大， 如果没有配置 excludeDirs 的话，导入工程可能得导一整天了。一般来说我们只需要关注很少的一部分代码而已，我们只需要保留我们要关注的代码目录即可，其他目录都加到 excludeDirs 里面。</p>
+<h2 id="3-导入-java-模块"><a href="#3-导入-java-模块" class="headerlink" title="3. 导入 java 模块"></a>3. 导入 java 模块</h2><p>一般情况下我们关注的是 frameworks/base 目录下的源码而已， 因此我们在 frameworks/base 目录下创建一个 build.gradle 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#39;java&#39;</span><br><span class="line">sourceSets &#123;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;core&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;graphics&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;keystore&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;location&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;lowpan&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;media&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;media&#x2F;apex&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;opengl&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;sax&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;accessibility&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;appprediction&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;appwidget&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;autofill&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;backup&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;companion&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;contentcapture&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;contentsuggestions&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;core&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;coverage&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;devicepolicy&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;midi&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;net&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;print&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;restrictions&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;robotests&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;startop&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;systemcaptions&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;usage&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;usb&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;voiceinteraction&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;services&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;telecomm&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;telephony&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;wifi&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;..&#x2F;..&#x2F;out&#x2F;soong&#x2F;.intermediates&#x2F;frameworks&#x2F;base&#x2F;framework&#x2F;android_common&#x2F;gen&#x2F;aidl&#x2F;frameworks&#x2F;base&#x2F;core&#x2F;java&#39;</span><br><span class="line">    main.java.srcDirs +&#x3D; &#39;..&#x2F;..&#x2F;out&#x2F;soong&#x2F;.intermediates&#x2F;frameworks&#x2F;base&#x2F;core&#x2F;res&#x2F;framework-res&#x2F;android_common&#x2F;gen&#x2F;aapt2&#x2F;R&#39;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-导入-c-模块"><a href="#4-导入-c-模块" class="headerlink" title="4. 导入 c++ 模块"></a>4. 导入 c++ 模块</h2><p>上面的方法只能解析 java 代码而已， 做系统层的开发经常是要接触到 c++ 代码的， 若是有一个强大的 ide 的辅助便能省心不少。下面就演示一下导入 c++ 模块的方法。以 recovery 模块为例， 在 bootable目录下新建一个 build.gradle 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#39;com.android.application&#39;</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion 29</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId &quot;com.android.recovery&quot;</span><br><span class="line">        minSdkVersion 28</span><br><span class="line">        targetSdkVersion 29</span><br><span class="line">        versionCode 1</span><br><span class="line">        versionName &quot;1.0&quot;</span><br><span class="line">        externalNativeBuild &#123;</span><br><span class="line">            cmake &#123;</span><br><span class="line">                cppFlags &quot;-std&#x3D;c++11&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    externalNativeBuild &#123;</span><br><span class="line">        cmake &#123;</span><br><span class="line">            path &quot;CMakeLists.txt&quot;</span><br><span class="line">            version &quot;3.10.2&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再新建一个 CMakeLists.txt 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 2.6)</span><br><span class="line">project(recovery)</span><br><span class="line">set(CMAKE_CXX_STANDARD 11)</span><br><span class="line"></span><br><span class="line">include_directories(..&#x2F;system&#x2F;core&#x2F;base&#x2F;include)</span><br><span class="line">include_directories(..&#x2F;system&#x2F;core&#x2F;libcutils&#x2F;include)</span><br><span class="line">include_directories(..&#x2F;hardware&#x2F;interfaces&#x2F;health&#x2F;2.0&#x2F;utils&#x2F;libhealthhalutils&#x2F;include)</span><br><span class="line">include_directories(..&#x2F;system&#x2F;core&#x2F;libziparchive&#x2F;include)</span><br><span class="line">include_directories(..&#x2F;system&#x2F;core&#x2F;liblog&#x2F;include)</span><br><span class="line">include_directories(..&#x2F;external&#x2F;selinux&#x2F;libselinux&#x2F;include)</span><br><span class="line"></span><br><span class="line">include_directories(recovery&#x2F;applypatch&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;bootloader_message&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;edify&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;fuse_sideload&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;install&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;minui&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;otautil&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;recovery_ui&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;update_verifier&#x2F;include)</span><br><span class="line">include_directories(recovery&#x2F;updater&#x2F;include)</span><br><span class="line"></span><br><span class="line">FILE(GLOB_RECURSE recovery_cpp_list &quot;.&#x2F;*.cpp&quot;)</span><br><span class="line">add_library(recovery $&#123;recovery_cpp_list&#125;)</span><br><span class="line">set_target_properties(recovery PROPERTIES LINKER_LANGUAGE CXX)</span><br></pre></td></tr></table></figure>
+
+<p>在 bootable 目录下新建 src/main 目录， 在此目录下新建 AndroidManifest.xml 文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android&#x3D;&quot;http:&#x2F;&#x2F;schemas.android.com&#x2F;apk&#x2F;res&#x2F;android&quot;</span><br><span class="line">    package&#x3D;&quot;com.android.recovery&quot;&gt;</span><br><span class="line">&lt;&#x2F;manifest&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个文件对于我们来说并没有什么用， 但是 gradle 的 android 插件要求要有这么一个文件，不然会报错， 我们创建这么个文件，简单声明一下 package 信息即可，其他内容都不需要。</p>
+<h2 id="5-settings-gradle-配置子模块"><a href="#5-settings-gradle-配置子模块" class="headerlink" title="5. settings.gradle 配置子模块"></a>5. settings.gradle 配置子模块</h2><p>在 Android 源码根目录下新建 settings.gradle 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">include &quot;:frameworks:base&quot;</span><br><span class="line">include &quot;:bootable&quot;</span><br></pre></td></tr></table></figure>
+<p>把我们前面添加的两个模块加进来。</p>
+<h2 id="6-使用-Android-studio-打开工程"><a href="#6-使用-Android-studio-打开工程" class="headerlink" title="6. 使用 Android studio 打开工程"></a>6. 使用 Android studio 打开工程</h2><p>使用 Android studio file –&gt; open 打开 build.gradle 文件，选择 open as a project。如果网络好的话，这一步应该几分钟就OK了。网络慢的话，可能要卡在下载 gradle 依赖这里很久，耐心等待便是。第一次打开耐心等待很长时间，才能解析完代码。这个得看网络速度，电脑性能，我自己的电脑十几分钟就解析完了，公司的电脑得半个多小时。待解析完代码后，打开 framework/base 下面的代码和 recovery 下面的代码，发现都可以跳转了。而且那些被配置为 excludeDirs 的目录应该变成了黄色的，表示这些目录下的文件不会被索引，下次再打开工程时速度就快很多了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/" title="Android系统开发入门-14.Android studio 导入系统源码" target="_blank" rel="external">http://qiushao.net/2020/02/04/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/14-Android-studio%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E6%BA%90%E7%A0%81/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/05/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/15-Anroid.bp%E6%9D%A1%E4%BB%B6%E7%BC%96%E8%AF%91/" title="Android系统开发入门-15.Android.bp 条件编译"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/03/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/13-binder%E6%AD%BB%E4%BA%A1%E8%AE%A3%E5%91%8A/" title="Android系统开发入门-13.Binder服务死亡讣告"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

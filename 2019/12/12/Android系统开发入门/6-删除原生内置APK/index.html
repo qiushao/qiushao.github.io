@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发入门-6.删除Android原生内置APK | 一叶知秋</title>
+  <meta name="description" content="Android 系统内置了很多应用，比如说通信录，日历，计算器，相机等， 对于 TV 来说，这些应用是没有什么用的，只是占用系统空间而已。为了节剩一下系统空间，我们在编译系统时要把这些模块给去掉。以下介绍两种方法来达到我们的目的。 1. 直接从 PRODUCT_PACKAGES 中删除比如说我们要删除通信录 Contacts 这个应用，我们可以查找一下这个应用是在哪里加入到 PRODUCT_PAC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发入门-6.删除Android原生内置APK">
+<meta property="og:url" content="http://qiushao.net/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="Android 系统内置了很多应用，比如说通信录，日历，计算器，相机等， 对于 TV 来说，这些应用是没有什么用的，只是占用系统空间而已。为了节剩一下系统空间，我们在编译系统时要把这些模块给去掉。以下介绍两种方法来达到我们的目的。 1. 直接从 PRODUCT_PACKAGES 中删除比如说我们要删除通信录 Contacts 这个应用，我们可以查找一下这个应用是在哪里加入到 PRODUCT_PAC">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-12T14:26:26.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-直接从-PRODUCT-PACKAGES-中删除"><span class="toc-text">1. 直接从 PRODUCT_PACKAGES 中删除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-通过-LOCAL-OVERRIDES-PACKAGES-删除"><span class="toc-text">2. 通过 LOCAL_OVERRIDES_PACKAGES 删除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-LOCAL-OVERRIDES-PACKAGES-原理"><span class="toc-text">3. LOCAL_OVERRIDES_PACKAGES 原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Android-8-0"><span class="toc-text">3.1 Android 8.0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Android-10-0"><span class="toc-text">3.2 Android 10.0</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发入门/6-删除原生内置APK" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发入门-6.删除Android原生内置APK
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/" class="article-date">
+	  <time datetime="2019-12-12T14:26:26.000Z" itemprop="datePublished">2019-12-12</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/" class="leancloud_visitors"  data-flag-title="Android系统开发入门-6.删除Android原生内置APK">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>Android 系统内置了很多应用，比如说通信录，日历，计算器，相机等， 对于 TV 来说，这些应用是没有什么用的，只是占用系统空间而已。为了节剩一下系统空间，我们在编译系统时要把这些模块给去掉。以下介绍两种方法来达到我们的目的。</p>
+<h2 id="1-直接从-PRODUCT-PACKAGES-中删除"><a href="#1-直接从-PRODUCT-PACKAGES-中删除" class="headerlink" title="1. 直接从 PRODUCT_PACKAGES 中删除"></a>1. 直接从 PRODUCT_PACKAGES 中删除</h2><p>比如说我们要删除通信录 Contacts 这个应用，我们可以查找一下这个应用是在哪里加入到 PRODUCT_PACKAGES 的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-PC:~&#x2F;source&#x2F;android-8.1$ mgrep Contacts</span><br><span class="line">.&#x2F;build&#x2F;make&#x2F;target&#x2F;product&#x2F;core_tiny.mk:22:    ContactsProvider \</span><br><span class="line">.&#x2F;build&#x2F;make&#x2F;target&#x2F;product&#x2F;core_base.mk:24:    ContactsProvider \</span><br><span class="line">.&#x2F;build&#x2F;make&#x2F;target&#x2F;product&#x2F;core.mk:33:    Contacts \</span><br><span class="line">.&#x2F;device&#x2F;google&#x2F;atv&#x2F;products&#x2F;atv_base.mk:32:    ContactsProvider \</span><br><span class="line">.&#x2F;platform_testing&#x2F;build&#x2F;tasks&#x2F;tests&#x2F;instrumentation_test_list.mk:35:    ContactsProviderTests \</span><br><span class="line">.&#x2F;platform_testing&#x2F;build&#x2F;tasks&#x2F;tests&#x2F;instrumentation_test_list.mk:36:    ContactsProviderTests2 \</span><br><span class="line">.&#x2F;packages&#x2F;services&#x2F;Car&#x2F;car_product&#x2F;build&#x2F;car_base.mk:23:    ContactsProvider \</span><br><span class="line">.&#x2F;packages&#x2F;services&#x2F;Telephony&#x2F;Android.mk:3:# Build the Phone app which includes the emergency dialer. See Contacts</span><br><span class="line">.&#x2F;packages&#x2F;apps&#x2F;Contacts&#x2F;CleanSpec.mk:50:$(call add-clean-step, rm -rf $(OUT_DIR)&#x2F;target&#x2F;common&#x2F;obj&#x2F;APPS&#x2F;Contacts_intermediates)</span><br><span class="line">.&#x2F;packages&#x2F;apps&#x2F;Contacts&#x2F;tests&#x2F;Android.mk:13:LOCAL_PACKAGE_NAME :&#x3D; ContactsTests</span><br><span class="line">.&#x2F;packages&#x2F;apps&#x2F;Contacts&#x2F;tests&#x2F;Android.mk:15:LOCAL_INSTRUMENTATION_FOR :&#x3D; Contacts</span><br><span class="line">.&#x2F;packages&#x2F;apps&#x2F;Contacts&#x2F;Android.mk:53:LOCAL_PACKAGE_NAME :&#x3D; Contacts</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;tests2&#x2F;Android.mk:23:    ContactsProviderTestUtils \</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;tests2&#x2F;Android.mk:32:LOCAL_PACKAGE_NAME :&#x3D; ContactsProviderTests2</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;tests2&#x2F;Android.mk:35:LOCAL_INSTRUMENTATION_FOR :&#x3D; ContactsProvider</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;test_common&#x2F;Android.mk:29:LOCAL_MODULE :&#x3D; ContactsProviderTestUtils</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;tests&#x2F;Android.mk:8:    ContactsProviderTestUtils \</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;tests&#x2F;Android.mk:18:LOCAL_PACKAGE_NAME :&#x3D; ContactsProviderTests</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;tests&#x2F;Android.mk:21:LOCAL_INSTRUMENTATION_FOR :&#x3D; ContactsProvider</span><br><span class="line">.&#x2F;packages&#x2F;providers&#x2F;ContactsProvider&#x2F;Android.mk:22:LOCAL_PACKAGE_NAME :&#x3D; ContactsProvider</span><br><span class="line">.&#x2F;cts&#x2F;tests&#x2F;tests&#x2F;contactsproviderwipe&#x2F;Android.mk:35:LOCAL_PACKAGE_NAME :&#x3D; CtsContactsProviderWipe</span><br></pre></td></tr></table></figure>
+
+<p>看一下搜索的结果应该可以知道是 ./build/make/target/product/core.mk 这个文件里面添加了 Contacts 应用。 很多系统原生的应用也是在这里面添加的。我们可以直接在这里面删除即可。</p>
+<h2 id="2-通过-LOCAL-OVERRIDES-PACKAGES-删除"><a href="#2-通过-LOCAL-OVERRIDES-PACKAGES-删除" class="headerlink" title="2. 通过 LOCAL_OVERRIDES_PACKAGES 删除"></a>2. 通过 LOCAL_OVERRIDES_PACKAGES 删除</h2><p>虽然通过前面的方法基本上可以满足我们的需求了，但是需要修改系统原生的配置，不好维护。后来发现一种更好维护的方法。在 device/qiushao 目录下添加 Android.mk 里面添加一个模块 remove_unused_module</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE :&#x3D; remove_unused_module</span><br><span class="line">LOCAL_MODULE_TAGS :&#x3D; optional</span><br><span class="line"></span><br><span class="line">LOCAL_MODULE_CLASS :&#x3D; FAKE</span><br><span class="line">LOCAL_MODULE_SUFFIX :&#x3D; $(COMMON_ANDROID_PACKAGE_SUFFIX)</span><br><span class="line"></span><br><span class="line">LOCAL_OVERRIDES_PACKAGES +&#x3D; \</span><br><span class="line">   Contacts \</span><br><span class="line">   Email</span><br><span class="line"></span><br><span class="line">include $(BUILD_SYSTEM)&#x2F;base_rules.mk</span><br><span class="line"></span><br><span class="line">$(LOCAL_BUILT_MODULE):</span><br><span class="line">	$(hide) echo &quot;Fake: $@&quot;</span><br><span class="line">	$(hide) mkdir -p $(dir $@)</span><br><span class="line">	$(hide) touch $@</span><br><span class="line"></span><br><span class="line">PACKAGES.$(LOCAL_MODULE).OVERRIDES :&#x3D; $(strip $(LOCAL_OVERRIDES_PACKAGES))</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是 <code>$(hide) echo &quot;Fake: $@&quot;</code> 前面是 TAB，不是空格， Makefile 语法的要求。</p>
+<p>然后在 device/qiushao/pure/pure.mk 里面添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_PACKAGES +&#x3D; remove_unused_module</span><br></pre></td></tr></table></figure>
+
+<p>将要去掉的模块添加到 LOCAL_OVERRIDES_PACKAGES 就可以了，统一管理，很方便。<br>下面来验证一下。把 out/target/product/pure/system 目录删除，然后重新编译，运行，发现Contacts，Email这两个应用的确是不见了。</p>
+<h2 id="3-LOCAL-OVERRIDES-PACKAGES-原理"><a href="#3-LOCAL-OVERRIDES-PACKAGES-原理" class="headerlink" title="3. LOCAL_OVERRIDES_PACKAGES 原理"></a>3. LOCAL_OVERRIDES_PACKAGES 原理</h2><p>LOCAL_MODULE_CLASS := FAKE 指定编译输出的目录为 $(PRODUCT_OUT)/fake_packages， 也就是不会打包到系统里面。<br>LOCAL_OVERRIDES_PACKAGES 定义本模块要覆盖的模块，也就是本模块被编译的话，被覆盖的模块就不会被编译了。</p>
+<h3 id="3-1-Android-8-0"><a href="#3-1-Android-8-0" class="headerlink" title="3.1 Android 8.0"></a>3.1 Android 8.0</h3><p>Android 8.0 版本的代码在 main.mk 里面有对 OVERRIDES_PACKAGES 进行处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Some packages may override others using LOCAL_OVERRIDES_PACKAGES.</span><br><span class="line"># Filter out (do not install) any overridden packages.</span><br><span class="line">overridden_packages :&#x3D; $(call get-package-overrides,$(modules_to_install))</span><br><span class="line">ifdef overridden_packages</span><br><span class="line">#  old_modules_to_install :&#x3D; $(modules_to_install)</span><br><span class="line">  modules_to_install :&#x3D; \</span><br><span class="line">      $(filter-out $(foreach p,$(overridden_packages),$(p) %&#x2F;$(p).apk %&#x2F;$(p).odex %&#x2F;$(p).vdex), \</span><br><span class="line">          $(modules_to_install))</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+
+<p>modules_to_install 是所有要编译的模块，<br>overridden_packages 就是指要覆盖的模块了，一般来说是通过在各模块的 Android.mk 里面通过 LOCAL_OVERRIDES_PACKAGES 指定的。<br>filter-out 就是过滤掉。<br>这段代码的意思就是将 overridden_packages 从 modules_to_install 中删除掉。</p>
+<h3 id="3-2-Android-10-0"><a href="#3-2-Android-10-0" class="headerlink" title="3.2 Android 10.0"></a>3.2 Android 10.0</h3><p>Android 10.0 的时候对 main.mk 进行了大修改。对 OVERRIDES_PACKAGES 进行处理为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># Lists most of the files a particular product installs, including:</span><br><span class="line"># - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES</span><br><span class="line"># - PRODUCT_COPY_FILES</span><br><span class="line"># The base list of modules to build for this product is specified</span><br><span class="line"># by the appropriate product definition file, which was included</span><br><span class="line"># by product_config.mk.</span><br><span class="line"># Name resolution for PRODUCT_PACKAGES:</span><br><span class="line">#   foo:32 resolves to foo_32;</span><br><span class="line">#   foo:64 resolves to foo;</span><br><span class="line">#   foo resolves to both foo and foo_32 (if foo_32 is defined).</span><br><span class="line">#</span><br><span class="line"># Name resolution for LOCAL_REQUIRED_MODULES:</span><br><span class="line">#   If a module is built for 2nd arch, its required module resolves to</span><br><span class="line">#   32-bit variant, if it exits. See the select-bitness-of-required-modules definition.</span><br><span class="line"># $(1): product makefile</span><br><span class="line">define product-installed-files</span><br><span class="line">  $(eval _mk :&#x3D; $(strip $(1))) \</span><br><span class="line">  $(eval _pif_modules :&#x3D; \</span><br><span class="line">    $(PRODUCTS.$(_mk).PRODUCT_PACKAGES) \</span><br><span class="line">    $(if $(filter eng,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_ENG)) \</span><br><span class="line">    $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \</span><br><span class="line">    $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \</span><br><span class="line">    $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \</span><br><span class="line">    $(call auto-included-modules) \</span><br><span class="line">  ) \</span><br><span class="line">  $(eval ### Filter out the overridden packages and executables before doing expansion) \</span><br><span class="line">  $(eval _pif_overrides :&#x3D; $(call module-overrides,$(_pif_modules))) \</span><br><span class="line">  $(eval _pif_modules :&#x3D; $(filter-out $(_pif_overrides), $(_pif_modules))) \</span><br><span class="line">  $(eval ### Resolve the :32 :64 module name) \</span><br><span class="line">  $(eval _pif_modules_32 :&#x3D; $(patsubst %:32,%,$(filter %:32, $(_pif_modules)))) \</span><br><span class="line">  $(eval _pif_modules_64 :&#x3D; $(patsubst %:64,%,$(filter %:64, $(_pif_modules)))) \</span><br><span class="line">  $(eval _pif_modules_rest :&#x3D; $(filter-out %:32 %:64,$(_pif_modules))) \</span><br><span class="line">  $(eval ### Note for 32-bit product, 32 and 64 will be added as their original module names.) \</span><br><span class="line">  $(eval _pif_modules :&#x3D; $(call get-32-bit-modules-if-we-can, $(_pif_modules_32))) \</span><br><span class="line">  $(eval _pif_modules +&#x3D; $(_pif_modules_64)) \</span><br><span class="line">  $(eval ### For the rest we add both) \</span><br><span class="line">  $(eval _pif_modules +&#x3D; $(call get-32-bit-modules, $(_pif_modules_rest))) \</span><br><span class="line">  $(eval _pif_modules +&#x3D; $(_pif_modules_rest)) \</span><br><span class="line">  $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \</span><br><span class="line">  $(filter-out $(HOST_OUT_ROOT)&#x2F;%,$(call module-installed-files, $(_pif_modules))) \</span><br><span class="line">  $(call resolve-product-relative-paths,\</span><br><span class="line">    $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))</span><br><span class="line">endef</span><br></pre></td></tr></table></figure>
+
+<p>其中 _pif_modules 变量保存了所有要安装到系统的模块。_pif_overrides　变量保存了所有被 overridden 的模块。<br><code>$(eval _pif_modules := $(filter-out $(_pif_overrides), $(_pif_modules)))</code><br>这行的意思就是把 _pif_overrides 模块从 _pif_modules 模块中删除。</p>
+<p>获取所有被 overridden 的模块方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">define module-overrides</span><br><span class="line">$(foreach m,$(1),$(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES) $(SHARED_LIBRARIES.$(m).OVERRIDES))</span><br><span class="line">endef</span><br></pre></td></tr></table></figure>
+
+<p>从这个函数来看目前我们可以 OVERRIDES 的模块类型有 PACKAGES, EXECUTABLES, SHARED_LIBRARIES。如果我们需要 OVERRIDES 其他类型的模块的话，扩展 module-overrides 这个函数就行。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/" title="Android系统开发入门-6.删除Android原生内置APK" target="_blank" rel="external">http://qiushao.net/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" title="Android系统开发入门-7.添加java层系统服务"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/12/10/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/5-%E6%B7%BB%E5%8A%A0%E9%A2%84%E7%BC%96%E8%AF%91%E6%A8%A1%E5%9D%97/" title="Android系统开发入门-5.添加预编译模块"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

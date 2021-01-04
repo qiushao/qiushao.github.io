@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发进阶-BootAnimation启动与结束流程 | 一叶知秋</title>
+  <meta name="description" content="开机动画 Android 系统在启动过程中播放的一段动画，其目的是给用户一个良好的开机体验。在开机过程中能看到一个动画效果表示系统正在启动中，肯定比一直黑屏等待系统启动完成体验好很多。下面我们从源码层面了解一下 BootAnimation 的启动流程。 1. bootanim 服务声明BootAnimation 的源码路径为: Android&#x2F;frameworks&#x2F;base&#x2F;cmds&#x2F;bootan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发进阶-BootAnimation启动与结束流程">
+<meta property="og:url" content="http://qiushao.net/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="开机动画 Android 系统在启动过程中播放的一段动画，其目的是给用户一个良好的开机体验。在开机过程中能看到一个动画效果表示系统正在启动中，肯定比一直黑屏等待系统启动完成体验好很多。下面我们从源码层面了解一下 BootAnimation 的启动流程。 1. bootanim 服务声明BootAnimation 的源码路径为: Android&#x2F;frameworks&#x2F;base&#x2F;cmds&#x2F;bootan">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png">
+<meta property="article:published_time" content="2020-02-23T04:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-bootanim-服务声明"><span class="toc-text">1. bootanim 服务声明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-bootanim-服务启动"><span class="toc-text">2. bootanim 服务启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-BootAnimation-播放流程"><span class="toc-text">3. BootAnimation 播放流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-bootanim-服务结束"><span class="toc-text">4. bootanim 服务结束</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发进阶/BootAnimation启动流程" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发进阶-BootAnimation启动与结束流程
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="article-date">
+	  <time datetime="2020-02-23T04:00:00.000Z" itemprop="datePublished">2020-02-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="leancloud_visitors"  data-flag-title="Android系统开发进阶-BootAnimation启动与结束流程">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>开机动画 Android 系统在启动过程中播放的一段动画，其目的是给用户一个良好的开机体验。在开机过程中能看到一个动画效果表示系统正在启动中，肯定比一直黑屏等待系统启动完成体验好很多。下面我们从源码层面了解一下 BootAnimation 的启动流程。</p>
+<h2 id="1-bootanim-服务声明"><a href="#1-bootanim-服务声明" class="headerlink" title="1. bootanim 服务声明"></a>1. bootanim 服务声明</h2><p>BootAnimation 的源码路径为: <code>Android/frameworks/base/cmds/bootanimation</code>。进入这个目录后，我们看到有一个 bootanim.rc 文件，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">service bootanim &#x2F;system&#x2F;bin&#x2F;bootanimation</span><br><span class="line">    class core animation</span><br><span class="line">    user graphics</span><br><span class="line">    group graphics audio</span><br><span class="line">    disabled</span><br><span class="line">    oneshot</span><br><span class="line">    ioprio rt 0</span><br><span class="line">    writepid &#x2F;dev&#x2F;stune&#x2F;top-app&#x2F;tasks</span><br></pre></td></tr></table></figure>
+
+<p>其中定义了一个 bootanim 服务，　但这个服务是被 disable 的状态，也就是 init 解析 init.rc 的时候不会自动启动这个服务。</p>
+<p>再看 Android.bp :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cc_binary &#123;</span><br><span class="line">    name: &quot;bootanimation&quot;,</span><br><span class="line">    defaults: [&quot;bootanimation_defaults&quot;],</span><br><span class="line">    ...</span><br><span class="line">    init_rc: [&quot;bootanim.rc&quot;],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有个 <code>init_rc: [&quot;bootanim.rc&quot;]</code> 的配置。加了这个配置之后，在编译系统的时候会把 bootanim.rc 文件安装到 /system/etc/init/ 目录。<br>init 进程在启动的时候会加载这个目录下的所有 rc 文件，　具体见代码路径 Android/system/core/init/init.cpp：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">LoadBootScripts</span><span class="params">(ActionManager&amp; action_manager, ServiceList&amp; service_list)</span> </span>&#123;</span><br><span class="line">    Parser parser = CreateParser(action_manager, service_list);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> bootscript = GetProperty(<span class="string">"ro.boot.init_rc"</span>, <span class="string">""</span>);</span><br><span class="line">    <span class="keyword">if</span> (bootscript.empty()) &#123;</span><br><span class="line">        parser.ParseConfig(<span class="string">"/init.rc"</span>);</span><br><span class="line">        <span class="keyword">if</span> (!parser.ParseConfig(<span class="string">"/system/etc/init"</span>)) &#123;</span><br><span class="line">            late_import_paths.emplace_back(<span class="string">"/system/etc/init"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!parser.ParseConfig(<span class="string">"/product/etc/init"</span>)) &#123;</span><br><span class="line">            late_import_paths.emplace_back(<span class="string">"/product/etc/init"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!parser.ParseConfig(<span class="string">"/product_services/etc/init"</span>)) &#123;</span><br><span class="line">            late_import_paths.emplace_back(<span class="string">"/product_services/etc/init"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!parser.ParseConfig(<span class="string">"/odm/etc/init"</span>)) &#123;</span><br><span class="line">            late_import_paths.emplace_back(<span class="string">"/odm/etc/init"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!parser.ParseConfig(<span class="string">"/vendor/etc/init"</span>)) &#123;</span><br><span class="line">            late_import_paths.emplace_back(<span class="string">"/vendor/etc/init"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        parser.ParseConfig(bootscript);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，我们已经定义好了 bootanim 服务，但是并没有自动启动，接下来我们看看是怎么启动的。</p>
+<h2 id="2-bootanim-服务启动"><a href="#2-bootanim-服务启动" class="headerlink" title="2. bootanim 服务启动"></a>2. bootanim 服务启动</h2><p>我们先想一下为什么 bootanim 服务要定义成 disable 的？为什么不直接在 init 阶段启动？<br>因为动画是需要显示屏幕上的。如果图像显示服务那个时候还没有初始化完，那 BootAnimation 就没法播放动画了。所以 bootanim 服务必须要等图形显示相关的服务初始化完了才启动。在 Android 系统中，图像合成显示的服务是 surfaceflinger，源码路径为：<code>Android/frameworks/native/services/surfaceflinger</code>。</p>
+<p>我们进入 surfaceflinger 源码目录 grep 一下 :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;frameworks&#x2F;native&#x2F;services&#x2F;surfaceflinger$ grep -nr bootanim</span><br><span class="line">StartPropertySetThread.cpp:33:    property_set(&quot;service.bootanim.exit&quot;, &quot;0&quot;);</span><br><span class="line">StartPropertySetThread.cpp:35:    property_set(&quot;ctl.start&quot;, &quot;bootanim&quot;);</span><br><span class="line">tests&#x2F;fakehwc&#x2F;FakeComposerUtils.cpp:162:    property_set(&quot;debug.sf.nobootanimation&quot;, &quot;1&quot;);</span><br><span class="line">tests&#x2F;fakehwc&#x2F;FakeComposerUtils.cpp:165:        property_get(&quot;debug.sf.nobootanimation&quot;, value, &quot;0&quot;);</span><br><span class="line">tests&#x2F;fakehwc&#x2F;FakeComposerUtils.cpp:178:    property_set(&quot;debug.sf.nobootanimation&quot;, &quot;0&quot;);</span><br><span class="line">SurfaceFlinger.cpp:562:    property_set(&quot;service.bootanim.exit&quot;, &quot;1&quot;);</span><br><span class="line">EventLog&#x2F;EventLogTags.logtags:39:60110 sf_stop_bootanim (time|2|3)</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;frameworks&#x2F;native&#x2F;services&#x2F;surfaceflinger$</span><br></pre></td></tr></table></figure>
+
+<p>发现在 StartPropertySetThread.cpp 中有启动 bootanim 相关的代码： <code>property_set(&quot;ctl.start&quot;, &quot;bootanim&quot;);</code><br>设置　<code>ctl.start=bootanim</code> 属性，即让 init 进程启动 bootanim 服务。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">StartPropertySetThread::threadLoop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Set property service.sf.present_timestamp, consumer need check its readiness</span></span><br><span class="line">    property_set(kTimestampProperty, mTimestampPropertyValue ? <span class="string">"1"</span> : <span class="string">"0"</span>);</span><br><span class="line">    <span class="comment">// Clear BootAnimation exit flag</span></span><br><span class="line">    property_set(<span class="string">"service.bootanim.exit"</span>, <span class="string">"0"</span>);</span><br><span class="line">    <span class="comment">// Start BootAnimation if not started</span></span><br><span class="line">    property_set(<span class="string">"ctl.start"</span>, <span class="string">"bootanim"</span>);</span><br><span class="line">    <span class="comment">// Exit immediately</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看 SurfaceFlinger.cpp 中的 SurfaceFlinger::init() 函数的一段代码:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// set initial conditions (e.g. unblank default device)</span></span><br><span class="line">initializeDisplays();</span><br><span class="line">getRenderEngine().primeCache();</span><br><span class="line"><span class="comment">// Inform native graphics APIs whether the present timestamp is supported:</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">bool</span> presentFenceReliable =　!getHwComposer().hasCapability(HWC2::Capability::PresentFenceIsNotReliable);</span><br><span class="line">mStartPropertySetThread = getFactory().createStartPropertySetThread(presentFenceReliable);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (mStartPropertySetThread-&gt;Start() != NO_ERROR) &#123;</span><br><span class="line">    ALOGE(<span class="string">"Run StartPropertySetThread failed!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先调用 <code>initializeDisplays();</code> 初始化显示系统。再调用 <code>mStartPropertySetThread-&gt;Start()</code>　启动 mStartPropertySetThread 线程：<br>mStartPropertySetThread-&gt;Start() –&gt; mStartPropertySetThread-&gt;run() –&gt; mStartPropertySetThread-&gt;threadLoop()。<br>bootanim 服务就这样在显示系统初始化完成后，马上被 SurfaceFlinger 服务启动了。</p>
+<p>SurfaceFlinger 的源码目录下也有个 rc 文件 surfaceflinger.rc：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">service surfaceflinger &#x2F;system&#x2F;bin&#x2F;surfaceflinger</span><br><span class="line">    class core animation</span><br><span class="line">    user system</span><br><span class="line">    group graphics drmrpc readproc</span><br><span class="line">    onrestart restart zygote</span><br><span class="line">    writepid &#x2F;dev&#x2F;stune&#x2F;foreground&#x2F;tasks</span><br><span class="line">    socket pdx&#x2F;system&#x2F;vr&#x2F;display&#x2F;client     stream 0666 system graphics u:object_r:pdx_display_client_endpoint_socket:s0</span><br><span class="line">    socket pdx&#x2F;system&#x2F;vr&#x2F;display&#x2F;manager    stream 0666 system graphics u:object_r:pdx_display_manager_endpoint_socket:s0</span><br><span class="line">    socket pdx&#x2F;system&#x2F;vr&#x2F;display&#x2F;vsync      stream 0666 system graphics u:object_r:pdx_display_vsync_endpoint_socket:s0</span><br></pre></td></tr></table></figure>
+
+<p>surfaceflinger 没有被 disable, 那就是系统启动的时候， 由 init 进程自动启动的了。</p>
+<h2 id="3-BootAnimation-播放流程"><a href="#3-BootAnimation-播放流程" class="headerlink" title="3. BootAnimation 播放流程"></a>3. BootAnimation 播放流程</h2><p>BootAnimation 的执行入口为 bootanimation_main.cpp 的 main 函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    setpriority(PRIO_PROCESS, <span class="number">0</span>, ANDROID_PRIORITY_DISPLAY);</span><br><span class="line">    <span class="comment">//是否支持开机动画，　由 ro.boot.quiescent 这个属性决定。</span></span><br><span class="line">    <span class="keyword">bool</span> noBootAnimation = bootAnimationDisabled();</span><br><span class="line">    ALOGI_IF(noBootAnimation,  <span class="string">"boot animation disabled"</span>);</span><br><span class="line">    <span class="keyword">if</span> (!noBootAnimation) &#123;</span><br><span class="line">        <span class="function">sp&lt;ProcessState&gt; <span class="title">proc</span><span class="params">(ProcessState::self())</span></span>;</span><br><span class="line">        ProcessState::self()-&gt;startThreadPool();</span><br><span class="line">        <span class="comment">// create the boot animation object (may take up to 200ms for 2MB zip)</span></span><br><span class="line">        sp&lt;BootAnimation&gt; boot = <span class="keyword">new</span> BootAnimation(audioplay::createAnimationCallbacks());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//等待SurfaceFlinger初始化完成并加入到 ServiceManager。</span></span><br><span class="line">        <span class="comment">//因为 bootanim 服务是在 SurfaceFlinger.init() 里面启动的，但在 SurfaceFlinger 服务是在执行完 SurfaceFlinger.init() 之后才加入到 ServiceManager 的，所以这里需要等一下。</span></span><br><span class="line">        waitForSurfaceFlinger();</span><br><span class="line">        <span class="comment">//运行动画线程，开始播放动画。</span></span><br><span class="line">        boot-&gt;<span class="built_in">run</span>(<span class="string">"BootAnimation"</span>, PRIORITY_DISPLAY);</span><br><span class="line">        ALOGV(<span class="string">"Boot animation set up. Joining pool."</span>);</span><br><span class="line">        IPCThreadState::self()-&gt;joinThreadPool();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>BootAnimation 继承了 Thread, Thread 又继承了 RefBase , RefBase 有一个函数 onFirstRef()，这个函数在对象第一次被引用的时候会调用，这是 RefBase 引用计数的一个机制。 BootAnimation 类重写了这个函数。因此在执行 <code>sp&lt;BootAnimation&gt; boot = new BootAnimation(audioplay::createAnimationCallbacks());</code> 这行的时候， BootAnimation.onFirstRef() 会被自动调用。这个函数里面会加载动画文件：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BootAnimation::onFirstRef</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">status_t</span> err = mSession-&gt;linkToComposerDeath(<span class="keyword">this</span>);</span><br><span class="line">    SLOGE_IF(err, <span class="string">"linkToComposerDeath failed (%s) "</span>, strerror(-err));</span><br><span class="line">    <span class="keyword">if</span> (err == NO_ERROR) &#123;</span><br><span class="line">        <span class="comment">// Load the animation content -- this can be slow (eg 200ms)</span></span><br><span class="line">        <span class="comment">// called before waitForSurfaceFlinger() in main() to avoid wait</span></span><br><span class="line">        ALOGD(<span class="string">"%sAnimationPreloadTiming start time: %"</span> PRId64 <span class="string">"ms"</span>,</span><br><span class="line">                mShuttingDown ? <span class="string">"Shutdown"</span> : <span class="string">"Boot"</span>, elapsedRealtime());</span><br><span class="line">        preloadAnimation();</span><br><span class="line">        ALOGD(<span class="string">"%sAnimationPreloadStopTiming start time: %"</span> PRId64 <span class="string">"ms"</span>,</span><br><span class="line">                mShuttingDown ? <span class="string">"Shutdown"</span> : <span class="string">"Boot"</span>, elapsedRealtime());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我有点不太明白，为什么要重写 onFirstRef，并在里面加载动画文件。为什么不直接在构造函数里面加载动画文件？绕这么一圈有什么意义呢？<br>下面的疑问暂且不管，我们来看看怎么加载动画文件：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> OEM_BOOTANIMATION_FILE[] = <span class="string">"/oem/media/bootanimation.zip"</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> PRODUCT_BOOTANIMATION_DARK_FILE[] = <span class="string">"/product/media/bootanimation-dark.zip"</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> PRODUCT_BOOTANIMATION_FILE[] = <span class="string">"/product/media/bootanimation.zip"</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> SYSTEM_BOOTANIMATION_FILE[] = <span class="string">"/system/media/bootanimation.zip"</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> APEX_BOOTANIMATION_FILE[] = <span class="string">"/apex/com.android.bootanimation/etc/bootanimation.zip"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">BootAnimation::preloadAnimation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    findBootAnimationFile();</span><br><span class="line">    <span class="keyword">if</span> (!mZipFileName.isEmpty()) &#123;</span><br><span class="line">        mAnimation = loadAnimation(mZipFileName);</span><br><span class="line">        <span class="keyword">return</span> (mAnimation != <span class="literal">nullptr</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BootAnimation::findBootAnimationFile</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">bool</span> playDarkAnim = android::base::GetIntProperty(<span class="string">"ro.boot.theme"</span>, <span class="number">0</span>) == <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span>* bootFiles[] =</span><br><span class="line">        &#123;APEX_BOOTANIMATION_FILE, playDarkAnim ? PRODUCT_BOOTANIMATION_DARK_FILE : PRODUCT_BOOTANIMATION_FILE,</span><br><span class="line">         OEM_BOOTANIMATION_FILE, SYSTEM_BOOTANIMATION_FILE&#125;;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span>* shutdownFiles[] =</span><br><span class="line">        &#123;PRODUCT_SHUTDOWNANIMATION_FILE, OEM_SHUTDOWNANIMATION_FILE, SYSTEM_SHUTDOWNANIMATION_FILE, <span class="string">""</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">char</span>* f : (!mShuttingDown ? bootFiles : shutdownFiles)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (access(f, R_OK) == <span class="number">0</span>) &#123;</span><br><span class="line">            mZipFileName = f;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>findBootAnimationFile() 函数的功能是根据优先级查找存在的动画文件，结果保存在 mZipFileName 中。bootFiles 是开机动画视频优先级列表， shutdownFiles 是关机动画优先级列表。这里我们只关心开机动画，其优先级如下:<br>APEX_BOOTANIMATION_FILE &gt; PRODUCT_BOOTANIMATION_FILE &gt; OEM_BOOTANIMATION_FILE &gt; SYSTEM_BOOTANIMATION_FILE<br>对应的具体路径看开关的常量定义。</p>
+<p>如果找到动画文件，则调用 loadAnimation 来加载动画文件。具体的逻辑我们这里就不关注了。</p>
+<p>接下来回到 main 函数中，　等待 SurfaceFlinger 初始化完成。然后启动 BootAnimation 线程。这里又有一个比较绕的地方：BootAnimation 的父类 Thread 有一个虚函数 readyToRun。BootAnimation 重写了这个函数。<strong>在调用 Thread.run 函数启动线程的时候会先调用 readyToRun，然后再调用 threadLoop。</strong><br>readyToRun 的主要工作是调用 SurfaceFlinger 服务创建 surface， 然后初始化 opengl(egl) 环境，这里我们也不用关注。 threadLoop 就是开始真正播放动画了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">BootAnimation::threadLoop</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">bool</span> r;</span><br><span class="line">    <span class="comment">// We have no bootanimation file, so we use the stock android logo</span></span><br><span class="line">    <span class="comment">// animation.</span></span><br><span class="line">    <span class="keyword">if</span> (mZipFileName.isEmpty()) &#123;</span><br><span class="line">        r = android();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        r = movie();</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">BootAnimation::movie</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    playAnimation(*mAnimation);</span><br><span class="line">    ...</span><br><span class="line">    releaseAnimation(mAnimation);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">BootAnimation::playAnimation</span><span class="params">(<span class="keyword">const</span> Animation&amp; animation)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i=<span class="number">0</span> ; i&lt;pcount ; i++) &#123; <span class="comment">//动画是分段的，依次播放各片段</span></span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> r=<span class="number">0</span> ; !part.count || r&lt;part.count ; r++) &#123; <span class="comment">//每个片段循环播放次数</span></span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">size_t</span> j=<span class="number">0</span> ; j&lt;fcount &amp;&amp; (!exitPending() || part.playUntilComplete) ; j++) &#123; <span class="comment">//一个片段的一次播放</span></span><br><span class="line">                <span class="comment">//逐帧播放动画，这些 opengl 绘图细节我们不关注</span></span><br><span class="line">                ...</span><br><span class="line">                <span class="comment">//查检是否开机完成，可以退出动画了</span></span><br><span class="line">                checkExit();</span><br><span class="line">            &#125;</span><br><span class="line">            usleep(part.pause * ns2us(frameDuration));</span><br><span class="line">            <span class="comment">// For infinite parts, we've now played them at least once, so perhaps exit</span></span><br><span class="line">            <span class="keyword">if</span>(exitPending() &amp;&amp; !part.count &amp;&amp; mCurrentInset &gt;= mTargetInset)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BootAnimation::checkExit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// EXIT_PROP_NAME = "service.bootanim.exit"</span></span><br><span class="line">    <span class="keyword">char</span> value[PROPERTY_VALUE_MAX];</span><br><span class="line">    property_get(EXIT_PROP_NAME, value, <span class="string">"0"</span>);</span><br><span class="line">    <span class="keyword">int</span> exitnow = atoi(value);</span><br><span class="line">    <span class="keyword">if</span> (exitnow) &#123;</span><br><span class="line">        requestExit();</span><br><span class="line">        mCallbacks-&gt;<span class="built_in">shutdown</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我把其中绘图相关的代码都删除掉了，只保留了个逻辑框架。播放线程开始后，先判断是否有动画文件存在，有的话，则调用 movie() 函数来播放动画。没有的话，则调用 android()函数来显示一个 android logo。<br>movie 又调用了 playAnimation() 函数来做真正的播放工作。动画的分段，循环播放逻辑已经在上面的代码上注释了。在播放每一帧的最后都会调用 checkExit() 函数来检查是否要退出动画了。<br>checkExit() 函数里面通过获取 service.bootanim.exit 这个属性值来判断是否要退出动画。如果这个属性被设置为 “1”, 则调用 requestExit() 请求结束线程, exitPending()函数的返回值就会变成 true。就退出播放线程。BootAnimation 的使命就完成了，可以退出了。</p>
+<h2 id="4-bootanim-服务结束"><a href="#4-bootanim-服务结束" class="headerlink" title="4. bootanim 服务结束"></a>4. bootanim 服务结束</h2><p>经过上面的流程分析，我们知道了 BootAnimation 通过 service.bootanim.exit 这个属性来退出动画播放的。那这个属性是谁设置的呢？泛化点来说，我们怎么分析确定一条又长又复杂的调用链呢？<br>我的方法是 grep + 堆栈打印。有了这两把梭，基本上大部分问题都能搞定。一般能用 grep 就用 grep 先，对于比较简单的调用链来说，grep 就已经能确定了。只有遇到调用关系比较乱，屡不清关系，才用堆栈打印。下面我们就用这两把梭来试试。<br>先在 framework 目录下 grep :</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$ grep -nr "service.bootanim.exit"</span><br><span class="line">base/core/proto/android/os/system_properties.proto:522:    optional int32  service_bootanim_exit = 23;</span><br><span class="line">base/cmds/bootanimation/BootAnimation.cpp:98:static const char EXIT_PROP_NAME[] = "service.bootanim.exit";</span><br><span class="line">base/cmds/bootanimation/FORMAT.md:104:the system property `service.bootanim.exit` to a nonzero string.)</span><br><span class="line">base/cmds/bootanimation/iot/iotbootanimation_main.cpp:80:                property_get("service.bootanim.exit", value, "0");</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3312:                SystemProperties.set("service.bootanim.exit", "1");</span><br><span class="line">native/services/surfaceflinger/StartPropertySetThread.cpp:33:    property_set("service.bootanim.exit", "0");</span><br><span class="line">native/services/surfaceflinger/SurfaceFlinger.cpp:562:    property_set("service.bootanim.exit", "1");</span><br><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$</span><br></pre></td></tr></table></figure>
+
+<p>我们发现有两处地方设置了 <code>service.bootanim.exit = 1</code>。WindowManagerService.java 和 SurfaceFlinger.cpp。<br>这两条路我们分别分析，先看 c++ 层的调用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SurfaceFlinger::bootFinished</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// stop boot animation</span></span><br><span class="line">    <span class="comment">// formerly we would just kill the process, but we now ask it to exit so it</span></span><br><span class="line">    <span class="comment">// can choose where to stop the animation.</span></span><br><span class="line">    property_set(<span class="string">"service.bootanim.exit"</span>, <span class="string">"1"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>那 bootFinished 函数是由谁来调用的呢？我们在 framework 目录下 grep 一下看看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$ grep -nr bootFinished</span><br><span class="line">native/services/surfaceflinger/SurfaceFlinger.cpp:532:void SurfaceFlinger::bootFinished()</span><br><span class="line">native/services/surfaceflinger/SurfaceFlinger.h:409:    void bootFinished() override;</span><br><span class="line">native/libs/gui/include/gui/ISurfaceComposer.h:149:    virtual void bootFinished() = 0;</span><br><span class="line">native/libs/gui/tests/Surface_test.cpp:568:    void bootFinished() override &#123;&#125;</span><br><span class="line">Binary file native/libs/gui/.ISurfaceComposer.cpp.swp matches</span><br><span class="line">native/libs/gui/ISurfaceComposer.cpp:104:    virtual void bootFinished()</span><br><span class="line">native/libs/gui/ISurfaceComposer.cpp:1058:            bootFinished();</span><br><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$</span><br></pre></td></tr></table></figure>
+
+<p>看起来是 ISurfaceComposer.cpp 里面调用的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">status_t</span> <span class="title">BnSurfaceComposer::onTransact</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">uint32_t</span> code, <span class="keyword">const</span> Parcel&amp; data, Parcel* reply, <span class="keyword">uint32_t</span> flags)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span>(code) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">case</span> BOOT_FINISHED: &#123;</span><br><span class="line">            CHECK_INTERFACE(ISurfaceComposer, data, reply);</span><br><span class="line">            bootFinished();</span><br><span class="line">            <span class="keyword">return</span> NO_ERROR;</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+<p>那又是谁通过 binder 调用了　BOOT_FINISHED 这个指令呢？继续在 framework 目录下 grep </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$ grep -nr BOOT_FINISHED</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3327:                    surfaceFlinger.transact(IBinder.FIRST_CALL_TRANSACTION, // BOOT_FINISHED</span><br><span class="line">native/services/surfaceflinger/SurfaceFlinger.cpp:5189:        case BOOT_FINISHED:</span><br><span class="line">native/libs/gui/include/gui/ISurfaceComposer.h:448:        // Note: BOOT_FINISHED must remain this value, it is called from</span><br><span class="line">native/libs/gui/include/gui/ISurfaceComposer.h:450:        BOOT_FINISHED = IBinder::FIRST_CALL_TRANSACTION,</span><br><span class="line">native/libs/gui/ISurfaceComposer.cpp:108:        remote()-&gt;transact(BnSurfaceComposer::BOOT_FINISHED, data, &amp;reply);</span><br><span class="line">native/libs/gui/ISurfaceComposer.cpp:1056:        case BOOT_FINISHED: &#123;</span><br><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$ </span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">看起来是 WindowManagerService.java 里面调用的：</span><br><span class="line">```java</span><br><span class="line">private void performEnableScreen() &#123;</span><br><span class="line">    synchronized (mGlobalLock) &#123;</span><br><span class="line">        ...</span><br><span class="line">        if (!mBootAnimationStopped) &#123;</span><br><span class="line">            Trace.asyncTraceBegin(TRACE_TAG_WINDOW_MANAGER, "Stop bootanim", 0);</span><br><span class="line">            // stop boot animation</span><br><span class="line">            // formerly we would just kill the process, but we now ask it to exit so it</span><br><span class="line">            // can choose where to stop the animation.</span><br><span class="line">            SystemProperties.set("service.bootanim.exit", "1");</span><br><span class="line">            mBootAnimationStopped = true;</span><br><span class="line">         &#125;</span><br><span class="line">        if (!mForceDisplayEnabled &amp;&amp; !checkBootAnimationCompleteLocked()) &#123;</span><br><span class="line">            if (DEBUG_BOOT) Slog.i(TAG_WM, "performEnableScreen: Waiting for anim complete");</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            IBinder surfaceFlinger = ServiceManager.getService("SurfaceFlinger");</span><br><span class="line">            if (surfaceFlinger != null) &#123;</span><br><span class="line">                 Slog.i(TAG_WM, "******* TELLING SURFACE FLINGER WE ARE BOOTED!");</span><br><span class="line">                Parcel data = Parcel.obtain();</span><br><span class="line">                 data.writeInterfaceToken("android.ui.ISurfaceComposer");</span><br><span class="line">                 surfaceFlinger.transact(IBinder.FIRST_CALL_TRANSACTION, // BOOT_FINISHED</span><br><span class="line">                         data, null, 0);</span><br><span class="line">                data.recycle();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (RemoteException ex) &#123;</span><br><span class="line">             Slog.e(TAG_WM, "Boot completed: SurfaceFlinger is dead!");</span><br><span class="line">        &#125;</span><br><span class="line">         ...</span><br></pre></td></tr></table></figure>
+
+<p>在 performEnableScreen 这个函数中通过 binder 调用了 <code>surfaceFlinger.transact(IBinder.FIRST_CALL_TRANSACTION, data, null, 0);</code><br>而实际上，　<code>IBinder.FIRST_CALL_TRANSACTION == BOOT_FINISHED</code>, 所以也就是相当于调用了 BOOT_FINISHED。这里的代码风格就有点问题了，如果没有注释的话，估计就找不下去了。</p>
+<p>我们再细心看的话，会发现其实这里已经直接设置了 <code>SystemProperties.set(&quot;service.bootanim.exit&quot;, &quot;1&quot;);</code>，这里就是我们最开始使用 grep “service.bootanim.exit” 时，得到的另一条线路。也就是 c++, java 这两条路都汇集到这里了。那 java 层都已经设置了，其实 c++ 层设置与否都没关系了。</p>
+<p>我们继续顺藤摸瓜，看看是谁调用了 performEnableScreen :</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$ grep -nr performEnableScreen</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3235:        performEnableScreen();</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3271:        performEnableScreen();</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3281:    private void performEnableScreen() &#123;</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3283:            if (DEBUG_BOOT) Slog.i(TAG_WM, "performEnableScreen: mDisplayEnabled=" + mDisplayEnabled</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3317:                if (DEBUG_BOOT) Slog.i(TAG_WM, "performEnableScreen: Waiting for anim complete");</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:3394:            performEnableScreen();</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:4734:                    performEnableScreen();</span><br><span class="line">base/services/core/java/com/android/server/wm/WindowManagerService.java:4878:                        performEnableScreen();</span><br><span class="line">base/services/art-profile:17483:HSPLcom/android/server/wm/WindowManagerService;-&gt;performEnableScreen()V</span><br><span class="line">qiushao@qiushao-pc:~/source/android-10/frameworks$</span><br></pre></td></tr></table></figure>
+
+<p>看起来有好几个调用，稍微看了下这几个调用的上下文，还真不好确定是哪一处调用。这时候就该我们的第二把梭 <strong>堆栈打印</strong> 出场了。我们在 performEnableScreen 函数的入口添加一行打印：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">performEnableScreen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Slog.d(TAG_WM, <span class="string">"qiushao performEnableScreen"</span>, <span class="keyword">new</span> Throwable());</span><br></pre></td></tr></table></figure>
+
+<p>然后重新编译运行一下，看看 log，　找第一个 “qiushao performEnableScreen”:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager: qiushao performEnableScreen</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager: java.lang.Throwable</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at com.android.server.wm.WindowManagerService.performEnableScreen(WindowManagerService.java:3282)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at com.android.server.wm.WindowManagerService.enableScreenAfterBoot(WindowManagerService.java:3235)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at com.android.server.wm.ActivityTaskManagerService$LocalService.enableScreenAfterBoot(ActivityTaskManagerService.java:6482)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at com.android.server.wm.ActivityTaskManagerService.lambda$postFinishBooting$6$ActivityTaskManagerService(ActivityTaskManagerService.java:5678)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at com.android.server.wm.-$$Lambda$ActivityTaskManagerService$oP6xxIfnD4kb4JN7aSJU073ULR4.run(Unknown Source:6)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at android.os.Handler.handleCallback(Handler.java:883)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at android.os.Handler.dispatchMessage(Handler.java:100)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at android.os.Looper.loop(Looper.java:214)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at android.os.HandlerThread.run(HandlerThread.java:67)</span><br><span class="line">02-24 20:33:49.960  1657  1698 D WindowManager:         at com.android.server.ServiceThread.run(ServiceThread.java:44)</span><br></pre></td></tr></table></figure>
+
+<p>看上面的堆栈信息，可以知道大概的流程是这样的：<br>ActivityTaskManagerService.java:5678 postFinishBooting –&gt;<br>ActivityTaskManagerService.java:6482 enableScreenAfterBoot –&gt;<br>WindowManagerService.java:3235 enableScreenAfterBoot –&gt;<br>WindowManagerService.java:3282 performEnableScreen –&gt;</p>
+<p>我们追踪到 ActivityTaskManagerService.java postFinishBooting 这里就没线索了。只能继续用 grep 大法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;frameworks$ grep -nr postFinishBooting</span><br><span class="line">base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:1261:            mService.postFinishBooting(booting, enableScreen);</span><br><span class="line">base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityTaskManagerService.java:5672:    void postFinishBooting(boolean finishBooting, boolean enableScreen) &#123;</span><br><span class="line">base&#x2F;services&#x2F;art-profile:15371:HSPLcom&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityTaskManagerService;-&gt;lambda$postFinishBooting$6$ActivityTaskManagerService(ZZ)V</span><br><span class="line">base&#x2F;services&#x2F;art-profile:15394:HSPLcom&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityTaskManagerService;-&gt;postFinishBooting(ZZ)V</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;frameworks$</span><br></pre></td></tr></table></figure>
+
+<p>只有一个地方有调用: <code>ActivityStackSupervisor.java:1261 mService.postFinishBooting(booting, enableScreen);</code>，　不知道还有多少层级的调用，懒得慢慢 grep 分析了，直接打印堆栈：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">checkFinishBootingLocked</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Slog.d(TAG, <span class="string">"qiushao checkFinishBootingLocked"</span>, <span class="keyword">new</span> Throwable());</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">boolean</span> booting = mService.isBooting();</span><br><span class="line">    <span class="keyword">boolean</span> enableScreen = <span class="keyword">false</span>;</span><br><span class="line">    mService.setBooting(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">if</span> (!mService.isBooted()) &#123;</span><br><span class="line">        mService.setBooted(<span class="keyword">true</span>);</span><br><span class="line">        enableScreen = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (booting || enableScreen) &#123;</span><br><span class="line">        mService.postFinishBooting(booting, enableScreen);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> booting;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新编译运行一下，看看 log:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager: qiushao checkFinishBootingLocked</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager: java.lang.Throwable</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager:   at com.android.server.wm.ActivityStackSupervisor.checkFinishBootingLocked(ActivityStackSupervisor.java:1253)</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager:   at com.android.server.wm.ActivityStackSupervisor.activityIdleInternalLocked(ActivityStackSupervisor.java:1310)</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager:   at com.android.server.wm.ActivityTaskManagerService.activityIdle(ActivityTaskManagerService.java:1675)</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager:   at android.app.IActivityTaskManager$Stub.onTransact(IActivityTaskManager.java:1957)</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager:   at android.os.Binder.execTransactInternal(Binder.java:1021)</span><br><span class="line">02-24 21:08:03.958  1593  2392 D ActivityTaskManager:   at android.os.Binder.execTransact(Binder.java:994)</span><br></pre></td></tr></table></figure>
+
+<p>根据堆栈信息，调用流程大概是这样的：<br>IActivityTaskManager binder 调用 –&gt;<br>ActivityTaskManagerService.java:1675 activityIdle –&gt;<br>ActivityStackSupervisor.java:1310 activityIdleInternalLocked –&gt;<br>ActivityStackSupervisor.java:1253 checkFinishBootingLocked</p>
+<p>线索到 ActivityTaskManagerService.activityIdle 这里又断了，只能用 grep 了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;frameworks$ jgrep activityIdle</span><br><span class="line">.&#x2F;base&#x2F;core&#x2F;java&#x2F;android&#x2F;app&#x2F;ActivityThread.java:2060:                            am.activityIdle(a.token, a.createdConfig, stopProfiling);</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;job&#x2F;controllers&#x2F;idle&#x2F;DeviceIdlenessTracker.java:43:    private long mInactivityIdleThreshold;</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;job&#x2F;controllers&#x2F;idle&#x2F;DeviceIdlenessTracker.java:70:        mInactivityIdleThreshold &#x3D; context.getResources().getInteger(</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;job&#x2F;controllers&#x2F;idle&#x2F;DeviceIdlenessTracker.java:71:                com.android.internal.R.integer.config_jobSchedulerInactivityIdleThreshold);</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;job&#x2F;controllers&#x2F;idle&#x2F;DeviceIdlenessTracker.java:148:            final long when &#x3D; nowElapsed + mInactivityIdleThreshold;</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:1269:    final ActivityRecord activityIdleInternalLocked(final IBinder token, boolean fromTimeout,</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:1282:            if (DEBUG_IDLE) Slog.d(TAG_IDLE, &quot;activityIdleInternalLocked: Callers&#x3D;&quot;</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:1356:                            &quot;activityIdleInternalLocked&quot;);</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:1764:            activityIdleInternalLocked(null, false &#x2F;* fromTimeout *&#x2F;,</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:2601:        void activityIdleInternal(ActivityRecord r, boolean processPausingActivities) &#123;</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:2603:                activityIdleInternalLocked(r !&#x3D; null ? r.appToken : null, true &#x2F;* fromTimeout *&#x2F;,</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:2633:                    activityIdleInternal((ActivityRecord) msg.obj,</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityStackSupervisor.java:2638:                    activityIdleInternal((ActivityRecord) msg.obj,</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityTaskManagerService.java:1666:    public final void activityIdle(IBinder token, Configuration config, boolean stopProfiling) &#123;</span><br><span class="line">.&#x2F;base&#x2F;services&#x2F;core&#x2F;java&#x2F;com&#x2F;android&#x2F;server&#x2F;wm&#x2F;ActivityTaskManagerService.java:1675:                final ActivityRecord r &#x3D; mStackSupervisor.activityIdleInternalLocked(token,</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;frameworks$</span><br></pre></td></tr></table></figure>
+
+<p>这里我们用了 jgrep, 需要 source build/envsetup.sh; lunch 之后才可以用这个命令。jgrep 只 grep java 源文件。<br>看 jgrep 的结果，只有 <code>ActivityThread.java:2060: am.activityIdle(a.token, a.createdConfig, stopProfiling);</code> 是我们要找的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Idler</span> <span class="keyword">implements</span> <span class="title">MessageQueue</span>.<span class="title">IdleHandler</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">queueIdle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                ...</span><br><span class="line">                <span class="keyword">if</span> (a.activity != <span class="keyword">null</span> &amp;&amp; !a.activity.mFinished) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        am.activityIdle(a.token, a.createdConfig, stopProfiling);</span><br><span class="line">                        a.createdConfig = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Idler 是 ActivityThread 的一个内部类，我们看年这个类是在哪里使用的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleResumeActivity</span><span class="params">(IBinder token, <span class="keyword">boolean</span> finalStateRequest, <span class="keyword">boolean</span> isForward,</span></span></span><br><span class="line"><span class="function"><span class="params">        String reason)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">final</span> ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);</span><br><span class="line">    ...</span><br><span class="line">    Looper.myQueue().addIdleHandler(<span class="keyword">new</span> Idler());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ActivityThread　是应用的 UI 线程，也就是主线程。handleResumeActivity 会调用 Acitvity类的 OnResume方法。Looper 我们可以理解为消息队列。在消息队列空闲的时候，会调用其中的 Idler Handler。而我们系统第一个起来的应用就是 Launcher。<br>至此，我基本上理清楚 BootAnimation 的结束流程了：<br>Launcher 启动完成， 消息队列 Looper 进入空闲状态 –&gt;<br>Idler Handler –&gt;<br>ActivityTaskManagerService.java:1675 activityIdle –&gt;<br>ActivityStackSupervisor.java:1310 activityIdleInternalLocked –&gt;<br>ActivityStackSupervisor.java:1253 checkFinishBootingLocked –&gt;<br>ActivityStackSupervisor.java:1261 mService.postFinishBooting(booting, enableScreen); –&gt;<br>ActivityTaskManagerService.java:5678 postFinishBooting –&gt;<br>ActivityTaskManagerService.java:6482 enableScreenAfterBoot –&gt;<br>WindowManagerService.java:3235 enableScreenAfterBoot –&gt;<br>WindowManagerService.java:3282 performEnableScreen –&gt;<br>SystemProperties.set(“service.bootanim.exit”, “1”);</p>
+<p>这条路真是够复杂的。不知道为什么要设计得这么复杂。最后借用网上的一张图来总结一下，虽然这图与 Android 10 上的流程有点出入，还有一些细节不到位，但整体上是 OK 的：</p>
+<p><img src="/images/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png" alt="BootAnimation启动流程"></p>
+<p>开机动画的启动与结束流程我们已经分析完了，其中的逻辑复杂混乱，但我们有两把梭： grep + 堆栈打印， grep 可以快刀斩乱麻，堆栈打印可以抽丝剥茧。希望大家能够学会灵活运用。<br>这个例子里面我们只在 java 层代码分析时使用了堆栈打印，其实在 c++ 层代码也是可以使用堆栈打印这个技巧的。关键字: <code>anrdroid callstack</code>。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Android系统开发进阶-BootAnimation启动与结束流程" target="_blank" rel="external">http://qiushao.net/2020/02/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/27/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E6%B7%BB%E5%8A%A0%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%8A%9F%E8%83%BD/" title="Android系统开发进阶-BootAnimation添加视频播放功能"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/22/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/Android%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="Android系统开发进阶-系统启动流程概要"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

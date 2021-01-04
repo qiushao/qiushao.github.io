@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ubuntu 18.04 升级 Linux 5.4 内核 | 一叶知秋</title>
+  <meta name="description" content="目前在用的系统是 ubuntu 18.04.4 版本，内核版本如下： 123qiushao@qiushao-pc:~$ uname -aLinux qiushao-pc 5.3.0-28-generic #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020 x86_64 x86_64 x86_64 GNU&#x2F;Linuxqiushao@qiu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu 18.04 升级 Linux 5.4 内核">
+<meta property="og:url" content="http://qiushao.net/2020/03/01/Linux/ubuntu-upgrade-kernel/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="目前在用的系统是 ubuntu 18.04.4 版本，内核版本如下： 123qiushao@qiushao-pc:~$ uname -aLinux qiushao-pc 5.3.0-28-generic #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020 x86_64 x86_64 x86_64 GNU&#x2F;Linuxqiushao@qiu">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/pc-partitions.png">
+<meta property="article:published_time" content="2020-03-01T03:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Kernel">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/pc-partitions.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/03/01/Linux/ubuntu-upgrade-kernel/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-下载官方编译好的内核"><span class="toc-text">1. 下载官方编译好的内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-安装内核"><span class="toc-text">2. 安装内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-重启验证"><span class="toc-text">3. 重启验证</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/ubuntu-upgrade-kernel" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ubuntu 18.04 升级 Linux 5.4 内核
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/03/01/Linux/ubuntu-upgrade-kernel/" class="article-date">
+	  <time datetime="2020-03-01T03:00:00.000Z" itemprop="datePublished">2020-03-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Kernel/" rel="tag">Kernel</a>, <a class="article-tag-link" href="/tags/Linux/" rel="tag">Linux</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/03/01/Linux/ubuntu-upgrade-kernel/" class="leancloud_visitors"  data-flag-title="ubuntu 18.04 升级 Linux 5.4 内核">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/03/01/Linux/ubuntu-upgrade-kernel/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>目前在用的系统是 ubuntu 18.04.4 版本，内核版本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ uname -a</span><br><span class="line">Linux qiushao-pc 5.3.0-28-generic #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020 x86_64 x86_64 x86_64 GNU&#x2F;Linux</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>cpu 是: amd 3900x, 主板是: 华硕X570， cpu,主板是比较新的， 5.3 版本的内核还有很多问题，比如说耳机口不能用，蓝牙连接不稳定等。一开始我还以为是硬件本身的问题，还以为是我自己装机时接错线了。前两天看 manjaro 出了新的版本，内核是 5.4 的。就安装到另一个分区尝试了一下，发现耳机，蓝牙的问题都没有。猜测是新版本的内核对主板的支持更完善了。于是想试试给 ubuntu 升级下内核到 5.4 版本，看看能不能解决耳机，蓝牙的问题。</p>
+<h2 id="1-下载官方编译好的内核"><a href="#1-下载官方编译好的内核" class="headerlink" title="1. 下载官方编译好的内核"></a>1. 下载官方编译好的内核</h2><p>升级内核有两种方法：1. 自己下载源码编译；2. 使用官方编译好的内核。一般来说最好都是使用官方编译好的。<br>官方编译的内核可以从这里下载：<a href="https://kernel.ubuntu.com/~kernel-ppa/mainline/" target="_blank" rel="noopener">https://kernel.ubuntu.com/~kernel-ppa/mainline/</a><br>因为我的目的是升级到 5.4 版本的内核，找到 5.4 的最新版本是 5.4.23：<a href="https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.23/" target="_blank" rel="noopener">https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.23/</a><br>页面前面有一段描述：</p>
+<blockquote>
+<p>Build for amd64 succeeded (see BUILD.LOG.amd64):<br>  linux-headers-5.4.23-050423_5.4.23-050423.202002281329_all.deb<br>  linux-headers-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb<br>  linux-headers-5.4.23-050423-lowlatency_5.4.23-050423.202002281329_amd64.deb<br>  linux-image-unsigned-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb<br>  linux-image-unsigned-5.4.23-050423-lowlatency_5.4.23-050423.202002281329_amd64.deb<br>  linux-modules-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb<br>  linux-modules-5.4.23-050423-lowlatency_5.4.23-050423.202002281329_amd64.deb</p>
+</blockquote>
+<p>generic 用于支持通用硬件系统， lowlatency 用于低延迟硬件系统，amd64用于64位系统。我们的电脑一般用 generic 就行了， 不用下载 lowlatency 相关的安装包。只需要下载下面几个安装包即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;kernel.ubuntu.com&#x2F;~kernel-ppa&#x2F;mainline&#x2F;v5.4.23&#x2F;linux-headers-5.4.23-050423_5.4.23-050423.202002281329_all.deb</span><br><span class="line">wget https:&#x2F;&#x2F;kernel.ubuntu.com&#x2F;~kernel-ppa&#x2F;mainline&#x2F;v5.4.23&#x2F;linux-headers-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb</span><br><span class="line">wget https:&#x2F;&#x2F;kernel.ubuntu.com&#x2F;~kernel-ppa&#x2F;mainline&#x2F;v5.4.23&#x2F;linux-image-unsigned-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb</span><br><span class="line">wget https:&#x2F;&#x2F;kernel.ubuntu.com&#x2F;~kernel-ppa&#x2F;mainline&#x2F;v5.4.23&#x2F;linux-modules-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-安装内核"><a href="#2-安装内核" class="headerlink" title="2. 安装内核"></a>2. 安装内核</h2><p>进入下载内核的目录，然后执行以下命令即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;Downloads&#x2F;kernel$ ls</span><br><span class="line">linux-headers-5.4.23-050423_5.4.23-050423.202002281329_all.deb            linux-image-unsigned-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb</span><br><span class="line">linux-headers-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb  linux-modules-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;Downloads&#x2F;kernel$</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;Downloads&#x2F;kernel$ sudo dpkg -i *.deb</span><br><span class="line">(Reading database ... 244666 files and directories currently installed.)</span><br><span class="line">Preparing to unpack linux-headers-5.4.23-050423_5.4.23-050423.202002281329_all.deb ...</span><br><span class="line">Unpacking linux-headers-5.4.23-050423 (5.4.23-050423.202002281329) over (5.4.23-050423.202002281329) ...</span><br><span class="line">Preparing to unpack linux-headers-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb ...</span><br><span class="line">Unpacking linux-headers-5.4.23-050423-generic (5.4.23-050423.202002281329) over (5.4.23-050423.202002281329) ...</span><br><span class="line">Preparing to unpack linux-image-unsigned-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb ...</span><br><span class="line">Unpacking linux-image-unsigned-5.4.23-050423-generic (5.4.23-050423.202002281329) over (5.4.23-050423.202002281329) ...</span><br><span class="line">Preparing to unpack linux-modules-5.4.23-050423-generic_5.4.23-050423.202002281329_amd64.deb ...</span><br><span class="line">Unpacking linux-modules-5.4.23-050423-generic (5.4.23-050423.202002281329) over (5.4.23-050423.202002281329) ...</span><br><span class="line">Setting up linux-headers-5.4.23-050423 (5.4.23-050423.202002281329) ...</span><br><span class="line">Setting up linux-headers-5.4.23-050423-generic (5.4.23-050423.202002281329) ...</span><br><span class="line">Setting up linux-modules-5.4.23-050423-generic (5.4.23-050423.202002281329) ...</span><br><span class="line">Setting up linux-image-unsigned-5.4.23-050423-generic (5.4.23-050423.202002281329) ...</span><br><span class="line">Processing triggers for linux-image-unsigned-5.4.23-050423-generic (5.4.23-050423.202002281329) ...</span><br><span class="line">&#x2F;etc&#x2F;kernel&#x2F;postinst.d&#x2F;initramfs-tools:</span><br><span class="line">update-initramfs: Generating &#x2F;boot&#x2F;initrd.img-5.4.23-050423-generic</span><br><span class="line">W: Possible missing firmware &#x2F;lib&#x2F;firmware&#x2F;rtl_nic&#x2F;rtl8125a-3.fw for module r8169</span><br><span class="line">I: The initramfs will attempt to resume from &#x2F;dev&#x2F;nvme0n1p4</span><br><span class="line">I: (UUID&#x3D;5d386fca-a168-4aae-9b13-425eae5932ea)</span><br><span class="line">I: Set the RESUME variable to override this.</span><br><span class="line">&#x2F;etc&#x2F;kernel&#x2F;postinst.d&#x2F;zz-update-grub:</span><br><span class="line">Sourcing file &#96;&#x2F;etc&#x2F;default&#x2F;grub&#39;</span><br><span class="line">Generating grub configuration file ...</span><br><span class="line">Found linux image: &#x2F;boot&#x2F;vmlinuz-5.4.23-050423-generic</span><br><span class="line">Found initrd image: &#x2F;boot&#x2F;initrd.img-5.4.23-050423-generic</span><br><span class="line">Found linux image: &#x2F;boot&#x2F;vmlinuz-5.3.0-28-generic</span><br><span class="line">Found initrd image: &#x2F;boot&#x2F;initrd.img-5.3.0-28-generic</span><br><span class="line">Found linux image: &#x2F;boot&#x2F;vmlinuz-5.0.0-37-generic</span><br><span class="line">Found initrd image: &#x2F;boot&#x2F;initrd.img-5.0.0-37-generic</span><br><span class="line">Found Manjaro Linux (19.0.1) on &#x2F;dev&#x2F;nvme0n1p3</span><br><span class="line">Adding boot menu entry for EFI firmware configuration</span><br><span class="line">done</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;Downloads&#x2F;kernel$ </span><br><span class="line">qiushao@qiushao-pc:~&#x2F;Downloads&#x2F;kernel$ reboot</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-重启验证"><a href="#3-重启验证" class="headerlink" title="3. 重启验证"></a>3. 重启验证</h2><p>重启后，查看一下内核的版本信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ uname -a</span><br><span class="line">Linux qiushao-pc 5.3.0-28-generic #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020 x86_64 x86_64 x86_64 GNU&#x2F;Linux</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>奇怪了啊，怎么还是 5.3 版本的内核呢！再看一下之前的安装日志也没有任何错误提示啊。又重复安装一遍，发现还是一样的问题。<br>到 /boot 目录下看看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:&#x2F;boot$ ls</span><br><span class="line">config-5.0.0-37-generic       efi                          initrd.img-5.3.0-28-generic       memtest86+.elf               System.map-5.3.0-28-generic       vmlinuz-5.3.0-28-generic</span><br><span class="line">config-5.3.0-28-generic       grub                         initrd.img-5.4.23-050423-generic  memtest86+_multiboot.bin     System.map-5.4.23-050423-generic  vmlinuz-5.4.23-050423-generic</span><br><span class="line">config-5.4.23-050423-generic  initrd.img-5.0.0-37-generic  memtest86+.bin                    System.map-5.0.0-37-generic  vmlinuz-5.0.0-37-generic</span><br><span class="line">qiushao@qiushao-pc:&#x2F;boot$</span><br></pre></td></tr></table></figure>
+
+<p>看起来已经有 5.4 的内核在里面了。为什么没有用新的内核来启动呢？<br>不信邪了，再 reboot 一次看看。在 reboot 到 grub 选择要启动的系统时突然猜测到了原因。因为前两天才再另外一个分区上安装的 manjaro, 所以目前系统上的 grub 启动菜单其实是 manjaro 所在的分区的。而系统的启动内核是由 grub 指定的。而我没有在 manjaro 系统里面更新 grub， 所以还是使用旧版本的内核。系统的分区信息如下:<br><img src="/images/pc-partitions.png" alt="partitions"></p>
+<ul>
+<li>partition 1 : uefi 分区， 指向的启动分区为 partition 3</li>
+<li>partition 2 : ubuntu / 分区, 里面有 /boot/grub/grub.cfg 启动菜单配置文件</li>
+<li>partition 3 : manjaro / 分区, 里面也有 /boot/grub/grub.cfg 启动菜单配置文件</li>
+<li>partition 4 : ubuntu &amp; manjaro /home 分区</li>
+</ul>
+<p>因为 manjaro 是后安装的，所以启动菜单使用的是 parition 3 中的 grub.cfg 配置文件，　但我们在安装内核的时候，自动更新的是 partition 2 中的 grub.cfg。<br>我们看看 partition 2　里面的 grub.cfg 里面的配置内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">menuentry &#39;Ubuntu&#39; --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option &#39;gnulinux-simple-697f7639-b38d-4e6c-a994-d36c5542dae5&#39; &#123;</span><br><span class="line">        recordfail</span><br><span class="line">        load_video</span><br><span class="line">        gfxmode $linux_gfx_mode</span><br><span class="line">        insmod gzio</span><br><span class="line">        if [ x$grub_platform &#x3D; xxen ]; then insmod xzio; insmod lzopio; fi</span><br><span class="line">        insmod part_gpt</span><br><span class="line">        insmod ext2</span><br><span class="line">        if [ x$feature_platform_search_hint &#x3D; xy ]; then</span><br><span class="line">          search --no-floppy --fs-uuid --set&#x3D;root  697f7639-b38d-4e6c-a994-d36c5542dae5</span><br><span class="line">        else</span><br><span class="line">          search --no-floppy --fs-uuid --set&#x3D;root 697f7639-b38d-4e6c-a994-d36c5542dae5</span><br><span class="line">        fi</span><br><span class="line">        linux   &#x2F;boot&#x2F;vmlinuz-5.4.23-050423-generic root&#x3D;UUID&#x3D;697f7639-b38d-4e6c-a994-d36c5542dae5 ro  quiet splash $vt_handoff</span><br><span class="line">        initrd  &#x2F;boot&#x2F;initrd.img-5.4.23-050423-generic</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们看到最后两行配置是内核相关的，其中指定了使用哪个版本的内核来启动系统。关于 grub 的知识，是 Linux 通用的，任何发行版都是一样的。</p>
+<p>解决方案很简单，先进入 manjaro 系统先，然后执行这个命令更新 grub 启动信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo update-grub</span><br></pre></td></tr></table></figure>
+
+<p>更新完之后， reboot 重启进入 ubuntu 再看看内核的版本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~$ uname -a</span><br><span class="line">Linux qiushao-pc 5.4.23-050423-generic #202002281329 SMP Fri Feb 28 18:33:31 UTC 2020 x86_64 x86_64 x86_64 GNU&#x2F;Linux</span><br><span class="line">qiushao@qiushao-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>嗯，升级到了 5.4。再看看耳机接口，嗯，有声音了，看来的确是新版本的内核对新硬件的支持会好一点。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/03/01/Linux/ubuntu-upgrade-kernel/" title="ubuntu 18.04 升级 Linux 5.4 内核" target="_blank" rel="external">http://qiushao.net/2020/03/01/Linux/ubuntu-upgrade-kernel/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/03/01/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/init.rc%E4%BB%8B%E7%BB%8D/" title="Android系统开发进阶-init.rc 详解"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/27/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/BootAnimation%E6%B7%BB%E5%8A%A0%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%8A%9F%E8%83%BD/" title="Android系统开发进阶-BootAnimation添加视频播放功能"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Linux Mint 20 安装微信 | 一叶知秋</title>
+  <meta name="description" content="最近 Linux Mint 20 发布了，手痒又折腾了一下。体验了几天，个人感觉非常好，就是国产那堆应用安装麻烦了一点。感谢 deepin 对很多国产应用做了移植，适配工作，让我们可以直接在 debian 系的系统上直接安装使用。下面以安装微信为例说明一下在 debian 系的系统上怎么安装 deepin 适配过的部分国产应用。 1. 添加 apt source在 &#x2F;etc&#x2F;apt&#x2F;sources">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux Mint 20 安装微信">
+<meta property="og:url" content="http://qiushao.net/2020/07/28/Linux/linuxmint-install-wechat/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="最近 Linux Mint 20 发布了，手痒又折腾了一下。体验了几天，个人感觉非常好，就是国产那堆应用安装麻烦了一点。感谢 deepin 对很多国产应用做了移植，适配工作，让我们可以直接在 debian 系的系统上直接安装使用。下面以安装微信为例说明一下在 debian 系的系统上怎么安装 deepin 适配过的部分国产应用。 1. 添加 apt source在 &#x2F;etc&#x2F;apt&#x2F;sources">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/%E6%B7%BB%E5%8A%A0%E5%85%A8%E5%B1%80%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE1.png">
+<meta property="og:image" content="http://qiushao.net/images/%E6%B7%BB%E5%8A%A0%E5%85%A8%E5%B1%80%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE2.png">
+<meta property="article:published_time" content="2020-07-28T14:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-04T13:37:15.247Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/%E6%B7%BB%E5%8A%A0%E5%85%A8%E5%B1%80%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/07/28/Linux/linuxmint-install-wechat/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-添加-apt-source"><span class="toc-text">1. 添加 apt source</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-刷新软件源"><span class="toc-text">2. 刷新软件源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-查看-deepin-wine-相关的软件包"><span class="toc-text">3. 查看 deepin-wine 相关的软件包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-安装微信"><span class="toc-text">4. 安装微信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-截图"><span class="toc-text">5. 截图</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/linuxmint-install-wechat" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux Mint 20 安装微信
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="article-date">
+	  <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Linux/" rel="tag">Linux</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/07/28/Linux/linuxmint-install-wechat/" class="leancloud_visitors"  data-flag-title="Linux Mint 20 安装微信">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/07/28/Linux/linuxmint-install-wechat/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>最近 Linux Mint 20 发布了，手痒又折腾了一下。体验了几天，个人感觉非常好，就是国产那堆应用安装麻烦了一点。感谢 deepin 对很多国产应用做了移植，适配工作，让我们可以直接在 debian 系的系统上直接安装使用。下面以安装微信为例说明一下在 debian 系的系统上怎么安装 deepin 适配过的部分国产应用。</p>
+<h2 id="1-添加-apt-source"><a href="#1-添加-apt-source" class="headerlink" title="1. 添加 apt source"></a>1. 添加 apt source</h2><p>在 /etc/apt/sources.list.d/ 目录下新建文件 deepin-wine.list，内容如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deb [trusted&#x3D;yes] https:&#x2F;&#x2F;deepin-wine.i-m.dev &#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>deepin 把QQ/微信之类的 deepin wine 应用打包放在了 deepin 仓库中，因此先提取出这些应用及依赖的软件包，再减去 Debian/Ubuntu 等发行版官方仓库中固有的软件包，就可以打包成一个移植于对应发行版的“差量仓库”。感谢这个仓库的作者 <a href="https://github.com/zq1997/deepin-wine" target="_blank" rel="noopener">https://github.com/zq1997/deepin-wine</a> ，想了解更多的细节的话，可以去这个仓库看看。</p>
+<h2 id="2-刷新软件源"><a href="#2-刷新软件源" class="headerlink" title="2. 刷新软件源"></a>2. 刷新软件源</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-查看-deepin-wine-相关的软件包"><a href="#3-查看-deepin-wine-相关的软件包" class="headerlink" title="3. 查看 deepin-wine 相关的软件包"></a>3. 查看 deepin-wine 相关的软件包</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">mint@mint-pc:~$ apt search deepin</span><br><span class="line">p   deepin-calculator                                    - Calculator for DDE (Deepin Desktop Environment)                                                                                                </span><br><span class="line">p   deepin-deb-installer                                 - Deepin Package Manager                                                                                                                         </span><br><span class="line">i A deepin-fonts-wine                                    - Windows API implementation - fonts                                                                                                             </span><br><span class="line">v   deepin-fonts-wine:i386                               -                                                                                                                                                </span><br><span class="line">p   deepin-gettext-tools                                 - Deepin Internationalization utilities                                                                                                          </span><br><span class="line">p   deepin-icon-theme                                    - Icon Theme for Deepin software and Deepin Desktop Environment                                                                                  </span><br><span class="line">p   deepin-image-viewer                                  - Image Viewer for Deepin Desktop Environment                                                                                                    </span><br><span class="line">i A deepin-libwine:i386                                  - Windows API implementation - library                                                                                                           </span><br><span class="line">p   deepin-menu                                          - Deepin menu service                                                                                                                            </span><br><span class="line">p   deepin-movie                                         - Deepin movie player                                                                                                                            </span><br><span class="line">p   deepin-music                                         - music player with brilliant and tweakful UI                                                                                                    </span><br><span class="line">p   deepin-notifications                                 - System notifications for Deepin Desktop Environment                                                                                            </span><br><span class="line">p   deepin-picker                                        - Color picker tool for deepin                                                                                                                   </span><br><span class="line">p   deepin-screen-recorder                               - Simple recorder tools for deepin 视频录制工具                                                                                                              </span><br><span class="line">p   deepin-screenshot                                    - Advanced screen shoting tool  截图工具                                                                                                                </span><br><span class="line">p   deepin-shortcut-viewer                               - Pop-up shortcut viewer for Deepin applications                                                                                                 </span><br><span class="line">p   deepin-terminal                                      - Deepin terminal emulator application                                                                                                           </span><br><span class="line">p   deepin-voice-recorder                                - Deepin&#39;s Voice recorder   录音工具                                                                                                                     </span><br><span class="line">i A deepin-wine                                          - Windows API implementation - standard suite                                                                                                    </span><br><span class="line">v   deepin-wine:i386                                     -                                                                                                                                                </span><br><span class="line">i A deepin-wine-helper:i386                              - Deepin Wine Helper                                                                                                                             </span><br><span class="line">v   deepin-wine-plugin                                   -                                                                                                                                                </span><br><span class="line">i A deepin-wine-plugin:i386                              - Deepin Wine plugin                                                                                                                             </span><br><span class="line">i A deepin-wine-plugin-virtual                           - Deepin Wine plugin virtual package                                                                                                             </span><br><span class="line">v   deepin-wine-plugin-virtual:i386                      -                                                                                                                                                </span><br><span class="line">i A deepin-wine-uninstaller:i386                         - Deepin Wine Uninstaller Tool                                                                                                                   </span><br><span class="line">v   deepin-wine32                                        -                                                                                                                                                </span><br><span class="line">i A deepin-wine32:i386                                   - Windows API implementation - 32-bit binary loader                                                                                              </span><br><span class="line">i A deepin-wine32-preloader:i386                         - Windows API implementation - prelinked 32-bit binary loader                                                                                    </span><br><span class="line">p   deepin.cn.360.yasuo:i386                             - 360zip on Deepin Wine                                                                                                                          </span><br><span class="line">p   deepin.cn.com.winrar:i386                            - WinRAR on Deepin Wine                                                                                                                          </span><br><span class="line">p   deepin.com.95579.cjsc:i386                           - CHANGJIANG SECURITIES Client on Deepin Wine                                                                                                    </span><br><span class="line">p   deepin.com.aaa-logo:i386                             - SWGSoft AAALogo on Deepin Wine                                                                                                                 </span><br><span class="line">p   deepin.com.baidu.pan:i386                            - Baidu net disk client on Deepin Wine   百度网盘                                                                                                        </span><br><span class="line">p   deepin.com.cmbchina:i386                             - CMBChina Client on Deepin Wine                                                                                                                 </span><br><span class="line">i   deepin.com.foxmail:i386                              - Tencent Foxmail Client on Deepin Wine                                                                                                          </span><br><span class="line">p   deepin.com.gtja.fuyi:i386                            - GUOTAI JUNAN SECURITIES RichEasy Client on Deepin Wine                                                                                         </span><br><span class="line">p   deepin.com.qq.b.crm:i386                             - Tencent bizQQ Client on Deepin Wine                                                                                                            </span><br><span class="line">p   deepin.com.qq.b.eim:i386                             - Tencent QQEIM Client on Deepin Wine                                                                                                            </span><br><span class="line">p   deepin.com.qq.im:i386                                - Tencent QQ Client on Deepin Wine  QQ                                                                                                             </span><br><span class="line">p   deepin.com.qq.im.light:i386                          - Tencent QQ Client on Deepin Wine  TIM                                                                                                            </span><br><span class="line">p   deepin.com.qq.office:i386                            - Tencent TIM Client on Deepin Wine                                                                                                              </span><br><span class="line">p   deepin.com.qq.rtx2015:i386                           - Tencent QQ Client on Deepin Wine                                                                                                               </span><br><span class="line">p   deepin.com.taobao.aliclient.qianniu:i386             - Ali Qian Niu Client on Deepin Wine  阿里千牛                                                                                                           </span><br><span class="line">p   deepin.com.taobao.wangwang:i386                      - Ali WangWang Client on Deepin Wine  阿里旺旺                                                                                                           </span><br><span class="line">p   deepin.com.thunderspeed:i386                         - Thunder Speed Client on Deepin Wine  迅雷下载                                                                                                          </span><br><span class="line">i   deepin.com.wechat:i386                               - Tencent WeChat Client on Deepin Wine  微信                                                                                                         </span><br><span class="line">p   deepin.com.weixin.work:i386                          - Tencent WeChat Work Client on Deepin Wine  企业微信                                                                                                     </span><br><span class="line">p   deepin.net.263.em:i386                               - 263 EM Client on Deepin Wine                                                                                                                   </span><br><span class="line">p   deepin.org.7-zip:i386                                - 7-Zip on Deepin Wine                                                                                                                           </span><br><span class="line">p   deepin.org.foobar2000:i386                           - Foobar2000 on Deepin Wine                                                                                                                      </span><br><span class="line">v   deepinwine-cmbchina:i386                             -                                                                                                                                                </span><br><span class="line">v   libqt5deepintheme-plugin                             -                                                                                                                                                </span><br><span class="line">mint@mint-pc:~$</span><br></pre></td></tr></table></figure>
+
+<p>根据包名大概可以知道是哪些软件。</p>
+<h2 id="4-安装微信"><a href="#4-安装微信" class="headerlink" title="4. 安装微信"></a>4. 安装微信</h2><p>只要执行以下命令即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install deepin.com.wechat</span><br><span class="line">sudo apt install deepin-screenshot </span><br><span class="line">sudo apt install libjpeg62:i386</span><br></pre></td></tr></table></figure>
+
+<p><code>deepin-screenshot</code> ：深度截图<br><code>libjpeg62:i386</code> ：不安装这个包的话，发送不了截图。</p>
+<p>之前旧版本安装完之后，就可以直接从应用列表里面看到了，但 2020-10 月之后更新了新版本，新版本的安装位置变成了 <code>/opt/apps</code>，这个路径不在标准的应用 desktop 配置搜索路径。<br>所以新版本还要做些设置才能在应用列表里面显示。<br>在  ~/.profile 文件最后面添加以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">XDG_DATA_DIRS&#x3D;$&#123;XDG_DATA_DIRS:-&#x2F;usr&#x2F;local&#x2F;share:&#x2F;usr&#x2F;share&#125;</span><br><span class="line">for deepin_dir in &#x2F;opt&#x2F;apps&#x2F;*&#x2F;entries; do</span><br><span class="line">   if [ -d &quot;$deepin_dir&#x2F;applications&quot; ]; then</span><br><span class="line">      XDG_DATA_DIRS&#x3D;&quot;$XDG_DATA_DIRS:$deepin_dir&quot;</span><br><span class="line">   fi</span><br><span class="line">done</span><br><span class="line">export XDG_DATA_DIRS</span><br></pre></td></tr></table></figure>
+<p>然后重启就行了</p>
+<h2 id="5-截图"><a href="#5-截图" class="headerlink" title="5. 截图"></a>5. 截图</h2><p>默认的截图快捷键是 Alt + A，但这个快捷键只有焦点在微信界面的时候才可以使用。<br>为了能够全局截图，我们可以使用深度截图。打开 系统设置 –&gt; 键盘 –&gt; 快捷键 –&gt; 自定义快捷键<br>设置如下：<br><img src="/images/%E6%B7%BB%E5%8A%A0%E5%85%A8%E5%B1%80%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE1.png" alt="添加全局截图快捷键1"><br><img src="/images/%E6%B7%BB%E5%8A%A0%E5%85%A8%E5%B1%80%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE2.png" alt="添加全局截图快捷键2"></p>
+<p>然后就可以全局使用 Ctrl + Alt + A 来截图啦。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/07/28/Linux/linuxmint-install-wechat/" title="Linux Mint 20 安装微信" target="_blank" rel="external">http://qiushao.net/2020/07/28/Linux/linuxmint-install-wechat/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/07/31/Linux/linuxmint-install-qt5/" title="Linux Mint 20 安装 QT5"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" title="内存泄漏分析工具：tcmalloc"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

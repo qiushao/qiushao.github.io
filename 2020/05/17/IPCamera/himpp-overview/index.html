@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>hisi Camera 开发--HiMPP媒体处理软件开发基本概念 | 一叶知秋</title>
+  <meta name="description" content="1. HIMPP平台架构简介海思提供的媒体处理软件平台(Media Process Platform,简称 MPP),可支持应用软件快速开发。该平台对应用软件屏蔽了芯片相关的复杂的底层处理,并对应用软件直接提供 MPI(MPP Program Interface)接口完成相应功能。该平台支持应用软件快速开发以下功能:输入视频捕获、H.265&#x2F;H.264&#x2F;JPEG 编码、H.265&#x2F;H.264&#x2F;JP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hisi Camera 开发--HiMPP媒体处理软件开发基本概念">
+<meta property="og:url" content="http://qiushao.net/2020/05/17/IPCamera/himpp-overview/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="1. HIMPP平台架构简介海思提供的媒体处理软件平台(Media Process Platform,简称 MPP),可支持应用软件快速开发。该平台对应用软件屏蔽了芯片相关的复杂的底层处理,并对应用软件直接提供 MPI(MPP Program Interface)接口完成相应功能。该平台支持应用软件快速开发以下功能:输入视频捕获、H.265&#x2F;H.264&#x2F;JPEG 编码、H.265&#x2F;H.264&#x2F;JP">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/hi3516%E7%B3%BB%E7%BB%9F%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="http://qiushao.net/images/hi3516%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B%E5%9B%BE.png">
+<meta property="og:image" content="http://qiushao.net/images/vb%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="http://qiushao.net/images/vi%E8%BD%AF%E4%BB%B6%E9%80%9A%E8%B7%AF.png">
+<meta property="og:image" content="http://qiushao.net/images/vi%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%B7%AF.png">
+<meta property="og:image" content="http://qiushao.net/images/vpss%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="http://qiushao.net/images/venc%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="http://qiushao.net/images/venc%E7%BC%96%E7%A0%81%E9%80%9A%E9%81%93.png">
+<meta property="article:published_time" content="2020-05-17T13:30:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Hi3519AV100">
+<meta property="article:tag" content="Camera">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/hi3516%E7%B3%BB%E7%BB%9F%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/05/17/IPCamera/himpp-overview/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-HIMPP平台架构简介"><span class="toc-text">1. HIMPP平台架构简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-系统分层结构"><span class="toc-text">2. 系统分层结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-HIMPP-数据处理流程"><span class="toc-text">3. HIMPP 数据处理流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-系统初始化"><span class="toc-text">4. 系统初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-视频缓冲池-VB"><span class="toc-text">4.1 视频缓冲池 VB</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-VI"><span class="toc-text">5. VI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-VPSS"><span class="toc-text">6. VPSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-从-VPSS-模块中获取帧数据"><span class="toc-text">6.1 从 VPSS 模块中获取帧数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-VO"><span class="toc-text">7. VO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-VENC"><span class="toc-text">8. VENC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-从-VENC-模块中获取帧数据"><span class="toc-text">8.1 从 VENC 模块中获取帧数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-VI-VPSS-工作模式"><span class="toc-text">9. VI, VPSS 工作模式</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-IPCamera/himpp-overview" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hisi Camera 开发--HiMPP媒体处理软件开发基本概念
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/05/17/IPCamera/himpp-overview/" class="article-date">
+	  <time datetime="2020-05-17T13:30:00.000Z" itemprop="datePublished">2020-05-17</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Camera/">Camera</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Camera/" rel="tag">Camera</a>, <a class="article-tag-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/05/17/IPCamera/himpp-overview/" class="leancloud_visitors"  data-flag-title="hisi Camera 开发--HiMPP媒体处理软件开发基本概念">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/05/17/IPCamera/himpp-overview/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="1-HIMPP平台架构简介"><a href="#1-HIMPP平台架构简介" class="headerlink" title="1. HIMPP平台架构简介"></a>1. HIMPP平台架构简介</h2><p>海思提供的媒体处理软件平台(Media Process Platform,简称 MPP),可支持应用软件快速开发。该平台对应用软件屏蔽了芯片相关的复杂的底层处理,并对应用软件直接提供 MPI(MPP Program Interface)接口完成相应功能。该平台支持应用软件快速开发以下功能:输入视频捕获、H.265/H.264/JPEG 编码、H.265/H.264/JPEG 解码、视频输出显示、视频图像前处理(包括去噪、增强、锐化)、图像拼接、图像几何矫正、智能、音频捕获及输出、音频编解码等功能。</p>
+<h2 id="2-系统分层结构"><a href="#2-系统分层结构" class="headerlink" title="2. 系统分层结构"></a>2. 系统分层结构</h2><p>系统大概层次结构如下：<br><img src="/images/hi3516%E7%B3%BB%E7%BB%9F%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84.png" alt="hi3516系统分层架构"></p>
+<ul>
+<li>硬件层<br>硬件层由 Hi35xx 芯片加上必要的外围器件构成。外围器件包括 Flash、DDR、视频 Sensor 或 AD、音频 AD 等。</li>
+<li>操作系统层<br>基于 Linux 或 Huawei LiteOS 的 OS 系统。</li>
+<li>操作系统适配层<br>提供操作系统系统调用基础函数,屏蔽操作系统差异,支持媒体处理平台运行在不同的操作系统上,或相同操作系统不同版本。</li>
+<li>媒体处理平台<br>基于操作系统适配层,控制芯片完成相应的媒体处理功能。它对应用层屏蔽了硬件处理细节,并为应用层提供 API 接口完成相应功能。</li>
+<li>其他驱动<br>除媒体处理平台外,海思为 Hi35xx 芯片的其他相关硬件处理单元提供了相应的驱动,包括 CIPHER、RTC 等驱动。</li>
+<li>应用层<br>基于海思媒体处理平台及其他驱动,由用户开发的应用软件系统。</li>
+</ul>
+<p>以上这些分层，我们主要关注的是 HIMPP 媒体软件处理平台和应用层。我们必须对 HIMPP 这层的内容进行深入的学习了解，才能在其基础之上开发应用。</p>
+<h2 id="3-HIMPP-数据处理流程"><a href="#3-HIMPP-数据处理流程" class="headerlink" title="3. HIMPP 数据处理流程"></a>3. HIMPP 数据处理流程</h2><p>海思媒体处理平台主要流程分为视频处理及音频处理两条路线：<br><img src="/images/hi3516%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="hi3516数据流程图"></p>
+<p>我们先来大概了解一下各个模块的作用：</p>
+<ul>
+<li>sensor: 包括镜头，感光芯片等器件，主要作用是光电信号转换。</li>
+<li>disk: 为硬盘存储文件。视频的来源既可以是从 sensor 中采集的，也可以是从文件中读取出来的。视频回放时走的是这条通路。</li>
+<li>VI：视频采集模块。捕获视频图像，可对其做剪切、缩放、镜像等处理，并输出多路不同分辨率的图像数据。</li>
+<li>VDEC：视频解码模块。对编码后的视频码流进行解码，并将解析后的图像数据送 VPSS 进行图像处理或直接送 VO 显示。可对 H.264/H.265/VC1/MPEG4/MPEG2/AVS 格式的视 频码流进行解码。</li>
+<li>VPSS：图像处理子系统。接收 VI 或 VDEC 发送过来的图像，可对图像进行去噪、图像增强、锐化等处理，并实现同源输出多路不同分辨率的图像数据用于编码、预览或抓拍。</li>
+<li>NNIE：AI算法模块。从 VPSS 拿到帧数据，然后进行人脸检测，识别等各种 AI 算法。算法结果可以通过 histreaming 等协议发送给客户端 app。</li>
+<li>VENC：编码模块。接收 VI 捕获并经 VPSS 处理后输出的图像数据，可叠加用户通过 Region 模块设置的 OSD 图像，然后按不同协议进行编码并输出相应码流(H264,MJPEG等)。然后可以通过各种视频传输协议进行传输。比如 uvc, rtsp, http 等。也可以保存到文件，后续可以进行回放。</li>
+<li>VO：视频输出模块。接收 VPSS 处理后的输出图像，可进行播放控制等处理，最后按用户配置的输出协议输出给外围视频设备 HDMI 等。</li>
+<li>mic：麦克风。主要作用是声电信号转换。</li>
+<li>AI: 音频采集模块。捕获音频数据，然后 AENC 模块支持按多种音频协议对其进行编码，最后输出音频码流。</li>
+<li>用户从网络或外围存储设备获取的音频码流可直接送给 ADEC 模块，ADEC 支持 解码多种不同的音频格式码流，解码后数据送给 AO 模块即可播放声音。</li>
+</ul>
+<p>我们对以上各模块的作用及数据处理流程一定要非常熟悉。因为应用层的开发基本上都是围绕着这个流程来进行编码实现的。应用层只需要配置好各模块的参数，启动，然后把各模块连接起来就行。</p>
+<h2 id="4-系统初始化"><a href="#4-系统初始化" class="headerlink" title="4. 系统初始化"></a>4. 系统初始化</h2><p>系统控制模块根据芯片特性，完成硬件各个部件的复位、基本初始化工作，同时负责完成 MPP（Media Process Platform 媒体处理平台）系统各个业务模块的初始化、去初始化以及管理 MPP 系统各个业务模块的工作状态、提供当前 MPP 系统的版本信息、提供大块物理内存管理等功能。应用程序启动 MPP 业务前，必须完成 MPP 系统初始化工作。同理，应用程序退出 MPP 业务后，也要完成 MPP 系统去初始化工作，释放资源。</p>
+<h3 id="4-1-视频缓冲池-VB"><a href="#4-1-视频缓冲池-VB" class="headerlink" title="4.1 视频缓冲池 VB"></a>4.1 视频缓冲池 VB</h3><p>视频缓存池主要向媒体业务提供大块物理内存管理功能，负责内存的分配和回收，充分发挥内存缓存池的作用，让物理内存资源在各个媒体处理模块中合理使用。一组大小相同、物理地址连续的缓存块组成一个视频缓存池。<br>视频输入通道需要使用公共视频缓存池。所有的视频输入通道都可以从公共视频缓存池中获取视频缓存块用于保存采集的图像（如图中所示从公共视频缓存池 B 中获取视频缓存块 Bm）。由于视频输入通道不提供创建和销毁公共视频缓存池功能，因此，在系统初始化之前，必须为视频输入通道配置公共视频缓存池。</p>
+<p>典型的公共视频缓存池数据流图如下：</p>
+<p><img src="/images/vb%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png" alt="vb数据处理流程"></p>
+<p>VI 从公共视频缓存池 B 中获取视频缓存块 Bm,缓存块 Bm 经 VI发送给 VPSS,输入缓存块 Bm 经过 VPSS 处理之后被释放回公共视频缓存池。假设 VPSS 通道的工作模式是 USER, 则 VPSS 通道 0 从公共视频缓存池 B 中获取缓存块 Bi 作为输出图像缓存 buffer 发送给 VENC,VPSS 通道 1 从公共视频缓存池 B 中获取缓存块 Bk 作为输出图像缓存 buffer 发送给 VO,Bi 经 VENC 编码完之后释放回公共视频缓存池,Bk 经 VO 显示完之后释放回公共视频缓存池。</p>
+<h2 id="5-VI"><a href="#5-VI" class="headerlink" title="5. VI"></a>5. VI</h2><p>视频输入(VI)模块实现的功能:通过 MIPI Rx(含 MIPI 接口、LVDS 接口和 HISPI 接口),SLVS-EC,BT.1120,BT.656,BT.601,DC 等接口接收视频数据。VI 将接收到的数据存入到指定的内存区域,在此过程中,VI 可以对接收到的原始视频图像数据进行处理, 实现视频数据的采集。<br>VI 在软件层次上划分 4 个部分：<br><img src="/images/vi%E8%BD%AF%E4%BB%B6%E9%80%9A%E8%B7%AF.png" alt="vi软件通路"><br>VI 从软件上划分了输入设备(DEV), 输入 PIPE(图示为物理 PIPE,虚拟 PIPE 只包含ISP_BE)、物理通道(PHY_CHN)、扩展通道(EXT_CHN)四个层级。</p>
+<ul>
+<li>视频输入设备<br>视频输入设备支持若干种时序输入,负责对时序进行解析。</li>
+<li>视频输入物理 PIPE<br>视频输入 PIPE 绑定在设备后端,负责设备解析后的数据再处理。包含了 ISP 的相关处理功能,主要是对图像数据进行流水线处理,输出YUV 图像格式给通道。</li>
+<li>视频输入虚拟 PIPE<br>视频输入虚拟 PIPE 不绑定设备,负责其他模块或用户发送过来的数据再处理。</li>
+<li>视频物理通道<br>物理通道负责将最终处理后的数据输出到 DDR,在真正将数据输出到 DDR 之前,它可以实现裁剪等功能。Hi3519AV100 VI 的一个 PIPE 包含 2 个物理通道。CH0 具有裁剪、压缩等功能。CH1 具有缩小的功能,支持 8 个扩展通道。</li>
+<li>视频扩展通道<br>扩展通道是物理通道的扩展,扩展通道具备缩放、裁剪、鱼眼矫正功能,它通过绑定物理通道,将物理通道输出作为自己的输入,然后输出用户设置的目标图像。</li>
+</ul>
+<p>VI 的硬件通路如下：<br><img src="/images/vi%E7%A1%AC%E4%BB%B6%E9%80%9A%E8%B7%AF.png" alt="vi硬件通路"></p>
+<ul>
+<li>镜头畸变校正(LDC)<br>镜头畸变校正,一些低端镜头容易产生图像畸变,需要根据畸变程度对其图像进行校正。</li>
+<li>DIS<br>DIS 模块通过比较当前图像与前两帧图像采用不同自由度的防抖算法计算出当前图像在各个轴方向上的抖动偏移向量,然后根据抖动偏移向量对当前图像进行校正,从而起到防抖的效果。</li>
+<li>BAS<br>Bayer scaling,即 Bayer 域缩放。</li>
+<li>低延时<br>低延时指图像写出指定的行数到 DDR 后,VI 上报一个中断,把图像发给后端模块处理,可以减少延时,且硬件会有机制保证图像是先写后读,不会出现读图像错误。</li>
+<li>提前上报中断<br>提前上报中断指图像写出指定的行数到 DDR 后,VI 上报一个中断,把图像发给后端模块处理,可以减少延时,但没有和低延时一样的硬件机制保证后端模块读图像不会出错。</li>
+</ul>
+<h2 id="6-VPSS"><a href="#6-VPSS" class="headerlink" title="6. VPSS"></a>6. VPSS</h2><p>VPSS(Video Process Sub-System)是视频处理子系统,支持的具体图像处理功能包括 FRC(Frame Rate Control)、CROP、Sharpen、3DNR、Scale、像素格式转换、LDC、Spread、固定角度旋转、任意角度旋转、鱼眼校正、Cover/Coverex、Overlayex、Mosaic、Mirror/Flip、HDR、Aspect Ratio、压缩解压等。</p>
+<p>vpss 的数据处理流程如下：<br><img src="/images/vpss%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png" alt="vpss数据处理流程"></p>
+<p>vpss 相关基本概念：</p>
+<ul>
+<li>GROUP<br>VPSS 对用户提供组(GROUP)的概念。最大个数请参见 VPSS_MAX_GRP_NUM 定义,各 GROUP 分时复用 VPSS 硬件,硬件依次处理各个组提交的任务。</li>
+<li>CHANNEL<br>VPSS 组的通道。通道分为 2 种:物理通道和扩展通道。VPSS 硬件提供多个物理通道,每个通道具有缩放、裁剪等功能。扩展通道具备裁剪、缩放功能,它通过绑定物理通道,将物理通道输出作为自己的输入,把图像裁剪、缩放成用户设置的目标分辨率输出。</li>
+<li>PIPE<br>VPSS 组的管道,取值只能为 0。</li>
+<li>FRC<br>帧率控制,分为 2 种:组帧率控制和通道帧率控制。<ul>
+<li>组帧率控制:用于控制各 GROUP 对输入图像的接收。</li>
+<li>通道帧率控制:用于控制各个物理通道和扩展通道图像的处理。</li>
+</ul>
+</li>
+<li>CROP<br>裁剪,分为 3 种:组裁剪、物理通道裁剪以及扩展通道裁剪。<ul>
+<li>组裁剪,VPSS 对输入图像进行裁剪。</li>
+<li>物理通道裁剪,VPSS 对各个物理通道的输出图像进行裁剪。</li>
+<li>扩展通道裁剪,VPSS 调用 VGS 对扩展通道的输出图像进行裁剪</li>
+</ul>
+</li>
+<li>Scale<br>缩放,对图像进行缩小放大。物理通道水平、垂直最大支持 15 倍缩小,最大支持 16 倍放大;扩展通道水平、垂直最大支持 30 倍缩小,最大支持 16 倍放大。</li>
+<li>Mirror/Flip<br>Mirror 即水平镜像,Flip 即上下翻转。可使用 Mirror+Flip 实现 180°旋转。</li>
+<li>Mosaic<br>马赛克,对 VPSS 的输出图像填充马赛克块。</li>
+<li>Cover<br>视频遮挡区域,对 VPSS 的输出图像填充纯色块。</li>
+<li>Overlayex<br>视频叠加区域,调用 VGS 对 VPSS 通道的输出图像叠加位图,支持位图格式 ARGB4444、ARGB1555、ARGB8888、2BPP(仅 Hi3516EV200/Hi3516EV300 支持)。</li>
+<li>3DNR<br>去噪。通过参数配置,把图像中的高斯噪声去除,使得图像变得平滑,有助于降低编码码率。Hi3559AV100ES/Hi3559AV100 不支持。</li>
+<li>固定角度旋转<br>支持 0 度、90 度、180 度以及 270 度固定角度的旋转功能。</li>
+<li>任意角度旋转<br>支持任意角度的旋转功能。Hi3559AV100ES/Hi3559AV100/Hi3516EV200 不支持。</li>
+<li>LDC<br>对输入图像做镜头畸变校正。Hi3559AV100ES/Hi3559AV100/Hi3516EV200 不支<br>持。</li>
+<li>Spread<br>对输入图像做展宽处理。Hi3559AV100ES/Hi3559AV100/Hi3516EV200 不支持。</li>
+<li>鱼眼校正<br>仅 Hi3519AV100/Hi3516CV500/Hi3516AV300/Hi3516DV300 支持。</li>
+<li>Aspect Ratio<br>幅形比,指定输出画面相对于输入画面的宽高纵横比。</li>
+</ul>
+<h3 id="6-1-从-VPSS-模块中获取帧数据"><a href="#6-1-从-VPSS-模块中获取帧数据" class="headerlink" title="6.1 从 VPSS 模块中获取帧数据"></a>6.1 从 VPSS 模块中获取帧数据</h3><p>我们需要进行 AI 算法运行的时候，需要从 VPSS 模块中获取帧数据，输入给算法模块进行处理。帧数据的获取大概如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 获取帧数据，保存到 pstVideoFrame 中。</span></span><br><span class="line"><span class="function">HI_S32 <span class="title">HI_MPI_VPSS_GetChnFrame</span><span class="params">(VPSS_GRP VpssGrp, VPSS_CHN VpssChn, VIDEO_FRAME_INFO_S *pstVideoFrame, HI_S32 s32MilliSec)</span></span>;\</span><br><span class="line"><span class="comment">// 2. 第一步中获取到的数据地址是物理地址，需要调用 mmap 把物理地址映射成逻辑地址。</span></span><br><span class="line"><span class="function">HI_VOID *<span class="title">HI_MPI_SYS_Mmap</span><span class="params">(HI_U64 u64PhyAddr, HI_U32 u32Size)</span></span>;</span><br><span class="line"><span class="comment">// 3. 数据使用</span></span><br><span class="line">将帧数据输入给算法模块使用。</span><br><span class="line"><span class="comment">// 4. 释放帧数据</span></span><br><span class="line"><span class="function">HI_S32 <span class="title">HI_MPI_VPSS_ReleaseChnFrame</span><span class="params">(VPSS_GRP VpssGrp, VPSS_CHN VpssChn, <span class="keyword">const</span> VIDEO_FRAME_INFO_S *pstVideoFrame)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-VO"><a href="#7-VO" class="headerlink" title="7. VO"></a>7. VO</h2><p>VO(Video Output,视频输出)模块主动从内存相应位置读取视频和图形数据,并通过相应的显示设备（HDMI等）输出视频和图形。</p>
+<h2 id="8-VENC"><a href="#8-VENC" class="headerlink" title="8. VENC"></a>8. VENC</h2><p>视频编码模块支持多路实时编码,且每路编码独立,编码协议和编码 profile 可以不同。本模块支持视频编码同时,调度 Region 模块对编码图像内容进行叠加和遮挡。<br>视频编码流程如下：<br><img src="/images/venc%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png" alt="venc数据处理流程"></p>
+<p>其中编码通道处理流程如下：<br><img src="/images/venc%E7%BC%96%E7%A0%81%E9%80%9A%E9%81%93.png" alt="venc编码通道"></p>
+<p>venc 相关基本概念：</p>
+<ul>
+<li>编码通道<br>编码通道作为基本容器,保存编码通道的多种用户设置和管理编码通道的多种内部资源。编码通道完成图像转化为码流的功能,具体由码率控制器和编码器协同完成。这里的编码器指的是狭义上的编码器,只完成编码功能。码率控制器提供了对编码参数的控制和调整,从而对输出码率进行控制。</li>
+<li>码率控制<br>码率控制器实现对编码码率进行控制。从信息学的角度分析,图像的压缩比越低,压缩图像的质量越高;图像压缩比例越高,压缩图像的质量越低。对于场景变化的真实场景,图像质量稳定,编码码率会波动;编码码率稳定,图像质量会波动。以 H.264 编码为例,通常图像 Qp 越低,图像的质量越好,码率越高;图像 Qp 越高,图像质量越差,码率越低。<br>码率控制是针对连续的编码码流而言,所以,JPEG 协议编码通道不包括码率控制功能。<br>码率控制器分别提供了对 MJPEG 协议编码通道 CBR、VBR、FIXQP 三种码率控制模式,H.264/H.265 协议编码通道 CBR、VBR、AVBR、QVBR、CVBR、FIXQP、QPMAP 七种码率控制模式,对图像质量和码率进行调节,对于 H.264/H.265/协议通道的 QPMAP 模式,码控的策略由用户决定。</li>
+</ul>
+<h3 id="8-1-从-VENC-模块中获取帧数据"><a href="#8-1-从-VENC-模块中获取帧数据" class="headerlink" title="8.1 从 VENC 模块中获取帧数据"></a>8.1 从 VENC 模块中获取帧数据</h3><p>VENC 编码完成后，需要 uvc, rtsp 等模块从 VENC 中获取帧数据，然后对外发送。帧数据的获取流程大概如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 查询 VENC 编码状态， VENC_CHN_STATUS_S.u32CurPacks 为当前帧的 package 数量。为 0 时说明还没编码好，等会再查询。</span></span><br><span class="line"><span class="function">HI_S32 <span class="title">HI_MPI_VENC_QueryStatus</span><span class="params">(VENC_CHN VeChn, VENC_CHN_STATUS_S *pstStatus)</span></span>;</span><br><span class="line"><span class="comment">// 2. 获取帧数据，保存到 pstStream 中。</span></span><br><span class="line"><span class="function">HI_S32 <span class="title">HI_MPI_VENC_GetStream</span><span class="params">(VENC_CHN VeChn, VENC_STREAM_S *pstStream, HI_S32 s32MilliSec)</span></span>;</span><br><span class="line"><span class="comment">// 3. 数据使用</span></span><br><span class="line">将帧数据输入给 uvc, rtsp 等模块。</span><br><span class="line"><span class="comment">// 4. 释放帧数据</span></span><br><span class="line"><span class="function">HI_S32 <span class="title">HI_MPI_VENC_ReleaseStream</span><span class="params">(VENC_CHN VeChn, VENC_STREAM_S *pstStream)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-VI-VPSS-工作模式"><a href="#9-VI-VPSS-工作模式" class="headerlink" title="9. VI, VPSS 工作模式"></a>9. VI, VPSS 工作模式</h2><p>VI 和 VPSS 各自的工作模式分为在线,离线,并行模式,工作模式说明如下：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>VI_CAP 与 VI_PROC</th>
+<th>VI_PROC 与 VPSS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>在线模式</td>
+<td>VI_CAP 与 VI_PROC 之间在线数据流传输,此模式下 VI_CAP不会写出 RAW 数据到 DDR,而是直接把数据流送给VI_PROC。</td>
+<td>VI_PROC 与 VPSS 之间的在线数据流传输,在此模式下 VI_PROC不会写出 YUV 数据到 DDR,而是直接把数据流送给 VPSS。</td>
+</tr>
+<tr>
+<td>离线模式</td>
+<td>VI_CAP 写出 RAW 数据到DDR,然后 VI_PROC 从 DDR 读取 RAW 数据进行后处理。</td>
+<td>VI_PROC 写出 YUV 数据到DDR,然后 VPSS 从 DDR 读取 YUV 数据进行后处理。</td>
+</tr>
+</tbody></table>
+<p>从以上的描述来看在线模式和离线模式的主要差别是是否将数据写出 DDR。在线模式时 VI 进行时序解析后直接在芯片内部将数据传递到VPSS，中间无DDR 写出的过程。在线模式可以省一定的带宽和内存，降低端到端的延时。但是，在线模式时，因为VI 不写出数据到DDR，无法进行CoverEx、OverlayEx、Rotate、LDC 等操作，需要在VPSS 各通道写出后再进行Rotate/LDC 等处理，而且有些功能只在离线下能支持，比如DIS。所以使用在线模式还是离线模式需要根据具体需求来决定。如果追求低延时，那自然要使用在线模式。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/05/17/IPCamera/himpp-overview/" title="hisi Camera 开发--HiMPP媒体处理软件开发基本概念" target="_blank" rel="external">http://qiushao.net/2020/05/17/IPCamera/himpp-overview/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/05/23/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/16-Android-add-bootjar/" title="Android系统开发入门-16.Android系统添加 bootjar"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/05/01/Linux/linux-enable-coredump/" title="arm linux 开启 coredump file"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

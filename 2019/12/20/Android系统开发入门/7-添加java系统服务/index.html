@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android系统开发入门-7.添加java层系统服务 | 一叶知秋</title>
+  <meta name="description" content="我们作为一个系统开发人员，经常要与各种服务打交道，什么 ActivityManagerService啊，PackageManagerService啊， PowerManagerService啊的。大部分场景是都只需要打打 patch 就行了， 但有时候我们也需要添加一些自定义的服务的。服务可以有很多种形式， 但这里讨论的是如何添加 java 层的系统服务。 1. 使用 aidl 定义服务接口首先我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android系统开发入门-7.添加java层系统服务">
+<meta property="og:url" content="http://qiushao.net/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="我们作为一个系统开发人员，经常要与各种服务打交道，什么 ActivityManagerService啊，PackageManagerService啊， PowerManagerService啊的。大部分场景是都只需要打打 patch 就行了， 但有时候我们也需要添加一些自定义的服务的。服务可以有很多种形式， 但这里讨论的是如何添加 java 层的系统服务。 1. 使用 aidl 定义服务接口首先我">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-20T12:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-使用-aidl-定义服务接口"><span class="toc-text">1. 使用 aidl 定义服务接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-实现接口"><span class="toc-text">2. 实现接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-将服务添加到-ServiceManager"><span class="toc-text">3. 将服务添加到 ServiceManager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-selinux-规则设置"><span class="toc-text">4. selinux 规则设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-编译验证"><span class="toc-text">5. 编译验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-客户端调用"><span class="toc-text">6. 客户端调用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-系统源码中使用"><span class="toc-text">6.1 系统源码中使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-非系统源码中使用"><span class="toc-text">6.2 非系统源码中使用</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android系统开发入门/7-添加java系统服务" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android系统开发入门-7.添加java层系统服务
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="article-date">
+	  <time datetime="2019-12-20T12:00:00.000Z" itemprop="datePublished">2019-12-20</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" class="leancloud_visitors"  data-flag-title="Android系统开发入门-7.添加java层系统服务">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>我们作为一个系统开发人员，经常要与各种服务打交道，什么 ActivityManagerService啊，PackageManagerService啊， PowerManagerService啊的。大部分场景是都只需要打打 patch 就行了， 但有时候我们也需要添加一些自定义的服务的。服务可以有很多种形式， 但这里讨论的是如何添加 java 层的系统服务。</p>
+<h2 id="1-使用-aidl-定义服务接口"><a href="#1-使用-aidl-定义服务接口" class="headerlink" title="1. 使用 aidl 定义服务接口"></a>1. 使用 aidl 定义服务接口</h2><p>首先我们得定义我们的服务名是什么，提供什么样的接口。<br>在这个例子里面，我们的服务就叫 HelloService，它提供了下接口：</p>
+<ul>
+<li>void hello(String name) //播放指定路径的音频文件</li>
+</ul>
+<p>在 frameworks/base/core/java/android 目录下创建 pure 目录，我们把代码放到 pure 里面。<br>pure 目录下增加中文件 IHelloService.aidl</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">package android.pure;</span><br><span class="line">interface IHelloService &#123;</span><br><span class="line">    void hello(String name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 frameworks/base/Android.bp framework-defaults 模块中添加我们刚刚加的 aidl 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;core&#x2F;java&#x2F;android&#x2F;pure&#x2F;IHelloService.aidl&quot;,</span><br></pre></td></tr></table></figure>
+
+<p>然后进入 framework/base 目录执行 mm -j 命令编译 framework.jar 模块。<br>编译成功后，会在 out/soong/.intermediates/frameworks/base/framework/android_common/gen/aidl/frameworks/base/core/java/android/pure 目录生成 IHelloService.java 这个文件。 这个文件封装了 binder 通信的相关细节，有兴趣的同学可以去了解一下。</p>
+<h2 id="2-实现接口"><a href="#2-实现接口" class="headerlink" title="2. 实现接口"></a>2. 实现接口</h2><p>在 frameworks/base/services/core/java/com/android/server 目录下新建 HelloService.java 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package com.android.server;</span><br><span class="line"></span><br><span class="line">import android.pure.IHelloService;</span><br><span class="line">import android.util.Log;</span><br><span class="line"></span><br><span class="line">public class HelloService extends IHelloService.Stub &#123;</span><br><span class="line">    private final String TAG &#x3D; &quot;HelloService&quot;;</span><br><span class="line"></span><br><span class="line">    public HelloService() &#123;</span><br><span class="line">        Log.d(TAG, &quot;create hello service&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void hello(String name) &#123;</span><br><span class="line">        Log.d(TAG, &quot;hello &quot; + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-将服务添加到-ServiceManager"><a href="#3-将服务添加到-ServiceManager" class="headerlink" title="3. 将服务添加到 ServiceManager"></a>3. 将服务添加到 ServiceManager</h2><p>修改 frameworks/base/services/java/com/android/server/SystemServer.java 文件，在 startOtherServices 方法里面增加以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; add hello service</span><br><span class="line">traceBeginAndSlog(&quot;HelloService&quot;);</span><br><span class="line">ServiceManager.addService(&quot;HelloService&quot;, new HelloService());</span><br><span class="line">traceEnd();</span><br></pre></td></tr></table></figure>
+
+<p>至此服务算是添加完了，我们来编译运行一下，发现系统起不来了，看下错误 log</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">12-20 23:46:47.308  3521  3521 I SystemServer: HelloService</span><br><span class="line">12-20 23:46:47.308  3521  3521 D HelloService: create hello service</span><br><span class="line">12-20 23:46:47.308  1526  1526 E SELinux : avc:  denied  &#123; add &#125; for service&#x3D;HelloService pid&#x3D;3521 uid&#x3D;1000 scontext&#x3D;u:r:system_server:s0 tcontext&#x3D;u:object_r:default_android_service:s0 tclass&#x3D;service_manager permissive&#x3D;0</span><br><span class="line">12-20 23:46:47.308  1526  1526 E ServiceManager: add_service(&#39;HelloService&#39;,95) uid&#x3D;1000 - PERMISSION DENIED</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  : ******************************************</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  : ************ Failure starting system services</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  : java.lang.SecurityException</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at android.os.BinderProxy.transactNative(Native Method)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at android.os.BinderProxy.transact(BinderProxy.java:510)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at android.os.ServiceManagerProxy.addService(ServiceManagerNative.java:156)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at android.os.ServiceManager.addService(ServiceManager.java:192)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at android.os.ServiceManager.addService(ServiceManager.java:161)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at com.android.server.SystemServer.startOtherServices(SystemServer.java:1914)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at com.android.server.SystemServer.run(SystemServer.java:512)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at com.android.server.SystemServer.main(SystemServer.java:349)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at java.lang.reflect.Method.invoke(Native Method)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:492)</span><br><span class="line">12-20 23:46:47.308  3521  3521 E System  :      at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:908)</span><br><span class="line">12-20 23:46:47.308  3521  3521 D SystemServerTiming: HelloService took to complete: 1ms</span><br></pre></td></tr></table></figure>
+
+<p>从 <code>SELinux : avc:  denied  { add } for service=HelloService</code> 这个信息来看，是因为我们没有添加 SELinux 规则，什么是 SELinux 这里就不展开了，同学们可以自己去查下资料。</p>
+<h2 id="4-selinux-规则设置"><a href="#4-selinux-规则设置" class="headerlink" title="4. selinux 规则设置"></a>4. selinux 规则设置</h2><p>Android 10 的 selinux 规则是放在 system/sepolicy 目录下的。<br>但 Android 每个版本 selinux 的添加规则多多少少是有些变化的，我们要怎么把这个新服务的 SELinux 规则给加上呢, 我们可以参考现有的系统服务的规则去添加，这里参考的是 network_time_update_service 服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cd system&#x2F;sepolicy</span><br><span class="line">grep -nr network_time_update_service</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;plat_pub_versioned.cil:2650:(type network_time_update_service)</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;plat_pub_versioned.cil:2651:(typeattribute network_time_update_service_28_0)</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;plat_pub_versioned.cil:2652:(roletype object_r network_time_update_service_28_0)</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;public&#x2F;service.te:107:type network_time_update_service, system_server_service, service_manager_type;</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;private&#x2F;compat&#x2F;27.0&#x2F;27.0.cil:385:(expandtypeattribute (network_time_update_service_27_0) true)</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;private&#x2F;compat&#x2F;27.0&#x2F;27.0.cil:1102:(typeattributeset network_time_update_service_27_0 (network_time_update_service))</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;private&#x2F;compat&#x2F;26.0&#x2F;26.0.cil:389:(typeattributeset network_time_update_service_26_0 (network_time_update_service))</span><br><span class="line">prebuilts&#x2F;api&#x2F;28.0&#x2F;private&#x2F;service_contexts:109:network_time_update_service               u:object_r:network_time_update_service:s0</span><br><span class="line">public&#x2F;service.te:125:type network_time_update_service, system_server_service, service_manager_type;</span><br><span class="line">private&#x2F;compat&#x2F;27.0&#x2F;27.0.cil:391:(expandtypeattribute (network_time_update_service_27_0) true)</span><br><span class="line">private&#x2F;compat&#x2F;27.0&#x2F;27.0.cil:1108:(typeattributeset network_time_update_service_27_0 (network_time_update_service))</span><br><span class="line">private&#x2F;compat&#x2F;26.0&#x2F;26.0.cil:395:(typeattributeset network_time_update_service_26_0 (network_time_update_service))</span><br><span class="line">private&#x2F;compat&#x2F;28.0&#x2F;28.0.cil:463:(expandtypeattribute (network_time_update_service_28_0) true)</span><br><span class="line">private&#x2F;compat&#x2F;28.0&#x2F;28.0.cil:1306:(typeattributeset network_time_update_service_28_0 (network_time_update_service))</span><br><span class="line">private&#x2F;service_contexts:132:network_time_update_service               u:object_r:network_time_update_service:s0</span><br></pre></td></tr></table></figure>
+
+<p>涉及到的文件很多，有部分文件是不需要修改的，我们先把找到的所有 service.te 和 service_contexts 都参考 network_time_update_service 加上 HelloService 的配置。</p>
+<p>service_contexts 加上 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HelloService                              u:object_r:HelloService:s0</span><br></pre></td></tr></table></figure>
+
+<p>service.te 加上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type HelloService, system_server_service, service_manager_type;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-编译验证"><a href="#5-编译验证" class="headerlink" title="5. 编译验证"></a>5. 编译验证</h2><p>完成以上各步骤的修改后，我们就可以先来验证一下，服务是否添加成功了。<br>先 <code>make api-stubs-docs-update-current-api -j20</code> 更新一下 api 接口，再整编系统。<br>运行虚拟机，执行 <code>service list</code> 看看有没有 HelloService 服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pure:&#x2F; # service list | grep HelloService                                                                                                                                                               </span><br><span class="line">16      HelloService: [android.pure.IHelloService]</span><br><span class="line">pure:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="6-客户端调用"><a href="#6-客户端调用" class="headerlink" title="6. 客户端调用"></a>6. 客户端调用</h2><p>我们创建完服务端之后，还要考虑怎么提供 api 接口给到 client 使用。我们分为两种情况来讨论。</p>
+<h3 id="6-1-系统源码中使用"><a href="#6-1-系统源码中使用" class="headerlink" title="6.1 系统源码中使用"></a>6.1 系统源码中使用</h3><p>假如我们上面添加的服务是给在系统源码中编译的模块使用的，那就简单了。比如一个 apk ，我们在系统源码中创建一个 apk 模块。目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models$ tree PureSettings&#x2F;</span><br><span class="line">PureSettings&#x2F;</span><br><span class="line">├── Android.bp</span><br><span class="line">├── AndroidManifest.xml</span><br><span class="line">├── res</span><br><span class="line">│   ├── layout</span><br><span class="line">│   │   └── activity_main.xml</span><br><span class="line">│   └── mipmap-hdpi</span><br><span class="line">│       └── ic_launcher.png</span><br><span class="line">└── src</span><br><span class="line">    └── com</span><br><span class="line">        └── pure</span><br><span class="line">            └── settings</span><br><span class="line">                └── MainActivity.java</span><br><span class="line"></span><br><span class="line">7 directories, 5 files</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models$</span><br></pre></td></tr></table></figure>
+
+<p>Android.bp：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">android_app &#123;</span><br><span class="line">    srcs: [&quot;src&#x2F;**&#x2F;*.java&quot;],</span><br><span class="line">    resource_dirs: [&quot;res&quot;],</span><br><span class="line">    name: &quot;PureSettings&quot;,</span><br><span class="line">    certificate: &quot;platform&quot;,</span><br><span class="line">    platform_apis: true,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 platform_apis 要设置为 true，不然没法调用我们新加的服务和 ServiceManager 。</p>
+<p>AndroidManifest.xml：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;manifest xmlns:android&#x3D;&quot;http:&#x2F;&#x2F;schemas.android.com&#x2F;apk&#x2F;res&#x2F;android&quot;</span><br><span class="line">    package&#x3D;&quot;com.pure.settings&quot;&gt;</span><br><span class="line">    &lt;application</span><br><span class="line">        android:icon&#x3D;&quot;@mipmap&#x2F;ic_launcher&quot;</span><br><span class="line">        android:label&#x3D;&quot;PureSettings&quot;</span><br><span class="line">        android:supportsRtl&#x3D;&quot;true&quot;&gt;</span><br><span class="line">        &lt;activity android:name&#x3D;&quot;com.pure.settings.MainActivity&quot;&gt;</span><br><span class="line">            &lt;intent-filter&gt;</span><br><span class="line">                &lt;action android:name&#x3D;&quot;android.intent.action.MAIN&quot; &#x2F;&gt;</span><br><span class="line">                &lt;category android:name&#x3D;&quot;android.intent.category.LAUNCHER&quot; &#x2F;&gt;</span><br><span class="line">            &lt;&#x2F;intent-filter&gt;</span><br><span class="line">        &lt;&#x2F;activity&gt;</span><br><span class="line">    &lt;&#x2F;application&gt;</span><br><span class="line">&lt;&#x2F;manifest&gt;</span><br></pre></td></tr></table></figure>
+
+<p>res/layout/activity_main.xml:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android&#x3D;&quot;http:&#x2F;&#x2F;schemas.android.com&#x2F;apk&#x2F;res&#x2F;android&quot;</span><br><span class="line">    xmlns:app&#x3D;&quot;http:&#x2F;&#x2F;schemas.android.com&#x2F;apk&#x2F;res-auto&quot;</span><br><span class="line">    xmlns:tools&#x3D;&quot;http:&#x2F;&#x2F;schemas.android.com&#x2F;tools&quot;</span><br><span class="line">    android:layout_width&#x3D;&quot;match_parent&quot;</span><br><span class="line">    android:layout_height&#x3D;&quot;match_parent&quot;</span><br><span class="line">    android:orientation&#x3D;&quot;vertical&quot;</span><br><span class="line">    tools:context&#x3D;&quot;.MainActivity&quot;&gt;</span><br><span class="line">    &lt;Button</span><br><span class="line">        android:id&#x3D;&quot;@+id&#x2F;button&quot;</span><br><span class="line">        android:layout_width&#x3D;&quot;wrap_content&quot;</span><br><span class="line">        android:layout_height&#x3D;&quot;wrap_content&quot;</span><br><span class="line">        android:text&#x3D;&quot;test&quot; &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;LinearLayout&gt;</span><br></pre></td></tr></table></figure>
+
+<p>src/com/pure/settings/MainActivity.java:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">package com.pure.settings;</span><br><span class="line"></span><br><span class="line">import android.app.Activity;</span><br><span class="line">import android.os.Bundle;</span><br><span class="line">import android.os.RemoteException;</span><br><span class="line">import android.os.ServiceManager;</span><br><span class="line">import android.pure.IHelloService;</span><br><span class="line">import android.util.Log;</span><br><span class="line">import android.view.View;</span><br><span class="line">import android.widget.Button;</span><br><span class="line"></span><br><span class="line">public class MainActivity extends Activity &#123;</span><br><span class="line"></span><br><span class="line">    private static final String TAG &#x3D; &quot;PureSettings&quot;;</span><br><span class="line">    private IHelloService service &#x3D; null;</span><br><span class="line">    private Button button;</span><br><span class="line"></span><br><span class="line">    private void test() &#123;</span><br><span class="line">        Log.d(TAG, &quot;test&quot;);</span><br><span class="line">        try &#123;</span><br><span class="line">            service.hello(&quot;qiushao&quot;);</span><br><span class="line">        &#125; catch (RemoteException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        service &#x3D; IHelloService.Stub.asInterface(ServiceManager.getService(&quot;HelloService&quot;));</span><br><span class="line"></span><br><span class="line">        button &#x3D; (Button) findViewById(R.id.button);</span><br><span class="line">        button.setOnClickListener(new View.OnClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onClick(View v) &#123;</span><br><span class="line">                test();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把模块添加到系统, pure.mk:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PRODUCT_PACKAGES +&#x3D; PureSettings</span><br></pre></td></tr></table></figure>
+
+<p>编译运行，闪退了，看下错误日志，发现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12-21 23:55:32.970  1526  1526 E SELinux : avc:  denied  &#123; find &#125; for service&#x3D;HelloService pid&#x3D;4266 uid&#x3D;10102 scontext&#x3D;u:r:platform_app:s0:c512,c768 tcontext&#x3D;u:object_r:HelloService:s0 tclass&#x3D;service_manager permissive&#x3D;0</span><br></pre></td></tr></table></figure>
+
+<p>看起来是还有 selinux 权限需要添加。具体分析如下<br>缺少什么权限：{find}权限，<br>谁缺少权限：scontext=u:r:platform_app:s0:c512,c768<br>对哪个文件缺少权限：tcontext=u:object_r:HelloService:s0<br>什么类型的文件：tclass=service_manager</p>
+<p>完整的意思： platform_app 缺少 service_manager 类型的 HelloService 的 find 权限。</p>
+<p>根据以上分析，我们就可以找到解决方案：<br>在 platform_app.te 中添加 HelloService 的 find 权限即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow platform_app HelloService:service_manager find;</span><br></pre></td></tr></table></figure>
+
+<p>我们查找一下有哪些 platform_app.te 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;system&#x2F;sepolicy$ find -name platform_app.te   </span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;27.0&#x2F;public&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;27.0&#x2F;private&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;29.0&#x2F;public&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;29.0&#x2F;private&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;26.0&#x2F;public&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;26.0&#x2F;private&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;28.0&#x2F;public&#x2F;platform_app.te</span><br><span class="line">.&#x2F;prebuilts&#x2F;api&#x2F;28.0&#x2F;private&#x2F;platform_app.te</span><br><span class="line">.&#x2F;public&#x2F;platform_app.te</span><br><span class="line">.&#x2F;private&#x2F;platform_app.te</span><br></pre></td></tr></table></figure>
+
+<p>把找到的所有 private/platform_app.te 都加上后，再重新编译运行发现不会挂了，看下 logcat:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">130|pure:&#x2F; # logcat -c;logcat -s &quot;HelloService:V&quot; &quot;PureSettings:V&quot; </span><br><span class="line">12-22 10:47:26.505  4291  4291 D PureSettings: test</span><br><span class="line">12-22 10:47:26.506  1757  3514 D HelloService: hello qiushao</span><br></pre></td></tr></table></figure>
+
+<p>的确调用到了我们添加的服务。</p>
+<h3 id="6-2-非系统源码中使用"><a href="#6-2-非系统源码中使用" class="headerlink" title="6.2 非系统源码中使用"></a>6.2 非系统源码中使用</h3><p>前面实现了在 Android 系统源码中调用新添加服务的方法，但在实际项目中很多情况是在非系统源码环境下使用的。这种情况我们一般是再封装一层接口出来。<br>调用的层级为： apk –&gt; HelloApi –&gt; HelloService<br>我们按以下目录结构创建 HelloApi 模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models$ tree HelloApi&#x2F;</span><br><span class="line">HelloApi&#x2F;</span><br><span class="line">├── Android.bp</span><br><span class="line">└── java</span><br><span class="line">    └── com</span><br><span class="line">        └── pure</span><br><span class="line">            └── api</span><br><span class="line">                └── HelloManager.java</span><br><span class="line"></span><br><span class="line">4 directories, 2 files</span><br><span class="line">qiushao@qiushao-pc:~&#x2F;source&#x2F;android-10&#x2F;device&#x2F;qiushao&#x2F;pure&#x2F;models$</span><br></pre></td></tr></table></figure>
+
+<p>Android.bp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">java_library &#123;</span><br><span class="line">    name: &quot;com.pure.api&quot;,</span><br><span class="line">    installable: true,</span><br><span class="line">    srcs: [</span><br><span class="line">        &quot;java&#x2F;**&#x2F;*.java&quot;, &#x2F;&#x2F;文件列表</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HelloManager.java:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">package com.pure.api;</span><br><span class="line"></span><br><span class="line">import android.os.RemoteException;</span><br><span class="line">import android.os.ServiceManager;</span><br><span class="line">import android.pure.IHelloService;</span><br><span class="line"></span><br><span class="line">public class HelloManager &#123;</span><br><span class="line"></span><br><span class="line">    private static HelloManager mInstance &#x3D; null;</span><br><span class="line">    public static HelloManager getInstance() &#123;</span><br><span class="line">        if (null &#x3D;&#x3D; mInstance) &#123;</span><br><span class="line">            mInstance &#x3D; new HelloManager();</span><br><span class="line">        &#125;</span><br><span class="line">        return mInstance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private IHelloService mService &#x3D; null;</span><br><span class="line">    private HelloManager() &#123;</span><br><span class="line">        mService &#x3D; IHelloService.Stub.asInterface(ServiceManager.getService(&quot;HelloService&quot;));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void sayHello(String name) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            mService.hello(name);</span><br><span class="line">        &#125; catch (RemoteException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后到 HelloApi 目录 mm 编译模块，得到 out/target/common/obj/JAVA_LIBRARIES/com.pure.api_intermediates/classes.jar 文件。<br>我们把这个 classes.jar 文件，复制到用 android-studio 创建的 apk 项目 的 app/libs 目录下，改名为 com.pure.api.jar 。<br>右键单击 com.pure.api.jar 选择 add as library， 然后我们就可以在 apk 的代码中使用 com.pure.api.jar 的接口了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        HelloManager.getInstance().sayHello(&quot;qiushao&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>安装 apk 到虚拟机上运行，又遇到了 SELinux : avc:  denied 错误，这次的错误是</p>
+<pre><code>E SELinux : avc:  denied  { find } for service=HelloService pid=4266 uid=10102 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:HelloService:s0 tclass=service_manager permissive=0</code></pre><p>跟上面的错误基本上是一样的，只不过是把 platform_app 换成了 untrusted_app 而已。platform_app 表示有系统签名的 apk， untrusted_app 表示没有系统签名的 apk。<br>我们按同样的思路添加完 selinux 的权限后，重新编译运行虚拟机，就可以正常调用服务的接口了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/" title="Android系统开发入门-7.添加java层系统服务" target="_blank" rel="external">http://qiushao.net/2019/12/20/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/7-%E6%B7%BB%E5%8A%A0java%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/12/22/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/8-java%E6%9C%8D%E5%8A%A1%E5%9B%9E%E8%B0%83/" title="Android系统开发入门-8.java服务回调"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/12/12/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/6-%E5%88%A0%E9%99%A4%E5%8E%9F%E7%94%9F%E5%86%85%E7%BD%AEAPK/" title="Android系统开发入门-6.删除Android原生内置APK"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

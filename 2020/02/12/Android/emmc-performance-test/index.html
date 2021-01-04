@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Android-emmc性能测试 | 一叶知秋</title>
+  <meta name="description" content="在 Android 可以用来测试 emmc io 性能的工具有很多，　比如 fio, iozone, dd 等。　看了大半天的　fio, iozone，　感觉用起来比较复杂，相对来说还是使用 dd 简单方便。接下来我们就以 dd 为主介绍一下如何测试 emmc 的 io　性能。 1. 页面缓存在开始之前，我们先了解一下页面缓存的概念。简单的说就是系统会把读取过的部分文件缓存到内存中，以此加快热点文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-emmc性能测试">
+<meta property="og:url" content="http://qiushao.net/2020/02/12/Android/emmc-performance-test/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="在 Android 可以用来测试 emmc io 性能的工具有很多，　比如 fio, iozone, dd 等。　看了大半天的　fio, iozone，　感觉用起来比较复杂，相对来说还是使用 dd 简单方便。接下来我们就以 dd 为主介绍一下如何测试 emmc 的 io　性能。 1. 页面缓存在开始之前，我们先了解一下页面缓存的概念。简单的说就是系统会把读取过的部分文件缓存到内存中，以此加快热点文">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-12T02:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.740Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/12/Android/emmc-performance-test/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-页面缓存"><span class="toc-text">1. 页面缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-写入性能测试"><span class="toc-text">2. 写入性能测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-写入块设备"><span class="toc-text">2.1 写入块设备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-写入文件"><span class="toc-text">2.2 写入文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-读取测试"><span class="toc-text">3. 读取测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-读取块设备"><span class="toc-text">3.1 读取块设备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-读取文件"><span class="toc-text">3.1 读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-对比iozone"><span class="toc-text">4. 对比iozone</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-对比fio"><span class="toc-text">5. 对比fio</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-写入文件速度"><span class="toc-text">5.1 写入文件速度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-读取文件速度"><span class="toc-text">5.2 读取文件速度</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Android/emmc-performance-test" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android-emmc性能测试
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/12/Android/emmc-performance-test/" class="article-date">
+	  <time datetime="2020-02-12T02:00:00.000Z" itemprop="datePublished">2020-02-12</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Android/" rel="tag">Android</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/12/Android/emmc-performance-test/" class="leancloud_visitors"  data-flag-title="Android-emmc性能测试">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/12/Android/emmc-performance-test/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>在 Android 可以用来测试 emmc io 性能的工具有很多，　比如 fio, iozone, dd 等。　看了大半天的　fio, iozone，　感觉用起来比较复杂，相对来说还是使用 dd 简单方便。接下来我们就以 dd 为主介绍一下如何测试 emmc 的 io　性能。</p>
+<h2 id="1-页面缓存"><a href="#1-页面缓存" class="headerlink" title="1. 页面缓存"></a>1. 页面缓存</h2><p>在开始之前，我们先了解一下页面缓存的概念。简单的说就是系统会把读取过的部分文件缓存到内存中，以此加快热点文件的读取速度，提高磁盘的 IO 速度。<br>具体的原理见 <a href="http://www.ilinuxkernel.com/files/Linux.Kernel.Cache.pdf" target="_blank" rel="noopener">Linux内核文件Cache机制</a>。<br>为了测试 emmc 的真实读写性能，我们需要先把页面缓存给清理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches</span><br></pre></td></tr></table></figure>
+
+<p>我们先看看页面缓存的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # busybox dd if&#x3D;&#x2F;dev&#x2F;block&#x2F;mmcblk0 of&#x3D;&#x2F;dev&#x2F;null bs&#x3D;1M count&#x3D;1024</span><br><span class="line">1024+0 records in</span><br><span class="line">1024+0 records out</span><br><span class="line">1073741824 bytes (1.0GB) copied, 5.023993 seconds, 203.8MB&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; #                                                               </span><br><span class="line">KKHi3751V810:&#x2F; # busybox dd if&#x3D;&#x2F;dev&#x2F;block&#x2F;mmcblk0 of&#x3D;&#x2F;dev&#x2F;null bs&#x3D;1M count&#x3D;1024 </span><br><span class="line">1024+0 records in</span><br><span class="line">1024+0 records out</span><br><span class="line">1073741824 bytes (1.0GB) copied, 0.564027 seconds, 1.8GB&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; # </span><br><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches                             </span><br><span class="line">KKHi3751V810:&#x2F; # busybox dd if&#x3D;&#x2F;dev&#x2F;block&#x2F;mmcblk0 of&#x3D;&#x2F;dev&#x2F;null bs&#x3D;1M count&#x3D;1024 </span><br><span class="line">1024+0 records in</span><br><span class="line">1024+0 records out</span><br><span class="line">1073741824 bytes (1.0GB) copied, 5.103213 seconds, 200.7MB&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>连续执行两次同样参数的 dd 命令，　从 /dev/block/mmcblk0 (也就是我们的 emmc) 块设备中读取内容，　写到 /dev/null 。/dev/null 是一个虚拟设备，写入这个路径并不会保存，我们可以认为这个设备的写入速度无限大，　也就是写入速度不会成为这个命令的瓶颈，　我们这个命令主要是为了测试 emmc 的读取速度。可以看到第一次执行的结果是 203.8MB/s，　第二次执行的结果是 1.8GB/s。从这个数据来看，页面缓存极大的提高了热点文件的读取速度。然后我们用 <code>echo 1 &gt; /proc/sys/vm/drop_caches</code>　命令清除一下页面缓存，再执行同样的 dd　命令，发现速度跟第一次差不多了。</p>
+<h2 id="2-写入性能测试"><a href="#2-写入性能测试" class="headerlink" title="2. 写入性能测试"></a>2. 写入性能测试</h2><p>我们分为两种情况来测试</p>
+<h3 id="2-1-写入块设备"><a href="#2-1-写入块设备" class="headerlink" title="2.1 写入块设备"></a>2.1 写入块设备</h3><p>cache 分区一般是用来存放 OTA 升级包的，正常状态下挂载失败也不影响系统的正常运行，所以我们拿 cache 分区来作写入测试，先找到 cache 对应的块设备文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; #ls -l &#x2F;dev&#x2F;block&#x2F;platform&#x2F;soc&#x2F;f9830000.emmc&#x2F;by-name&#x2F;cache                         &lt;</span><br><span class="line">lrwxrwxrwx 1 root root 21 1970-01-01 08:00 &#x2F;dev&#x2F;block&#x2F;platform&#x2F;soc&#x2F;f9830000.emmc&#x2F;by-name&#x2F;cache -&gt; &#x2F;dev&#x2F;block&#x2F;mmcblk0p18</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>cache 分区的块设备文件为 /dev/block/mmcblk0p18。<br>写入测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches                             </span><br><span class="line">KKHi3751V810:&#x2F; # busybox dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;dev&#x2F;block&#x2F;mmcblk0p18 bs&#x3D;1M count&#x3D;1024 conv&#x3D;fsync     </span><br><span class="line">1024+0 records in</span><br><span class="line">1024+0 records out</span><br><span class="line">1073741824 bytes (1.0GB) copied, 24.122624 seconds, 42.4MB&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>输入文件为 /dev/zero，是一个虚拟设备，我们可以认为这个设备的读取速度无限大，也就是读取速度不会影响到写入的速度。<br>bs=1M : 一次写入 1M<br>count=1024 : 写入 1024 次，也就是写入的数据总量为 1G<br><strong>conv=fsync : dd 结束前，把数据同步到 emmc，如果没加这个参数的话，数据可能还在缓存之中。为了确保数据准确，一定要加这个参数。</strong></p>
+<p>重复测试几次，速度基本在 42M/s　左右。</p>
+<h3 id="2-2-写入文件"><a href="#2-2-写入文件" class="headerlink" title="2.2 写入文件"></a>2.2 写入文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches</span><br><span class="line">KKHi3751V810:&#x2F; # busybox dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;data&#x2F;ddtest.bin bs&#x3D;1M count&#x3D;1024 conv&#x3D;fsync                         &lt;</span><br><span class="line">1024+0 records in</span><br><span class="line">1024+0 records out</span><br><span class="line">1073741824 bytes (1.0GB) copied, 30.607905 seconds, 33.5MB&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>重复测试几次，速度基本在 33M/s　左右。相对直接写块设备文件慢了 10M/s 左右。这可能是文件系统带来的影响。</p>
+<h2 id="3-读取测试"><a href="#3-读取测试" class="headerlink" title="3. 读取测试"></a>3. 读取测试</h2><h3 id="3-1-读取块设备"><a href="#3-1-读取块设备" class="headerlink" title="3.1 读取块设备"></a>3.1 读取块设备</h3><p>直接用我们上面介绍清除缓存的例子就行，这里就不再重复了。<br>从上面的例子得到的数据为 203M/s 左右。</p>
+<h3 id="3-1-读取文件"><a href="#3-1-读取文件" class="headerlink" title="3.1 读取文件"></a>3.1 读取文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches                             </span><br><span class="line">KKHi3751V810:&#x2F; # busybox dd if&#x3D;&#x2F;data&#x2F;ddtest.bin of&#x3D;&#x2F;dev&#x2F;null bs&#x3D;1M count&#x3D;1024</span><br><span class="line">1024+0 records in</span><br><span class="line">1024+0 records out</span><br><span class="line">1073741824 bytes (1.0GB) copied, 4.915286 seconds, 208.3MB&#x2F;s</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>直接拿测试写入速度时生成的文件，重复测试几次，速度基本上在 208MB/s 左右。</p>
+<h2 id="4-对比iozone"><a href="#4-对比iozone" class="headerlink" title="4. 对比iozone"></a>4. 对比iozone</h2><p>Android 系统源码中并没有 iozone，我们得自己人官网上下载编译，我下载时最新版本为　iozone3_489，　这个版本已经有 Android.mk 在代码里面了，　将源码放到 Android 系统源码里面 mm 即可。<br>随机读写测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches</span><br><span class="line">KKHi3751V810:&#x2F; # iozone -azecI -+n -L64 -S32 -r1m -s1024m -i0 -i2 -w -f &#x2F;data&#x2F;iozonetest.bin                             </span><br><span class="line">        Iozone: Performance Test of File I&#x2F;O</span><br><span class="line">                Version $Revision: 3.489 $</span><br><span class="line">                Compiled for 64 bit mode.</span><br><span class="line">                Build: linux-arm </span><br><span class="line"></span><br><span class="line">        Contributors:William Norcott, Don Capps, Isom Crawford, Kirby Collins</span><br><span class="line">                     Al Slater, Scott Rhine, Mike Wisner, Ken Goss</span><br><span class="line">                     Steve Landherr, Brad Smith, Mark Kelly, Dr. Alain CYR,</span><br><span class="line">                     Randy Dunlap, Mark Montague, Dan Million, Gavin Brebner,</span><br><span class="line">                     Jean-Marc Zucconi, Jeff Blomberg, Benny Halevy, Dave Boone,</span><br><span class="line">                     Erik Habbinga, Kris Strecker, Walter Wong, Joshua Root,</span><br><span class="line">                     Fabrice Bacchella, Zhenghua Xue, Qin Li, Darren Sawyer,</span><br><span class="line">                     Vangel Bojaxhi, Ben England, Vikentsi Lapa,</span><br><span class="line">                     Alexey Skidanov, Sudhir Kumar.</span><br><span class="line"></span><br><span class="line">        Run began: Wed Feb 12 20:47:58 2020</span><br><span class="line"></span><br><span class="line">        Auto Mode</span><br><span class="line">        Cross over of record size disabled.</span><br><span class="line">        Include fsync in write timing</span><br><span class="line">        Include close in write timing</span><br><span class="line">        O_DIRECT feature enabled</span><br><span class="line">        No retest option selected</span><br><span class="line">        Record Size 1024 kB</span><br><span class="line">        File size set to 1048576 kB</span><br><span class="line">        Setting no_unlink</span><br><span class="line">        Command line used: iozone -azecI -+n -L64 -S32 -r1m -s1024m -i0 -i2 -w -f &#x2F;data&#x2F;iozonetest.bin</span><br><span class="line">        Output is in kBytes&#x2F;sec</span><br><span class="line">        Time Resolution &#x3D; 0.000001 seconds.</span><br><span class="line">        Processor cache size set to 32 kBytes.</span><br><span class="line">        Processor cache line size set to 64 bytes.</span><br><span class="line">        File stride size set to 17 * record size.</span><br><span class="line">                                                              random    random     bkwd    record    stride                                    </span><br><span class="line">              kB  reclen    write  rewrite    read    reread    read     write     read   rewrite      read   fwrite frewrite    fread  freread</span><br><span class="line">         1048576    1024    74782        0                     199299    71520                                                                </span><br><span class="line"></span><br><span class="line">iozone test complete.</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>从结果来看，随机读速度为 199299 kB/s , 大概为 200M/s。　随机写速度为 71520 kB/s，　大概为 70M/s。<br>重复测试几次结果差不多，读的速度基本跟 dd 的一致。写入的比 dd 的快了将近一倍。</p>
+<h2 id="5-对比fio"><a href="#5-对比fio" class="headerlink" title="5. 对比fio"></a>5. 对比fio</h2><h3 id="5-1-写入文件速度"><a href="#5-1-写入文件速度" class="headerlink" title="5.1 写入文件速度"></a>5.1 写入文件速度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches                             </span><br><span class="line">KKHi3751V810:&#x2F; # fio -filename&#x3D;&#x2F;dev&#x2F;block&#x2F;mmcblk0p18 -direct&#x3D;1 -iodepth 1 -thread -rw&#x3D;randwrite -ioengine&#x3D;psync -bs&#x3D;1m -size&#x3D;1G -numjobs&#x3D;4 -runtime&#x3D;60 -group_reporting -name&#x3D;rand_write_1m</span><br><span class="line">rand_write_1m: (g&#x3D;0): rw&#x3D;randwrite, bs&#x3D;1M-1M&#x2F;1M-1M&#x2F;1M-1M, ioengine&#x3D;psync, iodepth&#x3D;1</span><br><span class="line">...</span><br><span class="line">fio-2.2.6</span><br><span class="line">Starting 4 threads</span><br><span class="line">Jobs: 3 (f&#x3D;3): [w(3),_(1)] [98.1% done] [0KB&#x2F;80734KB&#x2F;0KB &#x2F;s] [0&#x2F;78&#x2F;0 iops] [eta 00m:01s]</span><br><span class="line">rand_write_1m: (groupid&#x3D;0, jobs&#x3D;4): err&#x3D; 0: pid&#x3D;8316: Wed Feb 12 21:03:34 2020</span><br><span class="line">  write: io&#x3D;4096.0MB, bw&#x3D;83067KB&#x2F;s, iops&#x3D;81, runt&#x3D; 50493msec</span><br><span class="line">    clat (msec): min&#x3D;10, max&#x3D;1361, avg&#x3D;48.60, stdev&#x3D;44.45</span><br><span class="line">     lat (msec): min&#x3D;10, max&#x3D;1361, avg&#x3D;48.86, stdev&#x3D;44.44</span><br><span class="line">    clat percentiles (msec):</span><br><span class="line">     |  1.00th&#x3D;[   18],  5.00th&#x3D;[   22], 10.00th&#x3D;[   23], 20.00th&#x3D;[   26],</span><br><span class="line">     | 30.00th&#x3D;[   34], 40.00th&#x3D;[   37], 50.00th&#x3D;[   46], 60.00th&#x3D;[   48],</span><br><span class="line">     | 70.00th&#x3D;[   58], 80.00th&#x3D;[   65], 90.00th&#x3D;[   76], 95.00th&#x3D;[   87],</span><br><span class="line">     | 99.00th&#x3D;[  104], 99.50th&#x3D;[  114], 99.90th&#x3D;[  758], 99.95th&#x3D;[ 1123],</span><br><span class="line">     | 99.99th&#x3D;[ 1369]</span><br><span class="line">    bw (KB  &#x2F;s): min&#x3D; 1343, max&#x3D;41353, per&#x3D;25.49%, avg&#x3D;21171.93, stdev&#x3D;4637.55</span><br><span class="line">    lat (msec) : 20&#x3D;1.51%, 50&#x3D;60.52%, 100&#x3D;36.40%, 250&#x3D;1.37%, 500&#x3D;0.02%</span><br><span class="line">    lat (msec) : 750&#x3D;0.05%, 1000&#x3D;0.05%, 2000&#x3D;0.07%</span><br><span class="line">  cpu          : usr&#x3D;0.43%, sys&#x3D;1.13%, ctx&#x3D;10620, majf&#x3D;0, minf&#x3D;6</span><br><span class="line">  IO depths    : 1&#x3D;100.0%, 2&#x3D;0.0%, 4&#x3D;0.0%, 8&#x3D;0.0%, 16&#x3D;0.0%, 32&#x3D;0.0%, &gt;&#x3D;64&#x3D;0.0%</span><br><span class="line">     submit    : 0&#x3D;0.0%, 4&#x3D;100.0%, 8&#x3D;0.0%, 16&#x3D;0.0%, 32&#x3D;0.0%, 64&#x3D;0.0%, &gt;&#x3D;64&#x3D;0.0%</span><br><span class="line">     complete  : 0&#x3D;0.0%, 4&#x3D;100.0%, 8&#x3D;0.0%, 16&#x3D;0.0%, 32&#x3D;0.0%, 64&#x3D;0.0%, &gt;&#x3D;64&#x3D;0.0%</span><br><span class="line">     issued    : total&#x3D;r&#x3D;0&#x2F;w&#x3D;4096&#x2F;d&#x3D;0, short&#x3D;r&#x3D;0&#x2F;w&#x3D;0&#x2F;d&#x3D;0, drop&#x3D;r&#x3D;0&#x2F;w&#x3D;0&#x2F;d&#x3D;0</span><br><span class="line">     latency   : target&#x3D;0, window&#x3D;0, percentile&#x3D;100.00%, depth&#x3D;1</span><br><span class="line"></span><br><span class="line">Run status group 0 (all jobs):</span><br><span class="line">  WRITE: io&#x3D;4096.0MB, aggrb&#x3D;83067KB&#x2F;s, minb&#x3D;83067KB&#x2F;s, maxb&#x3D;83067KB&#x2F;s, mint&#x3D;50493msec, maxt&#x3D;50493msec</span><br><span class="line"></span><br><span class="line">Disk stats (read&#x2F;write):</span><br><span class="line">  mmcblk0: ios&#x3D;54&#x2F;8332, merge&#x3D;5&#x2F;888, ticks&#x3D;60872&#x2F;378355, in_queue&#x3D;439181, util&#x3D;100.00%</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>4个线程的平均写入速度为 bw=83067KB/s，大概是 80M/s，　比 dd 也快了一倍多。</p>
+<h3 id="5-2-读取文件速度"><a href="#5-2-读取文件速度" class="headerlink" title="5.2 读取文件速度"></a>5.2 读取文件速度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">KKHi3751V810:&#x2F; # echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;drop_caches                             </span><br><span class="line">KKHi3751V810:&#x2F; # fio -filename&#x3D;&#x2F;dev&#x2F;block&#x2F;mmcblk0 -direct&#x3D;1 -iodepth 1 -thread -rw&#x3D;randread -ioengine&#x3D;psync -bs&#x3D;1m -size&#x3D;1G -numjobs&#x3D;4 -runtime&#x3D;60 -group_reporting -name&#x3D;rand_read_1m</span><br><span class="line">rand_read_1m: (g&#x3D;0): rw&#x3D;randread, bs&#x3D;1M-1M&#x2F;1M-1M&#x2F;1M-1M, ioengine&#x3D;psync, iodepth&#x3D;1</span><br><span class="line">...</span><br><span class="line">fio-2.2.6</span><br><span class="line">Starting 4 threads</span><br><span class="line">Jobs: 1 (f&#x3D;1): [_(3),r(1)] [96.2% done] [148.5MB&#x2F;0KB&#x2F;0KB &#x2F;s] [148&#x2F;0&#x2F;0 iops] [eta 00m:01s]     </span><br><span class="line">rand_read_1m: (groupid&#x3D;0, jobs&#x3D;4): err&#x3D; 0: pid&#x3D;7889: Wed Feb 12 20:56:21 2020</span><br><span class="line">  read : io&#x3D;4096.0MB, bw&#x3D;171813KB&#x2F;s, iops&#x3D;167, runt&#x3D; 24412msec</span><br><span class="line">    clat (msec): min&#x3D;4, max&#x3D;9350, avg&#x3D;19.50, stdev&#x3D;215.06</span><br><span class="line">     lat (msec): min&#x3D;4, max&#x3D;9350, avg&#x3D;19.50, stdev&#x3D;215.06</span><br><span class="line">    clat percentiles (msec):</span><br><span class="line">     |  1.00th&#x3D;[    7],  5.00th&#x3D;[    8], 10.00th&#x3D;[    8], 20.00th&#x3D;[   11],</span><br><span class="line">     | 30.00th&#x3D;[   11], 40.00th&#x3D;[   11], 50.00th&#x3D;[   11], 60.00th&#x3D;[   14],</span><br><span class="line">     | 70.00th&#x3D;[   14], 80.00th&#x3D;[   14], 90.00th&#x3D;[   14], 95.00th&#x3D;[   14],</span><br><span class="line">     | 99.00th&#x3D;[   16], 99.50th&#x3D;[   30], 99.90th&#x3D;[ 2638], 99.95th&#x3D;[ 4113],</span><br><span class="line">     | 99.99th&#x3D;[ 9372]</span><br><span class="line">    bw (KB  &#x2F;s): min&#x3D;  964, max&#x3D;145420, per&#x3D;46.41%, avg&#x3D;79740.53, stdev&#x3D;25495.41</span><br><span class="line">    lat (msec) : 10&#x3D;13.77%, 20&#x3D;85.55%, 50&#x3D;0.29%, 100&#x3D;0.12%, 500&#x3D;0.05%</span><br><span class="line">    lat (msec) : 750&#x3D;0.05%, 2000&#x3D;0.05%, &gt;&#x3D;2000&#x3D;0.12%</span><br><span class="line">  cpu          : usr&#x3D;0.22%, sys&#x3D;3.16%, ctx&#x3D;9195, majf&#x3D;0, minf&#x3D;1030</span><br><span class="line">  IO depths    : 1&#x3D;100.0%, 2&#x3D;0.0%, 4&#x3D;0.0%, 8&#x3D;0.0%, 16&#x3D;0.0%, 32&#x3D;0.0%, &gt;&#x3D;64&#x3D;0.0%</span><br><span class="line">     submit    : 0&#x3D;0.0%, 4&#x3D;100.0%, 8&#x3D;0.0%, 16&#x3D;0.0%, 32&#x3D;0.0%, 64&#x3D;0.0%, &gt;&#x3D;64&#x3D;0.0%</span><br><span class="line">     complete  : 0&#x3D;0.0%, 4&#x3D;100.0%, 8&#x3D;0.0%, 16&#x3D;0.0%, 32&#x3D;0.0%, 64&#x3D;0.0%, &gt;&#x3D;64&#x3D;0.0%</span><br><span class="line">     issued    : total&#x3D;r&#x3D;4096&#x2F;w&#x3D;0&#x2F;d&#x3D;0, short&#x3D;r&#x3D;0&#x2F;w&#x3D;0&#x2F;d&#x3D;0, drop&#x3D;r&#x3D;0&#x2F;w&#x3D;0&#x2F;d&#x3D;0</span><br><span class="line">     latency   : target&#x3D;0, window&#x3D;0, percentile&#x3D;100.00%, depth&#x3D;1</span><br><span class="line"></span><br><span class="line">Run status group 0 (all jobs):</span><br><span class="line">   READ: io&#x3D;4096.0MB, aggrb&#x3D;171813KB&#x2F;s, minb&#x3D;171813KB&#x2F;s, maxb&#x3D;171813KB&#x2F;s, mint&#x3D;24412msec, maxt&#x3D;24412msec</span><br><span class="line"></span><br><span class="line">Disk stats (read&#x2F;write):</span><br><span class="line">  mmcblk0: ios&#x3D;8365&#x2F;46, merge&#x3D;15&#x2F;47, ticks&#x3D;633927&#x2F;61332, in_queue&#x3D;695214, util&#x3D;99.20%</span><br><span class="line">KKHi3751V810:&#x2F; #</span><br></pre></td></tr></table></figure>
+
+<p>４个线程的平均读速度为 bw=171813KB/s，　大概为 170M/s。</p>
+<p>综合对比 dd, iozone, fio　这几个工具发现，读的速度基本上差不多，但写速度差距比较大，可能跟设置的参数有关。<br>为了简单起见，我们只采用 dd 的结果作为参考数据即可。</p>
+<p>参考文章:<br>[IO测试工具之fio详解]:<a href="https://www.cnblogs.com/raykuan/p/6914748.html" target="_blank" rel="noopener">https://www.cnblogs.com/raykuan/p/6914748.html</a><br>[emmc读写速度性能分析]:<a href="https://blog.csdn.net/jekenzhuang/article/details/81142178" target="_blank" rel="noopener">https://blog.csdn.net/jekenzhuang/article/details/81142178</a><br>[dd命令的conv=fsync,oflag=sync/dsync]:<a href="https://blog.csdn.net/menogen/article/details/38059671" target="_blank" rel="noopener">https://blog.csdn.net/menogen/article/details/38059671</a><br>[页面缓存：内存和文件之间的那些事]:<a href="https://linux.cn/article-9528-1.html" target="_blank" rel="noopener">https://linux.cn/article-9528-1.html</a><br>[在 Linux 上如何清除内存的 Cache、Buffer 和交换空间]:<a href="https://linux.cn/article-5627-1.html" target="_blank" rel="noopener">https://linux.cn/article-5627-1.html</a><br>[iozone的使用]:<a href="http://wowothink.com/b871283/" target="_blank" rel="noopener">http://wowothink.com/b871283/</a><br>[eMMC读写性能和稳定性验证]:<a href="http://wowothink.com/7ffb6593/" target="_blank" rel="noopener">http://wowothink.com/7ffb6593/</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/12/Android/emmc-performance-test/" title="Android-emmc性能测试" target="_blank" rel="external">http://qiushao.net/2020/02/12/Android/emmc-performance-test/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/13/Android/logcat-stat/" title="Android-logcat统计各进程的log输出"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/11/Android/iostat/" title="Android-io统计"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

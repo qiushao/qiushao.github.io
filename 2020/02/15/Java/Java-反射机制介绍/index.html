@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Java-反射机制介绍 | 一叶知秋</title>
+  <meta name="description" content="我觉得作为一个 java 语言的使用者，无论你是 web 开发，还是 Android　开发，你都有必要了解一下这几个知识点：反射，类的加载机制，注解,动态代理。作为一个普通的开发者，你可能没有意识到你有使用过这些技术，但实际上这些技术是应用非常广的，基本上我们使用的各种 web 框架， ORM 框架，插件化框架都会依赖这些技术去实现。如果你想对使用的各种框架有更深入的理解，或者甚至想开发自己的框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java-反射机制介绍">
+<meta property="og:url" content="http://qiushao.net/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="我觉得作为一个 java 语言的使用者，无论你是 web 开发，还是 Android　开发，你都有必要了解一下这几个知识点：反射，类的加载机制，注解,动态代理。作为一个普通的开发者，你可能没有意识到你有使用过这些技术，但实际上这些技术是应用非常广的，基本上我们使用的各种 web 框架， ORM 框架，插件化框架都会依赖这些技术去实现。如果你想对使用的各种框架有更深入的理解，或者甚至想开发自己的框架">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-02-15T12:46:26.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.744Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-什么是反射"><span class="toc-text">1. 什么是反射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-反射的使用场景"><span class="toc-text">2. 反射的使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-反射的基本用法"><span class="toc-text">3. 反射的基本用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-获取-Class-对象"><span class="toc-text">4. 获取 Class 对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-创建类实例"><span class="toc-text">5. 创建类实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-调用方法"><span class="toc-text">6. 调用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-访问变量"><span class="toc-text">7. 访问变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-获取父类信息"><span class="toc-text">8. 获取父类信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-枚举的反射"><span class="toc-text">9. 枚举的反射</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Java/Java-反射机制介绍" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java-反射机制介绍
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" class="article-date">
+	  <time datetime="2020-02-15T12:46:26.000Z" itemprop="datePublished">2020-02-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Java/" rel="tag">Java</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" class="leancloud_visitors"  data-flag-title="Java-反射机制介绍">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>我觉得作为一个 java 语言的使用者，无论你是 web 开发，还是 Android　开发，你都有必要了解一下这几个知识点：反射，类的加载机制，注解,动态代理。作为一个普通的开发者，你可能没有意识到你有使用过这些技术，但实际上这些技术是应用非常广的，基本上我们使用的各种 web 框架， ORM 框架，插件化框架都会依赖这些技术去实现。如果你想对使用的各种框架有更深入的理解，或者甚至想开发自己的框架，那你一定要深入理解前面提到的几个基本知识点。这里先介绍反射，后面再依次介绍其他知识点。</p>
+<h2 id="1-什么是反射"><a href="#1-什么是反射" class="headerlink" title="1. 什么是反射"></a>1. 什么是反射</h2><p>反射机制是 Java 语言的一个重要特性。在学习 Java 反射机制前，大家应该先分清楚两个概念: 编译期和运行期。</p>
+<ul>
+<li>编译期：是指把源码交给编译器编译成计算机可以执行的文件的过程。在 Java 中也就是把 Java 代码编成 class 文件的过程。编译期只是做了一些翻译功能，并没有把代码放在内存中运行起来，而只是把代码当成文本进行操作，比如检查错误。</li>
+<li>运行期：是把编译后的文件交给计算机执行，直到程序运行结束。所谓运行期就把在磁盘中的代码放到内存中执行起来。</li>
+</ul>
+<p>Java 反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为 Java 语言的反射机制。简单来说，反射机制指的是程序在运行时能够获取自身的信息。在 Java 中，只要给定类的名字，就可以通过反射机制来获得类的所有信息，而这个类在编译过程中甚至是还未存在的。在运行的时候我们可以通过配置文件获取某个类的类名，然后使用反射机制构造这个类的对象，调用这个对象的方法，修改这个对象的成员变量。</p>
+<h2 id="2-反射的使用场景"><a href="#2-反射的使用场景" class="headerlink" title="2. 反射的使用场景"></a>2. 反射的使用场景</h2><p>Java 反射机制在 web 开发框架， ORM 框架， 插件化开发等场景中得到了广泛运用。<br>比如说 web 开发框架 Spring 中，最重要的概念就是 IOC 控制反转。而 IOC　的实现原理就是反射。通过反射来构造 Java Bean 的对象，调用其方法。<br>比如说 Android 开发中常用的 ORM 框架： GreenDao, LiteOrm　等，　也是通过反射来读写 Java Bean 对象的成员变量的。<br>如果你只是使用这些框架，你可能感觉不到反射的存在，实际上反射却是无处不在。</p>
+<h2 id="3-反射的基本用法"><a href="#3-反射的基本用法" class="headerlink" title="3. 反射的基本用法"></a>3. 反射的基本用法</h2><p>我们先写个简单的 Demo，来感性的认识一下反射的基本用法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> qiushao.net;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String mName;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mName = <span class="string">"unknown"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        mName = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        mName = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"hello, my name is "</span> + mName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">( String[] args )</span> <span class="keyword">throws</span> ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, NoSuchFieldException </span>&#123;</span><br><span class="line">        <span class="comment">//假设我们在编译时不能直接 import qiushao.net.Person; 这个类，　但我们知道系统有这么一个类存在，而且我们知道它的包名类名。</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//1. 获取类对象</span></span><br><span class="line">        Class&lt;?&gt; claz = Class.forName(<span class="string">"qiushao.net.Person"</span>);</span><br><span class="line">        <span class="comment">//2. 调用无参构造函数创建类实例</span></span><br><span class="line">        Object person = claz.newInstance();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 调用方法</span></span><br><span class="line">        Method setNameMethod = claz.getMethod(<span class="string">"setName"</span>, String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        setNameMethod.invoke(person, <span class="string">"qiushao"</span>);</span><br><span class="line"></span><br><span class="line">        Method showMethod = claz.getMethod(<span class="string">"show"</span>);</span><br><span class="line">        showMethod.invoke(person);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//4. 设置成员变量值</span></span><br><span class="line">        Field nameField = claz.getDeclaredField(<span class="string">"mName"</span>);</span><br><span class="line">        nameField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        nameField.set(person, <span class="string">"foobar"</span>);</span><br><span class="line"></span><br><span class="line">        showMethod.invoke(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的例子，我们展示了反射的一些最基本用法，比如获取类对象，构造类实例，调用实例的方法，修改成员变量的值等。接下来我们详细的讨论反射的各种功能具体用法。</p>
+<h2 id="4-获取-Class-对象"><a href="#4-获取-Class-对象" class="headerlink" title="4. 获取 Class 对象"></a>4. 获取 Class 对象</h2><p>我们可以通过三种形式来获取一个类的 Class 对象：</p>
+<ol>
+<li>直接通过 类名.class 的方式得到：<code>Class&lt;?&gt; claz = Person.class;</code>,　如果我们在编译时期可以 import Person 这个类的话，就可以这么用。</li>
+<li>通过对象调用 getClass() 方法来获取: <code>Class&lt;?&gt; claz = obj.getClass();</code>, 比如你传过来一个 Object 类型的对象，而我不知道你具体是什么类，用这种方法</li>
+<li>通过 Class 对象的 forName() 静态方法来获取: <code>Class&lt;?&gt; claz = Class.forName(&quot;qiushao.net.Person&quot;);</code>， 不能在编译时 import, 也不能在运行时获取类对象的话，只能用这种方法了。这种用法是最常用的了。forName 还有另外一个重载方法<code>Class&lt;?&gt; forName(String name, boolean initialize, ClassLoader loader)</code>, 可以传入一个 ClassLoader 对象来指定类的加载方法。这个就涉及到类的加载机制了，这里先不讨论。<br>获取到 Class 之后，我们可以进而可以通过 claz 获取一些这个类的基本信息：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取“类名”，　值为 Person </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String    <span class="title">getSimpleName</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取“完整类名”，　值为　qiushao.net.Person</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String    <span class="title">getName</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 类是不是“枚举类”</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span>    <span class="title">isEnum</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// obj是不是类的对象</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span>    <span class="title">isInstance</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 类是不是“接口”</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span>    <span class="title">isInterface</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 类是不是“本地类”。本地类,就是定义在方法内部的类。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span>    <span class="title">isLocalClass</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 类是不是“成员类”。成员类,是内部类的一种，　其定义请参考 https://blog.csdn.net/a327369238/article/details/52780442</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span>    <span class="title">isMemberClass</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 类是不是“基本类型”。 基本类型，包括void和boolean、byte、char、short、int、long、float 和 double这几种类型。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span>    <span class="title">isPrimitive</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="5-创建类实例"><a href="#5-创建类实例" class="headerlink" title="5. 创建类实例"></a>5. 创建类实例</h2><p>通过反射来创建类实例主要有两种方式:</p>
+<ol>
+<li><p>调用无参构造函数<br>无参构造函数是指没有参数的构造函数，如果一个类有无参构造函数的话，我们就可以通过这种方式来创建类的实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; claz = Class.forName(<span class="string">"qiushao.net.Person"</span>);</span><br><span class="line">Object person = claz.newInstance();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用指定构造函数<br>如果一个类没有无参构造函数，使用第一种方法就会报错，我们需要使用另外一种方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; claz = Class.forName(<span class="string">"qiushao.net.Person"</span>);</span><br><span class="line">Constructor constructor = claz.getConstructor(String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">Object person = constructor.newInstance(<span class="string">"qiushao"</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>我们可以通过 claz.getConstructor 来获取指定参数类型的构造函数，　这个例子里面就是获取有一个 String 类型参数的构造函数。<br>然后通过 constructor.newInstance 来创建实例，参数就是我们要传给构造函数的数据。</p>
+<p>获取构造函数的接口还有其他几个，使用方法基本类似，就不再举例了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取“参数是parameterTypes”的public的构造函数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Constructor    <span class="title">getConstructor</span><span class="params">(Class[] parameterTypes)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取全部的public的构造函数</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Constructor[]    <span class="title">getConstructors</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取“参数是parameterTypes”的，并且是类自身声明的构造函数，包含public、protected和private构造函数。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Constructor    <span class="title">getDeclaredConstructor</span><span class="params">(Class[] parameterTypes)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取类自身声明的全部的构造函数，包含public、protected和private方法。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Constructor[]    <span class="title">getDeclaredConstructors</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 如果这个类是“其它类的构造函数中的内部类”，调用getEnclosingConstructor()就是这个类所在的构造函数；　这种场景我还没见过，居然会在构造函数中声明一个类。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Constructor    <span class="title">getEnclosingConstructor</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="6-调用方法"><a href="#6-调用方法" class="headerlink" title="6. 调用方法"></a>6. 调用方法</h2><p>参考上面的例子，通过反射调用类方法的基本形式为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Method setNameMethod = claz.getMethod(<span class="string">"setName"</span>, String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">setNameMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">setNameMethod.invoke(person, <span class="string">"qiushao"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果要调用的方法是 private 的，则需要调用 <code>setAccessible(true)</code> 来修改访问权限。<br>如果要调用的方法是类的静态方法，则 invoke　的第一个参数传 null 即可。<br>获取类的方法的接口有好几个，解析如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取“名称是name，参数是parameterTypes”的public的函数(包括从基类继承的、从接口实现的所有public函数)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Method <span class="title">getMethod</span><span class="params">(String name, Class[] parameterTypes)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取全部的public的函数(包括从基类继承的、从接口实现的所有public函数)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Method[] <span class="title">getMethods</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取“名称是name，参数是parameterTypes”，并且是类自身声明的函数，包含public、protected和private方法。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Method <span class="title">getDeclaredMethod</span><span class="params">(String name, Class[] parameterTypes)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取全部的类自身声明的函数，包含public、protected和private方法。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Method[] <span class="title">getDeclaredMethods</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 如果这个类是“其它类中某个方法的内部类”，调用getEnclosingMethod()就是这个类所在的方法；若不存在，返回null。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Method <span class="title">getEnclosingMethod</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="7-访问变量"><a href="#7-访问变量" class="headerlink" title="7. 访问变量"></a>7. 访问变量</h2><p>参考上面的例子，通过反射访问类成员变量的基本形式为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Field nameField = claz.getDeclaredField(<span class="string">"mName"</span>);</span><br><span class="line">nameField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"><span class="comment">//修改成员变量的值</span></span><br><span class="line">nameField.set(person, <span class="string">"foobar"</span>);</span><br><span class="line"><span class="comment">//获取成员变量的值</span></span><br><span class="line">String value = (String) nameField.get(person);</span><br></pre></td></tr></table></figure>
+
+<p>如果要访问的变量是 private 的，则需要调用 <code>setAccessible(true)</code> 来修改访问权限。<br>如果要访问的变量是类的静态变量，则 set/get 的第一个参数传 null 即可。<br>如果要访问的变量是基本数据类型(int, double等)的话，则要通过 setInt/getInt　等形式去设置和获取值。<br>获取变量的接口有好几个，解析如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取名称是"name"的public的成员变量(包括从基类继承的、从接口实现的所有public成员变量)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Field <span class="title">getField</span><span class="params">(String name)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取全部的public成员变量(包括从基类继承的、从接口实现的所有public成员变量)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Field[] <span class="title">getFields</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取名称是"name"，并且是类自身声明的成员变量，包含public、protected和private成员变量。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Field <span class="title">getDeclaredField</span><span class="params">(String name)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 获取全部的类自身声明的成员变量，包含public、protected和private成员变量。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Field[] <span class="title">getDeclaredFields</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="8-获取父类信息"><a href="#8-获取父类信息" class="headerlink" title="8. 获取父类信息"></a>8. 获取父类信息</h2><p>我们可以通过以下接口，获取父类的信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取实现的全部接口，由于编译擦除，没有显示泛型参数</span></span><br><span class="line">Class&lt;?&gt;[] getInterfaces()</span><br><span class="line"><span class="comment">// 获取实现的全部接口，　包含泛型参数</span></span><br><span class="line"><span class="keyword">public</span> Type[] getGenericInterfaces()</span><br><span class="line"><span class="comment">// 获取直接继承的父类, 由于编译擦除，没有显示泛型参数</span></span><br><span class="line">Class&lt;? <span class="keyword">super</span> T&gt; getSuperclass();</span><br><span class="line"><span class="comment">// 获取直接继承的父类, 包含泛型参数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Type <span class="title">getGenericSuperclass</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我们获取到父类的 Class　之后，就可以用我们前面学到的方法来访问父类的方法和变量了。</p>
+<h2 id="9-枚举的反射"><a href="#9-枚举的反射" class="headerlink" title="9. 枚举的反射"></a>9. 枚举的反射</h2><p>枚举本质上就是一个类，所以上面介绍的方法，对于枚举来说是同样适用的。<br>枚举常量我们可以理解为是类的 public static final int 变量。<br>下面举个枚举的例子:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> COLOR &#123;</span><br><span class="line">    RED,</span><br><span class="line">    GREEN,</span><br><span class="line">    BLUE</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">showColor</span><span class="params">(COLOR color)</span> </span>&#123;</span><br><span class="line">        System.out.println(color);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">( String[] args )</span> <span class="keyword">throws</span> ClassNotFoundException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException, InvocationTargetException </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazApp = App<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">        Class&lt;?&gt; clazColor = COLOR<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">        Method showColorMethod = clazApp.getMethod(<span class="string">"showColor"</span>, clazColor);</span><br><span class="line">        <span class="comment">// 这里我们可以把 GREEN　这个枚举值当作 COLOR　枚举类的一个变量</span></span><br><span class="line">        Field greenField = clazColor.getField(<span class="string">"GREEN"</span>);</span><br><span class="line">        <span class="comment">// 枚举量可以当作是类的静态变量，所以获取它的值时，传 null　就行</span></span><br><span class="line">        Object color = greenField.get(<span class="keyword">null</span>);</span><br><span class="line">        showColorMethod.invoke(<span class="keyword">null</span>, color);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" title="Java-反射机制介绍" target="_blank" rel="external">http://qiushao.net/2020/02/15/Java/Java-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/02/16/Java/Java-%E6%B3%A8%E8%A7%A3%E4%BB%8B%E7%BB%8D/" title="Java-注解介绍"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/02/14/Android/grade%E4%BE%9D%E8%B5%96%E4%B8%8B%E8%BD%BD%E5%8A%A0%E9%80%9F/" title="Android-grade依赖下载加速"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

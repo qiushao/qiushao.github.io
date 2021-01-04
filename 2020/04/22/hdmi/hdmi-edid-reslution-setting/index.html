@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>hdmi edid 分辨率设置 | 一叶知秋</title>
+  <meta name="description" content="以下说明截图基于 R_980mgr_4.16.39.13141_Win.msi 工具(以下简称 980)，最好先安装这个工具，然后对着说明进行操作。关于 edid 的各字段这里不再作解析，请网上查阅资料。可以参考以下文章: https:&#x2F;&#x2F;www.cnblogs.com&#x2F;beyond-rxl&#x2F;archive&#x2F;2018&#x2F;07&#x2F;05&#x2F;9266997.htmlhttps:&#x2F;&#x2F;blog.csdn.net&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hdmi edid 分辨率设置">
+<meta property="og:url" content="http://qiushao.net/2020/04/22/hdmi/hdmi-edid-reslution-setting/index.html">
+<meta property="og:site_name" content="qiushao">
+<meta property="og:description" content="以下说明截图基于 R_980mgr_4.16.39.13141_Win.msi 工具(以下简称 980)，最好先安装这个工具，然后对着说明进行操作。关于 edid 的各字段这里不再作解析，请网上查阅资料。可以参考以下文章: https:&#x2F;&#x2F;www.cnblogs.com&#x2F;beyond-rxl&#x2F;archive&#x2F;2018&#x2F;07&#x2F;05&#x2F;9266997.htmlhttps:&#x2F;&#x2F;blog.csdn.net&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://qiushao.net/images/edid-import.png">
+<meta property="og:image" content="http://qiushao.net/images/980-introduce.png">
+<meta property="og:image" content="http://qiushao.net/images/Established-Timings.png">
+<meta property="og:image" content="http://qiushao.net/images/Standard-Timings.png">
+<meta property="og:image" content="http://qiushao.net/images/windows-reslution-setting.png">
+<meta property="og:image" content="http://qiushao.net/images/Preferred-Timing.png">
+<meta property="og:image" content="http://qiushao.net/images/monitor-name.png">
+<meta property="og:image" content="http://qiushao.net/images/Extension-Block-Detailed-Timing.png">
+<meta property="og:image" content="http://qiushao.net/images/edid-export.png">
+<meta property="article:published_time" content="2020-04-22T10:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T01:22:23.748Z">
+<meta property="article:author" content="qiushao">
+<meta property="article:tag" content="edid">
+<meta property="article:tag" content="hdmi">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiushao.net/images/edid-import.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qiushao.net/2020/04/22/hdmi/hdmi-edid-reslution-setting/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="qiushao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/qiushao" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秋少</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android system developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>I do code for fun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/">Android系统开发入门</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E8%BF%9B%E9%98%B6/">Android系统开发进阶</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Camera/">Camera</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/QT/">QT</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c/">c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hdmi/">hdmi</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hi3519AV100/" rel="tag">Hi3519AV100</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel/" rel="tag">Kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mame/" rel="tag">Mame</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QT/" rel="tag">QT</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/" rel="tag">c++</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredump/" rel="tag">coredump</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/edid/" rel="tag">edid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gperftools/" rel="tag">gperftools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdmi/" rel="tag">hdmi</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nfs/" rel="tag">nfs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shadowsocks/" rel="tag">shadowsocks</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcmalloc/" rel="tag">tcmalloc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tftp/" rel="tag">tftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="tag">内存泄漏</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" rel="tag">静态代码检查</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Android/" style="font-size: 14px;">Android</a> <a href="/tags/Camera/" style="font-size: 13.2px;">Camera</a> <a href="/tags/Hi3519AV100/" style="font-size: 13.2px;">Hi3519AV100</a> <a href="/tags/Java/" style="font-size: 13.4px;">Java</a> <a href="/tags/Kernel/" style="font-size: 13px;">Kernel</a> <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Mame/" style="font-size: 13px;">Mame</a> <a href="/tags/QT/" style="font-size: 13px;">QT</a> <a href="/tags/c/" style="font-size: 13.6px;">c++</a> <a href="/tags/coredump/" style="font-size: 13px;">coredump</a> <a href="/tags/docker/" style="font-size: 13.2px;">docker</a> <a href="/tags/edid/" style="font-size: 13px;">edid</a> <a href="/tags/gperftools/" style="font-size: 13px;">gperftools</a> <a href="/tags/hdmi/" style="font-size: 13px;">hdmi</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/maven/" style="font-size: 13px;">maven</a> <a href="/tags/nfs/" style="font-size: 13px;">nfs</a> <a href="/tags/shadowsocks/" style="font-size: 13px;">shadowsocks</a> <a href="/tags/shell/" style="font-size: 13px;">shell</a> <a href="/tags/tcmalloc/" style="font-size: 13px;">tcmalloc</a> <a href="/tags/tftp/" style="font-size: 13px;">tftp</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" style="font-size: 13px;">内存泄漏</a> <a href="/tags/%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%9F%A5/" style="font-size: 13.2px;">静态代码检查</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/Linux/linux-profile-bashrc-difference/" class="title">Linux profile 和 bashrc 的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T01:22:23.744Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/QT/">QT</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/31/Linux/linuxmint-install-qt5/" class="title">Linux Mint 20 安装 QT5</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-31T14:00:00.000Z" itemprop="datePublished">2020-07-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/28/Linux/linuxmint-install-wechat/" class="title">Linux Mint 20 安装微信</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-28T14:00:00.000Z" itemprop="datePublished">2020-07-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Linux/">Linux</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/07/11/Linux/memory-leak-analyze-tcmalloc/" class="title">内存泄漏分析工具：tcmalloc</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-07-11T12:00:00.000Z" itemprop="datePublished">2020-07-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/Android/">Android</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/29/Android/Android.bp-disable-module/" class="title">根据条件禁用Android.bp模块</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-29T12:00:00.000Z" itemprop="datePublished">2020-05-29</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-导入-edid"><span class="toc-text">1. 导入 edid</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-分辨率设置"><span class="toc-text">2. 分辨率设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Established-Timings"><span class="toc-text">2.1. Established Timings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Standard-Timings"><span class="toc-text">2.2. Standard Timings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Detailed-Timing"><span class="toc-text">2.3 Detailed Timing</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-Preferred-Timing-推荐分辨率"><span class="toc-text">2.3.1 Preferred Timing (推荐分辨率)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-普通-Detailed-Timing"><span class="toc-text">2.3.2 普通 Detailed Timing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-3-Extension-Block-中的-Detailed-Timing"><span class="toc-text">2.3.3 Extension Block 中的 Detailed Timing</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-导出-edid"><span class="toc-text">4. 导出 edid</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-hdmi/hdmi-edid-reslution-setting" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hdmi edid 分辨率设置
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/04/22/hdmi/hdmi-edid-reslution-setting/" class="article-date">
+	  <time datetime="2020-04-22T10:00:00.000Z" itemprop="datePublished">2020-04-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/hdmi/">hdmi</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/edid/" rel="tag">edid</a>, <a class="article-tag-link" href="/tags/hdmi/" rel="tag">hdmi</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2020/04/22/hdmi/hdmi-edid-reslution-setting/" class="leancloud_visitors"  data-flag-title="hdmi edid 分辨率设置">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/04/22/hdmi/hdmi-edid-reslution-setting/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>以下说明截图基于 R_980mgr_4.16.39.13141_Win.msi 工具(以下简称 980)，最好先安装这个工具，然后对着说明进行操作。<br>关于 edid 的各字段这里不再作解析，请网上查阅资料。可以参考以下文章:</p>
+<p><a href="https://www.cnblogs.com/beyond-rxl/archive/2018/07/05/9266997.html" target="_blank" rel="noopener">https://www.cnblogs.com/beyond-rxl/archive/2018/07/05/9266997.html</a><br><a href="https://blog.csdn.net/Gplusplus/article/details/52597033" target="_blank" rel="noopener">https://blog.csdn.net/Gplusplus/article/details/52597033</a></p>
+<p>本文只解析说明如何修改 edid 以支持目标分辨率。设置推荐分辨率。</p>
+<h2 id="1-导入-edid"><a href="#1-导入-edid" class="headerlink" title="1. 导入 edid"></a>1. 导入 edid</h2><p>打开 980, 切换到 EDID/DPCD 标签页，右键 EDID - USER 菜单，选择 import 菜单。然后选择需要编辑的 EDID 文件即可。<br><img src="/images/edid-import.png" alt="edid-import"></p>
+<p>980 的界面菜单大致功能划分如下：<br><img src="/images/980-introduce.png" alt="980-introduce"></p>
+<h2 id="2-分辨率设置"><a href="#2-分辨率设置" class="headerlink" title="2. 分辨率设置"></a>2. 分辨率设置</h2><p>在EDID中定义了几种 Timing，分别是 Established Timing、Standard Timing、Detailed Timing 还有一些额外的Timing，比如GTF和CVT Timing。<br>其中 Detailed Timing 又包含了： Preferred Timing， 普通 Detailed Timing， Extension Block中的Detailed Timing。这三者的格式基本是一致的。</p>
+<p>对于显示器来说，支持的这些 Timing 有一个优先级：<br>Preferred Timing &gt; 普通 Detailed Timing &gt; Extension Block 中的 Detailed Timing &gt; CVT &gt; Standard Timing &gt; Established Timing</p>
+<p>下面对这几种 Timing 分别解析。</p>
+<h3 id="2-1-Established-Timings"><a href="#2-1-Established-Timings" class="headerlink" title="2.1. Established Timings"></a>2.1. Established Timings</h3><p>提供一些基本固定的VESA, Apple, Mac, IBM VGA等输出的Timing。这个比较简单，如果确认芯片支持这些分辨率的话，直接打钩就行了。不需要解析。<br><img src="/images/Established-Timings.png" alt="Established-Timings"></p>
+<h3 id="2-2-Standard-Timings"><a href="#2-2-Standard-Timings" class="headerlink" title="2.2. Standard Timings"></a>2.2. Standard Timings</h3><p>总共16个字节，提供最多8种分辨率的识别，每一种分辨率都是由2个字节的模式格式和刷新率得到的。这些分辨率应该是对 Established Timings 的一种扩充。<br><img src="/images/Standard-Timings.png" alt="Standard Timings"></p>
+<p>每个字段的意义解析如下：</p>
+<ul>
+<li>Unused : 是否使用这个分辨率。</li>
+<li>H-Active Pixels(256-2288 by 8) :水平分辨率, 例如 1280</li>
+<li>Image Aspect Ratio: 画面比例(水平分辨率 : 垂直分辨率), 例如 5:4 </li>
+<li>Refresh Rate(60 - 123 HZ): 刷新率，也就是帧率，例如 60</li>
+</ul>
+<p>其中水平分辨率和画面比例共同决定了分辨率。如上面的例子。水平分辨率为 1280, 画面比例为 5 : 4。那我们就可以算出垂直分辨率：<br>水平分辨率 / 垂直分辨率 = 5 / 4<br>–&gt; 垂直分辨率 = 水平分辨率 * 4 / 5 = 1280 * 4 / 5 = 1024</p>
+<p>也就是整个分辨率块定义的分辨率为： 1280 * 1024 60HZ 。</p>
+<h3 id="2-3-Detailed-Timing"><a href="#2-3-Detailed-Timing" class="headerlink" title="2.3 Detailed Timing"></a>2.3 Detailed Timing</h3><h4 id="2-3-1-Preferred-Timing-推荐分辨率"><a href="#2-3-1-Preferred-Timing-推荐分辨率" class="headerlink" title="2.3.1 Preferred Timing (推荐分辨率)"></a>2.3.1 Preferred Timing (推荐分辨率)</h4><p>推荐分辨率就是 hdmi 设备优先输出的分辨率。当用户没有手动设置过分辨率时，且 hdmi 设备支持时，输出的分辨率就是推荐分辨率。<br>如果是 windows 电脑接入电视的话，我们在设置分辨的时候分看到分辨率列表里面有(推荐) 的字样提示：<br><img src="/images/windows-reslution-setting.png" alt="windows-reslution-setting"></p>
+<p>Preferred Timing 其实用的就是第一个 Detailed Timing:<br><img src="/images/Preferred-Timing.png" alt="Preferred-Timing"></p>
+<h4 id="2-3-2-普通-Detailed-Timing"><a href="#2-3-2-普通-Detailed-Timing" class="headerlink" title="2.3.2 普通 Detailed Timing"></a>2.3.2 普通 Detailed Timing</h4><p>各字段的描述跟 Preferred Timing 一样的。 目前其实也只有 Descriptor 2。<br>普通 Detailed Timing Descriptions。共72个字节分为四个详细时序描述块（DTD），每部分18个字节，故最多可以对四个TIMING 进行详细描述。一般来说 Descriptor 1/2 用来描述分辨率, 其中 Descriptor 1 作为推荐分辨率。 Descriptor 3/4 用来描述显示器信息（比如说显示器名）。</p>
+<p>显示器名的设置如下：<br><img src="/images/monitor-name.png" alt="monitor-name"></p>
+<h4 id="2-3-3-Extension-Block-中的-Detailed-Timing"><a href="#2-3-3-Extension-Block-中的-Detailed-Timing" class="headerlink" title="2.3.3 Extension Block 中的 Detailed Timing"></a>2.3.3 Extension Block 中的 Detailed Timing</h4><p>扩展块中的 Detailed Timing 跟普通 Detailed Timing 的字段是一样的。只不过是放的位置不一样而已。当前面三种方法不能囊括我们想要支持的分辨率，且 EDID 还有足够的空间的时候。我们就可以通过这种方法来添加分辨率支持。<br><img src="/images/Extension-Block-Detailed-Timing.png" alt="Extension-Block-Detailed-Timing"></p>
+<h2 id="4-导出-edid"><a href="#4-导出-edid" class="headerlink" title="4. 导出 edid"></a>4. 导出 edid</h2><p>修改完之后，点一下 Apply 按钮，然后然后 File –&gt; Export， 选择 bin 形式导出即可。<br><img src="/images/edid-export.png" alt="edid-export"></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qiushao.net/2020/04/22/hdmi/hdmi-edid-reslution-setting/" title="hdmi edid 分辨率设置" target="_blank" rel="external">http://qiushao.net/2020/04/22/hdmi/hdmi-edid-reslution-setting/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/qiushao" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/qiushao" target="_blank"><span class="text-dark">秋少</span><small class="ml-1x">Android system developer</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/05/01/Linux/linux-enable-coredump/" title="arm linux 开启 coredump file"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/04/15/IPCamera/Hi3519AV100-sdk-overview/" title="Hi3519AV100 sdk 介绍"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/qiushao" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'ssiguykzvYVKQssTSlReQlvc-gzGzoHsz',
+    appKey: 'makcAEpnr5TFRXcyjIqWaA04',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?cb9abaf5d3c6ca617102a9af9cb0434f";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>
