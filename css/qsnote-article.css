@@ -1,0 +1,113 @@
+/* Prism token styles from VNote native/highlight.css (PrismJS, MIT). */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+/* Shared article typography. Repeated class specificity overrides the bundled
+   themes only inside article content, including their nested heading rules. */
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article { display: block; font: 16px/1.75 system-ui, sans-serif; color: #24292f; background: white; overflow-wrap: anywhere; text-align: left; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article :where(*):not(:where(.katex, .katex *, .diagram *, .token, .vx-heading-fold-toggle, .vx-heading-fold-content, .code-toolbar, .toolbar, .toolbar *)) { all: revert; box-sizing: content-box; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article :where(*):not(:where(.katex, .katex *, .diagram *, .token, .vx-heading-fold-toggle, .vx-heading-fold-content, .code-toolbar, .toolbar, .toolbar *))::before,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article :where(*):not(:where(.katex, .katex *, .diagram *, .token, .vx-heading-fold-toggle, .vx-heading-fold-content, .code-toolbar, .toolbar, .toolbar *))::after { content: normal; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h1,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h2,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h3,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h4,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h5,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h6 { line-height: 1.35; margin: 1.2em 0 .6em; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h1 { font-size: 1.5em; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h1,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article h2 { padding-bottom: .25em; border-bottom: 1px solid #e3e5e8; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article a { color: #3567c7; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article img,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article svg { max-width: 100%; }
+/* Code colors keep inline snippets distinct from blocks: inline code uses a warm
+   tint with crimson text, blocks a soft panel with tone-down foreground. */
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article { --qsnote-code-background: #fafafa; --qsnote-code-foreground: #383a42; --qsnote-inline-code-background: #fcfaf2; --qsnote-inline-code-foreground: #cb1b45; --qsnote-code-header: #ececee; --qsnote-code-label: #8b8f99; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article pre { padding: 16px; overflow: auto; background: var(--qsnote-code-background); color: var(--qsnote-code-foreground); border-radius: 6px; line-height: 1.6; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background: var(--qsnote-inline-code-background); color: var(--qsnote-inline-code-foreground); padding: 2px 4px; border-radius: 3px; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article pre code { overflow-wrap: normal; background: none; color: inherit; padding: 0; border-radius: 0; }
+/* Code block chrome from article.js: window dots, language badge and rounded
+   shadowed panel, mirroring the reference blog's figure.highlight. */
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .code-block { position: relative; overflow: hidden; margin: 1em 0; padding-top: 2.4em; border-radius: 8px; background: var(--qsnote-code-header); box-shadow: 0 4px 10px rgba(0, 0, 0, .1), 0 14px 32px rgba(0, 0, 0, .22); }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .code-block::before { content: ''; position: absolute; top: 1em; left: 14px; width: 12px; height: 12px; border-radius: 50%; background: #fc625d; box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .code-block[data-language]::after { content: attr(data-language); position: absolute; top: 1.05em; left: 50%; transform: translateX(-50%); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: .75em; line-height: 1; color: var(--qsnote-code-label); letter-spacing: .05em; text-transform: uppercase; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .code-block .code-copy { position: absolute; top: .75em; right: 10px; padding: .2em .55em; border: 1px solid #d8dce2; border-radius: 4px; background: white; color: #656d76; font-family: inherit; font-size: .75em; line-height: 1.4; cursor: pointer; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .code-block .code-copy:hover { background: #eef1f6; color: #24292f; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .code-block pre { margin: 0; border-radius: 0; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article blockquote { margin-left: 0; padding-left: 16px; border-left: 4px solid #d8dce2; color: #656d76; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article table { border-collapse: collapse; display: block; overflow-x: auto; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article td,.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article th { padding: 6px 12px; border: 1px solid #d8dce2; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article th { background: #f6f7f9; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .task-list-item { list-style: none; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article input[type=checkbox] { margin-right: .6em; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article figure { margin: 1em 0; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article figcaption { text-align: center; color: #656d76; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article eqn { display: block; overflow-x: auto; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside { padding: 12px; background: #eef4ff; border-left: 4px solid #3b6fd4; }
+/* Alert asides from "alert-..." containers and GitHub-style [!NOTE] blockquotes. */
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside .alert-title { font-weight: 600; margin: 0 0 .3em; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-note { background: #ddf4ff; border-left-color: #0969da; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-note .alert-title { color: #0969da; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-tip { background: #dafbe1; border-left-color: #1a7f37; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-tip .alert-title { color: #1a7f37; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-important { background: #fbefff; border-left-color: #8250df; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-important .alert-title { color: #8250df; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-warning { background: #fff8c5; border-left-color: #9a6700; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-warning .alert-title { color: #9a6700; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-caution { background: #ffebe9; border-left-color: #cf222e; }.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article aside.alert-caution .alert-title { color: #cf222e; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article eq .katex-display { display: inline-block; margin: 0; vertical-align: middle; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .diagram { overflow: auto; margin: 16px 0; text-align: center; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .render-error { color: #b42318; white-space: pre-wrap; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .math-inline { vertical-align: middle; }
+.qsnote-article.qsnote-article.qsnote-article.qsnote-article.qsnote-article .math-display { display: block; margin: 1em auto; }

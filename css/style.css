@@ -5761,8 +5761,8 @@ body.no-sidebar .sidebar {
 }
 
 #avatar {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   display: inline-block;
 }
 
@@ -5865,7 +5865,7 @@ body.no-sidebar .sidebar {
 .main .pager > a,
 .main .pager > .page-number {
   line-height: 32px;
-  float: left;
+  /* float: left; */
 }
 
 .main .pager a {
@@ -7895,6 +7895,11 @@ body.okayNav-loaded {
 }
 
 @media (min-width: 992px) {
+  
+  .slimContent{
+    margin-top: 20px;
+  }
+
   .container {
     width: 970px;
   }
