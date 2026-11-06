@@ -1,157 +1,53 @@
 <!DOCTYPE html>
-
-<html lang="zh">
-<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Shell | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/tags/Shell/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
-<body class="main-center theme-purple" itemscope="" itemtype="http://schema.org/WebPage">
-<header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-<div class="slimContent">
-<div class="navbar-header">
-<div class="profile-block text-center">
-<a href="https://qiushao.github.io" id="avatar" target="_blank">
-<img class="img-circle img-rotate" height="200" src="/images/qsnote-avatar.png" width="200"/>
-</a>
-<h2 class="hidden-xs hidden-sm" id="name">秋少</h2>
-<h3 class="hidden-xs hidden-sm hidden-md" id="title"></h3>
-<small class="text-muted hidden-xs hidden-sm" id="location"><i class="icon icon-map-marker"></i> 深圳</small>
-</div>
-<div class="search" id="search-form-wrap">
-<form class="search-form sidebar-form">
-<div class="input-group">
-<input class="search-form-input form-control" placeholder="搜索" type="text"/>
-<span class="input-group-btn">
-<button class="search-form-submit btn btn-flat" onclick="return false;" type="submit"><i class="icon icon-search"></i></button>
-</span>
-</div>
-</form>
-<div class="ins-search">
-<div class="ins-search-mask"></div>
-<div class="ins-search-container">
-<div class="ins-input-wrapper">
-<input class="ins-search-input" placeholder="想要查找什么..." type="text" x-webkit-speech=""/>
-<button aria-label="Close" class="close ins-close ins-selectable" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
-</div>
-<div class="ins-section-wrapper">
-<div class="ins-section-container"></div>
-</div>
-</div>
-</div>
-</div>
-<button aria-controls="main-navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#main-navbar" data-toggle="collapse" type="button">
-<span class="sr-only">Toggle navigation</span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-</button>
-</div>
-<nav class="collapse navbar-collapse" id="main-navbar" itemscope="" itemtype="http://schema.org/SiteNavigationElement" role="navigation">
-<ul class="nav navbar-nav main-nav">
-<li class="menu-item menu-item-home">
-<a href="/.">
-<i class="icon icon-home-fill"></i>
-<span class="menu-title">首页</span>
-</a>
-</li>
-<li class="menu-item menu-item-archives">
-<a href="/archives">
-<i class="icon icon-archives-fill"></i>
-<span class="menu-title">归档</span>
-</a>
-</li>
-<li class="menu-item menu-item-categories">
-<a href="/categories">
-<i class="icon icon-folder"></i>
-<span class="menu-title">分类</span>
-</a>
-</li>
-<li class="menu-item menu-item-tags">
-<a href="/tags">
-<i class="icon icon-tags"></i>
-<span class="menu-title">标签</span>
-</a>
-</li>
-<li class="menu-item menu-item-links">
-<a href="/links">
-<i class="icon icon-friendship"></i>
-<span class="menu-title">友链</span>
-</a>
-</li>
-<li class="menu-item menu-item-about">
-<a href="/about">
-<i class="icon icon-cup-fill"></i>
-<span class="menu-title">关于</span>
-</a>
-</li>
-</ul>
-<ul class="social-links">
-<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
-</ul>
-</nav>
-</div>
-</header>
-<button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="main-sidebar" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-<aside id="main-sidebar" class="sidebar" itemscope="" itemtype="http://schema.org/WPSideBar">
-<div class="slimContent">
-<div class="widget">
-<h3 class="widget-title">分类</h3>
-<div class="widget-body">
-<ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">标签</h3>
-<div class="widget-body">
-<ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a><span class="tag-list-count">1</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">标签云</h3>
-<div class="widget-body tagcloud"><a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/Shell/" style="font-size: 13px;">Shell</a> </div>
-</div>
-<div class="widget">
-<h3 class="widget-title">归档</h3>
-<div class="widget-body">
-<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/11/">十一月 2026</a><span class="archive-list-count">5</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">最新文章</h3>
-<div class="widget-body">
-<ul class="recent-post-list list-unstyled no-thumbnail"><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-664d93b2/">Java-反射机制介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-81a0e8a2/">Java-注解介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-b3143e0b/">Java-类的加载机制介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Linux/">Linux</a></p><p class="item-title"><a class="title" href="/categories/Linux/post-44d87909/">Linux profile 和 bashrc 的区别</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Linux/">Linux</a></p><p class="item-title"><a class="title" href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li></ul>
-</div>
-</div>
-</div>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发">
+<meta name="description" content="Android系统开发，音视频开发">
+<link rel="canonical" href="https://qiushao.github.io/tags/Shell/">
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/qsnote-3-jekyll.css">
+<script src="/js/qsnote-3-jekyll.js" defer></script>
+<link rel="stylesheet" href="/css/qsnote-article.css"></head>
+<body data-root="/">
+<aside id="sidebar" aria-label="站点导航">
+  <div id="sidebar-left">
+    <header class="header">
+      <a id="sidebar-avatar" href="/"><img id="sidebar-avatar-img" alt="一叶知秋" src="/images/qsnote-avatar.png"></a>
+      <div id="sidebar-social"><a class="sidebar-social-icon github" href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"></a></div>
+      <a class="site-title" href="/">一叶知秋</a>
+      <p class="site-author">秋少</p>
+      <nav class="site-menu" aria-label="页面"><a class="" href="/">首页</a><a class="" href="/categories/">分类</a><a class="" href="/tags/">标签</a><a class="" href="/archives/">归档</a><a class="" href="/links/">友链</a><a class="" href="/about/">关于</a></nav>
+    </header>
+    <ul id="sidebar-tags" aria-label="按标签筛选文章">
+      <li><button class="sidebar-tag active" type="button" data-all="true" aria-pressed="true">全部文章</button></li>
+      <li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Java">Java</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Linux">Linux</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Shell">Shell</button></li>
+    </ul>
+  </div>
+  <div id="sidebar-right">
+    <div id="search-box"><input id="search-input" type="search" placeholder="搜索文章" aria-label="搜索文章"></div>
+    <nav id="toc" aria-label="文章列表"><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-664d93b2/" title="Java-反射机制介绍">Java-反射机制介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-81a0e8a2/" title="Java-注解介绍">Java-注解介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-b3143e0b/" title="Java-类的加载机制介绍">Java-类的加载机制介绍</a><a class="toc-link" data-tags="[]" href="/categories/Linux/post-44d87909/" title="Linux profile 和 bashrc 的区别">Linux profile 和 bashrc 的区别</a><a class="toc-link" data-tags="[&quot;Linux&quot;,&quot;Shell&quot;]" href="/categories/Linux/post-a42caa80/" title="正确获取shell脚本所在目录">正确获取shell脚本所在目录</a><p id="search-empty" role="status" hidden>没有找到文章</p></nav>
+  </div>
 </aside>
-<main class="main" role="main"><article class="article article-tags article-type-list"><header class="article-header"><h1 class="hidden-xs" itemprop="name">标签: Shell</h1><p class="text-muted hidden-xs">共 1 篇文章</p><nav role="navigation" id="nav-main" class="okayNav"><ul><li><a class="" href="/tags/">All</a></li><li><a class="" href="/tags/Java/">Java</a></li><li><a class="" href="/tags/Linux/">Linux</a></li><li><a class="" href="/tags/Shell/">Shell</a></li></ul></nav></header><div class="article-body"><h3 class="panel-title mb-1x"><a class="" href="/tags/Shell/"># Shell</a> <small class="text-muted">(Total 1 articles)</small></h3><div class="row"><div class="col-md-6"><article class="panel panel-default hover-shadow hover-grow" itemscope itemtype="http://schema.org/BlogPosting"><div class="panel-body"><div class="article-meta"><time>2026-11-05</time></div><h3 class="article-title" itemprop="name"><a class="article-link" href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></h3></div><div class="panel-footer"><a class="label label-default mb" href="/tags/Linux/">Linux</a> <a class="label label-default mb" href="/tags/Shell/">Shell</a> </div></article></div></div></div></article><nav class="bar bar-footer clearfix" data-stick-bottom><div class="bar-inner"><ul class="pager pull-left"><li class="prev disabled"><a href="javascript:;"><i class="icon icon-angle-left"></i> 上一页</a></li><li class="next disabled"><a href="javascript:;">下一页 <i class="icon icon-angle-right"></i></a></li></ul><div class="total-article bar-right">Page 1 of 1</div></div></nav></main>
-<footer class="footer" itemscope="" itemtype="http://schema.org/WPFooter">
-<ul class="social-links">
-<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
-</ul>
-<div class="copyright">
-<p>Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
-<div class="publishby">
-        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
-        </div>
-</div>
-</footer>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/plugin.min.js"></script>
-<script src="/js/application.js"></script>
-<script>
-(function (window) {
-    var INSIGHT_CONFIG = {
-        TRANSLATION: {
-            POSTS: '文章',
-            PAGES: '页面',
-            CATEGORIES: '分类',
-            TAGS: '标签',
-            UNTITLED: '(未命名)',
-        },
-        ROOT_URL: '/',
-        CONTENT_URL: '/content.json',
-    };
-    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
-})(window);
-</script>
-<script src="/js/insight.js"></script>
+<main id="main">
+  <article class="post container">
+  <h1 class="post-title">Shell</h1>
+  <section class="post-summary">
+  <div class="post-meta"><span class="post-meta-span date"><time datetime="2026-11-05">2026-11-05</time></span><span class="post-meta-span tag"><a class="article-tag-link-link" href="/tags/Linux/">Linux</a><a class="article-tag-link-link" href="/tags/Shell/">Shell</a></span></div>
+  <h2><a href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></h2>
+  <p>1. why，为什么我们要获取脚本所在的目录
+编写脚本时，经常需要知道脚本所在目录的位置，以便引用其他的资源或调用其他的脚本。因为这些资源的目录位置相对于当前脚本的位置是固定的。有同学就会问，既然它们的相对位置是固定的，那为什么我们不直接使用相对路径...</p>
+</section>
+
+</article>
+
+  <footer class="footer"><div class="container">
+    <p class="footer-entry">Android系统开发，音视频开发</p>
+    <p class="footer-entry">Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
+    <p class="footer-entry">Theme <a href="https://github.com/P233/3-Jekyll">3-Jekyll</a> by P233</p>
+  </div></footer>
+</main>
+<button id="menu" type="button" aria-label="切换导航" aria-controls="sidebar" aria-expanded="false"><span id="menu-icons" aria-hidden="true"></span></button>
 </body>
 </html>

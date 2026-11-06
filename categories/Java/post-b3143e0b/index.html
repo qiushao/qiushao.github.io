@@ -1,136 +1,40 @@
 <!DOCTYPE html>
-
-<html lang="zh">
-<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Java-类的加载机制介绍 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/categories/Java/post-b3143e0b/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
-<body class="main-center theme-purple" itemscope="" itemtype="http://schema.org/WebPage">
-<header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-<div class="slimContent">
-<div class="navbar-header">
-<div class="profile-block text-center">
-<a href="https://qiushao.github.io" id="avatar" target="_blank">
-<img class="img-circle img-rotate" height="200" src="/images/qsnote-avatar.png" width="200"/>
-</a>
-<h2 class="hidden-xs hidden-sm" id="name">秋少</h2>
-<h3 class="hidden-xs hidden-sm hidden-md" id="title"></h3>
-<small class="text-muted hidden-xs hidden-sm" id="location"><i class="icon icon-map-marker"></i> 深圳</small>
-</div>
-<div class="search" id="search-form-wrap">
-<form class="search-form sidebar-form">
-<div class="input-group">
-<input class="search-form-input form-control" placeholder="搜索" type="text"/>
-<span class="input-group-btn">
-<button class="search-form-submit btn btn-flat" onclick="return false;" type="submit"><i class="icon icon-search"></i></button>
-</span>
-</div>
-</form>
-<div class="ins-search">
-<div class="ins-search-mask"></div>
-<div class="ins-search-container">
-<div class="ins-input-wrapper">
-<input class="ins-search-input" placeholder="想要查找什么..." type="text" x-webkit-speech=""/>
-<button aria-label="Close" class="close ins-close ins-selectable" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
-</div>
-<div class="ins-section-wrapper">
-<div class="ins-section-container"></div>
-</div>
-</div>
-</div>
-</div>
-<button aria-controls="main-navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#main-navbar" data-toggle="collapse" type="button">
-<span class="sr-only">Toggle navigation</span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-</button>
-</div>
-<nav class="collapse navbar-collapse" id="main-navbar" itemscope="" itemtype="http://schema.org/SiteNavigationElement" role="navigation">
-<ul class="nav navbar-nav main-nav">
-<li class="menu-item menu-item-home">
-<a href="/.">
-<i class="icon icon-home-fill"></i>
-<span class="menu-title">首页</span>
-</a>
-</li>
-<li class="menu-item menu-item-archives">
-<a href="/archives">
-<i class="icon icon-archives-fill"></i>
-<span class="menu-title">归档</span>
-</a>
-</li>
-<li class="menu-item menu-item-categories">
-<a href="/categories">
-<i class="icon icon-folder"></i>
-<span class="menu-title">分类</span>
-</a>
-</li>
-<li class="menu-item menu-item-tags">
-<a href="/tags">
-<i class="icon icon-tags"></i>
-<span class="menu-title">标签</span>
-</a>
-</li>
-<li class="menu-item menu-item-links">
-<a href="/links">
-<i class="icon icon-friendship"></i>
-<span class="menu-title">友链</span>
-</a>
-</li>
-<li class="menu-item menu-item-about">
-<a href="/about">
-<i class="icon icon-cup-fill"></i>
-<span class="menu-title">关于</span>
-</a>
-</li>
-</ul>
-<ul class="social-links">
-<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
-</ul>
-</nav>
-</div>
-</header>
-<button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="main-sidebar" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-<aside id="main-sidebar" class="sidebar" itemscope="" itemtype="http://schema.org/WPSideBar">
-<div class="slimContent">
-<div class="widget">
-<h3 class="widget-title">分类</h3>
-<div class="widget-body">
-<ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">标签</h3>
-<div class="widget-body">
-<ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a><span class="tag-list-count">1</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">标签云</h3>
-<div class="widget-body tagcloud"><a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/Shell/" style="font-size: 13px;">Shell</a> </div>
-</div>
-<div class="widget">
-<h3 class="widget-title">归档</h3>
-<div class="widget-body">
-<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/11/">十一月 2026</a><span class="archive-list-count">5</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">最新文章</h3>
-<div class="widget-body">
-<ul class="recent-post-list list-unstyled no-thumbnail"><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-664d93b2/">Java-反射机制介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-81a0e8a2/">Java-注解介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-b3143e0b/">Java-类的加载机制介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Linux/">Linux</a></p><p class="item-title"><a class="title" href="/categories/Linux/post-44d87909/">Linux profile 和 bashrc 的区别</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Linux/">Linux</a></p><p class="item-title"><a class="title" href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li></ul>
-</div>
-</div>
-</div>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java-类的加载机制介绍 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发">
+<meta name="description" content="Android系统开发，音视频开发">
+<link rel="canonical" href="https://qiushao.github.io/categories/Java/post-b3143e0b/">
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/qsnote-3-jekyll.css">
+<script src="/js/qsnote-3-jekyll.js" defer></script>
+<link rel="stylesheet" href="/css/qsnote-article.css"></head>
+<body data-root="/">
+<aside id="sidebar" aria-label="站点导航">
+  <div id="sidebar-left">
+    <header class="header">
+      <a id="sidebar-avatar" href="/"><img id="sidebar-avatar-img" alt="一叶知秋" src="/images/qsnote-avatar.png"></a>
+      <div id="sidebar-social"><a class="sidebar-social-icon github" href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"></a></div>
+      <a class="site-title" href="/">一叶知秋</a>
+      <p class="site-author">秋少</p>
+      <nav class="site-menu" aria-label="页面"><a class="" href="/">首页</a><a class="" href="/categories/">分类</a><a class="" href="/tags/">标签</a><a class="" href="/archives/">归档</a><a class="" href="/links/">友链</a><a class="" href="/about/">关于</a></nav>
+    </header>
+    <ul id="sidebar-tags" aria-label="按标签筛选文章">
+      <li><button class="sidebar-tag active" type="button" data-all="true" aria-pressed="true">全部文章</button></li>
+      <li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Java">Java</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Linux">Linux</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Shell">Shell</button></li>
+    </ul>
+  </div>
+  <div id="sidebar-right">
+    <div id="search-box"><input id="search-input" type="search" placeholder="搜索文章" aria-label="搜索文章"></div>
+    <nav id="toc" aria-label="文章列表"><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-664d93b2/" title="Java-反射机制介绍">Java-反射机制介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-81a0e8a2/" title="Java-注解介绍">Java-注解介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-b3143e0b/" aria-current="page" title="Java-类的加载机制介绍">Java-类的加载机制介绍</a><a class="toc-link" data-tags="[]" href="/categories/Linux/post-44d87909/" title="Linux profile 和 bashrc 的区别">Linux profile 和 bashrc 的区别</a><a class="toc-link" data-tags="[&quot;Linux&quot;,&quot;Shell&quot;]" href="/categories/Linux/post-a42caa80/" title="正确获取shell脚本所在目录">正确获取shell脚本所在目录</a><p id="search-empty" role="status" hidden>没有找到文章</p></nav>
+  </div>
 </aside>
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar"><div class="slimContent"><nav id="toc" class="article-toc"><h3 class="toc-title">Catalogue</h3><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1.-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">1. 类加载机制基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2.-%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-text">2. 类的加载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2.1.-%E5%8A%A0%E8%BD%BD%EF%BC%9A%E6%9F%A5%E6%89%BE%E5%B9%B6%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%95%B0%E6%8D%AE"><span class="toc-text">2.1. 加载：查找并加载类的二进制数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2.2.-%E6%A0%A1%E9%AA%8C%EF%BC%9A%E6%A3%80%E6%9F%A5%E8%BD%BD%E5%85%A5class%E6%96%87%E4%BB%B6%E6%95%B0%E6%8D%AE%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="toc-text">2.2. 校验：检查载入Class文件数据的正确性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2.3.-%E5%87%86%E5%A4%87%EF%BC%9A%E7%BB%99%E7%B1%BB%E7%9A%84%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%E5%88%86%E9%85%8D%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4"><span class="toc-text">2.3. 准备：给类的静态变量分配存储空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2.4.-%E8%A7%A3%E6%9E%90%EF%BC%9A%E5%B0%86%E7%AC%A6%E5%8F%B7%E5%BC%95%E7%94%A8%E8%BD%AC%E6%88%90%E7%9B%B4%E6%8E%A5%E5%BC%95%E7%94%A8"><span class="toc-text">2.4. 解析：将符号引用转成直接引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2.5.-%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%9A%E5%AF%B9%E7%B1%BB%E7%9A%84%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%EF%BC%8C%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97%E6%89%A7%E8%A1%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E6%93%8D%E4%BD%9C"><span class="toc-text">2.5. 初始化：对类的静态变量，静态代码块执行初始化操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3.-%E8%A7%A6%E5%8F%91%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-text">3. 触发类加载的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4.-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">4. 类加载器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4.1-%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="toc-text">4.1 双亲委派模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4.2-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">4.2 自定义类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5.-%E5%BC%80%E7%AF%87%E9%97%AE%E9%A2%98%E8%A7%A3%E7%AD%94"><span class="toc-text">5. 开篇问题解答</span></a></li></ol></li></ol></nav></div></aside><main class="main" role="main"><div class="content">
-<article class="article article-type-post" id="post-categories/Java/post-b3143e0b/" itemscope="" itemtype="http://schema.org/BlogPosting">
-<div class="article-header">
-<h1 class="article-title" itemprop="name">Java-类的加载机制介绍</h1>
-<div class="article-meta"><span class="article-date"><i class="icon icon-calendar-check"></i> <a class="article-date" href="/categories/Java/post-b3143e0b/"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></a></span>
-<span class="article-category"><i class="icon icon-folder"></i> <a class="article-category-link" href="/categories/Java/">Java</a></span>
-<span class="article-tag"><i class="icon icon-tags"></i> <a class="article-tag-link-link" href="/tags/Java/">Java</a></span>
-<span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/Java/post-b3143e0b/#comments">评论</a></span></div>
-</div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><p>在开始介绍类的加载机制之前我们先看一个有趣的例子。
+<main id="main">
+  <article class="post container">
+  <div class="post-meta"><span class="post-meta-span date"><time datetime="2026-11-05">2026-11-05</time></span><span class="post-meta-span tag"><a class="article-tag-link-link" href="/tags/Java/">Java</a></span></div>
+  <h1 class="post-title">Java-类的加载机制介绍</h1>
+  <article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><p>在开始介绍类的加载机制之前我们先看一个有趣的例子。
 新建一个 apk 工程，然后修改其中的 MainActivity 代码如下：</p>
 <div class="code-toolbar"><figure data-language="java" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">net<span class="token punctuation">.</span>qiushao<span class="token punctuation">.</span>classloadertest</span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">androidx<span class="token punctuation">.</span>appcompat<span class="token punctuation">.</span>app<span class="token punctuation">.</span></span><span class="token class-name">AppCompatActivity</span></span><span class="token punctuation">;</span>
@@ -170,13 +74,13 @@
 <p>神奇的事情发生了，<code>ServiceManager.getService(Context.POWER_SERVICE)</code> 的返回结果竟然不是 null。如果你没有了解过 java 的类加载机制的话，肯定会一脸懵逼。但你看完下面对类的加载机制介绍之后应该就会明白其中的原理了。</p>
 <h2 id="1.-类加载机制基本概念">1. 类加载机制基本概念</h2>
 <p>我们首先从宏观上回顾一下 java 类的编译执行的流程，大概如下图:
-<img src="/categories/Java/post-b3143e0b/java%E7%BC%96%E8%AF%91%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="java编译执行流程"/></p>
+<img alt="java编译执行流程" src="/categories/Java/post-b3143e0b/java%E7%BC%96%E8%AF%91%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png"/></p>
 <p>java 虚拟机把描述类的数据从 .class 文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的 java 类型，这就是虚拟机的加载机制。
 .class 文件由类装载器装载后，在 JVM 中将形成一份描述 Class 结构的元信息对象，通过该元信息对象可以获知 Class 的结构信息：如构造函数，属性和方法等，Java允许用户借由这个Class 相关的元信息对象间接调用 Class 对象的功能, 这里就是我们经常能见到的 Class 类。如果你有看过前两篇文章关于反射的介绍，你就知道，我们在反射中用到的 Class 对象其实就是从这里来的了。</p>
 <p>本文主要介绍的就是其中的 <strong>类加载器</strong> 的工作。</p>
 <h2 id="2.-类的加载过程">2. 类的加载过程</h2>
 <p>类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载、验证、准备、解析、初始化、使用和卸载七个阶段。这七个阶段的发生顺序如下图所示：
-<img src="/categories/Java/post-b3143e0b/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png" alt="类的加载过程"/></p>
+<img alt="类的加载过程" src="/categories/Java/post-b3143e0b/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png"/></p>
 <p>其中类加载的过程包括了加载、验证、准备、解析、初始化五个阶段，这五个阶段的工作分别如下：</p>
 <h3 id="2.1.-加载：查找并加载类的二进制数据">2.1. 加载：查找并加载类的二进制数据</h3>
 <p>加载是类加载过程的第一个阶段，在加载阶段，虚拟机需要完成以下三件事情：</p>
@@ -257,7 +161,7 @@
 <li>如果没找到，则继续依次向下查找，如果还没找到则最后会交由自身去查找</li>
 </ol>
 <p>具体流程见下图：
-<img src="/categories/Java/post-b3143e0b/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B.png" alt="双亲委派模型"/></p>
+<img alt="双亲委派模型" src="/categories/Java/post-b3143e0b/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B.png"/></p>
 <ul>
 <li>红色虚线的箭头代表向上委托的方向，如果当前的类加载器没有从缓存中找到这个 Class 对象，就会请求父加载器进行操作。直到 Bootstrap ClassLoader。</li>
 <li>黑色虚线的箭头代表的是查找方向，若 Bootstrap ClassLoader 可以从 $JAVA_HOME/jre/lib目录或者 -Xbootclasspath 指定目录查找到，就直接返回该对象，否则就让 ExtClassLoader 去查找。</li>
@@ -381,54 +285,18 @@ qiushao.net.Person is loaded by:qiushao.net.TestClassloader@5e2de80c
 <li>Bootstrap ClassLoader 会加载 $BOOTCLASSPATH 路径下的类。</li>
 </ul>
 <p>以上大部分知识来源于 周志明老师的 &lt;深入理解 Java 虚拟机>，这本书买了几年了，为了写这篇文章，又翻出来看了几遍。这本书写的是真不错，感兴趣的同学可以买来研究一下。</p>
-</article></div>
-<div class="article-footer">
-<blockquote class="mt-2x">
-<ul class="post-copyright list-unstyled">
-<li class="post-copyright-link hidden-xs">
-<strong>本文链接：</strong>
-<a href="https://qiushao.github.io/categories/Java/post-b3143e0b/" rel="external" target="_blank" title="Java-类的加载机制介绍">https://qiushao.github.io/categories/Java/post-b3143e0b/</a>
-</li>
-<li class="post-copyright-license">
-<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-</ul>
-</blockquote>
-</div>
 </article>
-<section id="comments"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
-</div>
-<nav class="bar bar-footer clearfix" data-stick-bottom><div class="bar-inner"><ul class="pager pull-left"><li class="prev"><a href="/categories/Java/post-81a0e8a2/" title="Java-注解介绍"><i class="icon icon-angle-left"></i><span>  上一篇</span></a></li><li class="next"><a href="/categories/Linux/post-44d87909/" title="Linux profile 和 bashrc 的区别"><span>下一篇  </span><i class="icon icon-angle-right"></i></a></li><li class="toggle-toc"><a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" aria-controls="collapseToc" title="Catalogue" role="button"><span>[&nbsp;</span><span>Catalogue</span> <i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><div class="bar-right"></div></div></nav></main>
-<footer class="footer" itemscope="" itemtype="http://schema.org/WPFooter">
-<ul class="social-links">
-<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
-</ul>
-<div class="copyright">
-<p>Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
-<div class="publishby">
-        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
-        </div>
-</div>
-</footer>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/plugin.min.js"></script>
-<script src="/js/application.js"></script>
-<script>
-(function (window) {
-    var INSIGHT_CONFIG = {
-        TRANSLATION: {
-            POSTS: '文章',
-            PAGES: '页面',
-            CATEGORIES: '分类',
-            TAGS: '标签',
-            UNTITLED: '(未命名)',
-        },
-        ROOT_URL: '/',
-        CONTENT_URL: '/content.json',
-    };
-    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
-})(window);
-</script>
-<script src="/js/insight.js"></script>
+  <div class="post-categories"><a class="article-category-link" href="/categories/Java/">Java</a></div>
+  <div class="post-nav"><div class="post-nav-item"><a class="" href="/categories/Java/post-81a0e8a2/">‹ Java-注解介绍</a></div><div class="post-nav-item"><a class="" href="/categories/Linux/post-44d87909/">Linux profile 和 bashrc 的区别 ›</a></div></div>
+</article>
+<section id="comments" class="comment container"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
+
+  <footer class="footer"><div class="container">
+    <p class="footer-entry">Android系统开发，音视频开发</p>
+    <p class="footer-entry">Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
+    <p class="footer-entry">Theme <a href="https://github.com/P233/3-Jekyll">3-Jekyll</a> by P233</p>
+  </div></footer>
+</main>
+<button id="menu" type="button" aria-label="切换导航" aria-controls="sidebar" aria-expanded="false"><span id="menu-icons" aria-hidden="true"></span></button>
 </body>
 </html>

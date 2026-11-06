@@ -1,136 +1,40 @@
 <!DOCTYPE html>
-
-<html lang="zh">
-<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Java-反射机制介绍 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/categories/Java/post-664d93b2/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
-<body class="main-center theme-purple" itemscope="" itemtype="http://schema.org/WebPage">
-<header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-<div class="slimContent">
-<div class="navbar-header">
-<div class="profile-block text-center">
-<a href="https://qiushao.github.io" id="avatar" target="_blank">
-<img class="img-circle img-rotate" height="200" src="/images/qsnote-avatar.png" width="200"/>
-</a>
-<h2 class="hidden-xs hidden-sm" id="name">秋少</h2>
-<h3 class="hidden-xs hidden-sm hidden-md" id="title"></h3>
-<small class="text-muted hidden-xs hidden-sm" id="location"><i class="icon icon-map-marker"></i> 深圳</small>
-</div>
-<div class="search" id="search-form-wrap">
-<form class="search-form sidebar-form">
-<div class="input-group">
-<input class="search-form-input form-control" placeholder="搜索" type="text"/>
-<span class="input-group-btn">
-<button class="search-form-submit btn btn-flat" onclick="return false;" type="submit"><i class="icon icon-search"></i></button>
-</span>
-</div>
-</form>
-<div class="ins-search">
-<div class="ins-search-mask"></div>
-<div class="ins-search-container">
-<div class="ins-input-wrapper">
-<input class="ins-search-input" placeholder="想要查找什么..." type="text" x-webkit-speech=""/>
-<button aria-label="Close" class="close ins-close ins-selectable" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
-</div>
-<div class="ins-section-wrapper">
-<div class="ins-section-container"></div>
-</div>
-</div>
-</div>
-</div>
-<button aria-controls="main-navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#main-navbar" data-toggle="collapse" type="button">
-<span class="sr-only">Toggle navigation</span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-</button>
-</div>
-<nav class="collapse navbar-collapse" id="main-navbar" itemscope="" itemtype="http://schema.org/SiteNavigationElement" role="navigation">
-<ul class="nav navbar-nav main-nav">
-<li class="menu-item menu-item-home">
-<a href="/.">
-<i class="icon icon-home-fill"></i>
-<span class="menu-title">首页</span>
-</a>
-</li>
-<li class="menu-item menu-item-archives">
-<a href="/archives">
-<i class="icon icon-archives-fill"></i>
-<span class="menu-title">归档</span>
-</a>
-</li>
-<li class="menu-item menu-item-categories">
-<a href="/categories">
-<i class="icon icon-folder"></i>
-<span class="menu-title">分类</span>
-</a>
-</li>
-<li class="menu-item menu-item-tags">
-<a href="/tags">
-<i class="icon icon-tags"></i>
-<span class="menu-title">标签</span>
-</a>
-</li>
-<li class="menu-item menu-item-links">
-<a href="/links">
-<i class="icon icon-friendship"></i>
-<span class="menu-title">友链</span>
-</a>
-</li>
-<li class="menu-item menu-item-about">
-<a href="/about">
-<i class="icon icon-cup-fill"></i>
-<span class="menu-title">关于</span>
-</a>
-</li>
-</ul>
-<ul class="social-links">
-<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
-</ul>
-</nav>
-</div>
-</header>
-<button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="main-sidebar" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-<aside id="main-sidebar" class="sidebar" itemscope="" itemtype="http://schema.org/WPSideBar">
-<div class="slimContent">
-<div class="widget">
-<h3 class="widget-title">分类</h3>
-<div class="widget-body">
-<ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">标签</h3>
-<div class="widget-body">
-<ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a><span class="tag-list-count">1</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">标签云</h3>
-<div class="widget-body tagcloud"><a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/Shell/" style="font-size: 13px;">Shell</a> </div>
-</div>
-<div class="widget">
-<h3 class="widget-title">归档</h3>
-<div class="widget-body">
-<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/11/">十一月 2026</a><span class="archive-list-count">5</span></li></ul>
-</div>
-</div>
-<div class="widget">
-<h3 class="widget-title">最新文章</h3>
-<div class="widget-body">
-<ul class="recent-post-list list-unstyled no-thumbnail"><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-664d93b2/">Java-反射机制介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-81a0e8a2/">Java-注解介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Java/">Java</a></p><p class="item-title"><a class="title" href="/categories/Java/post-b3143e0b/">Java-类的加载机制介绍</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Linux/">Linux</a></p><p class="item-title"><a class="title" href="/categories/Linux/post-44d87909/">Linux profile 和 bashrc 的区别</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/Linux/">Linux</a></p><p class="item-title"><a class="title" href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></p><p class="item-date"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></p></div></li></ul>
-</div>
-</div>
-</div>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java-反射机制介绍 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发">
+<meta name="description" content="Android系统开发，音视频开发">
+<link rel="canonical" href="https://qiushao.github.io/categories/Java/post-664d93b2/">
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/qsnote-3-jekyll.css">
+<script src="/js/qsnote-3-jekyll.js" defer></script>
+<link rel="stylesheet" href="/css/qsnote-article.css"></head>
+<body data-root="/">
+<aside id="sidebar" aria-label="站点导航">
+  <div id="sidebar-left">
+    <header class="header">
+      <a id="sidebar-avatar" href="/"><img id="sidebar-avatar-img" alt="一叶知秋" src="/images/qsnote-avatar.png"></a>
+      <div id="sidebar-social"><a class="sidebar-social-icon github" href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"></a></div>
+      <a class="site-title" href="/">一叶知秋</a>
+      <p class="site-author">秋少</p>
+      <nav class="site-menu" aria-label="页面"><a class="" href="/">首页</a><a class="" href="/categories/">分类</a><a class="" href="/tags/">标签</a><a class="" href="/archives/">归档</a><a class="" href="/links/">友链</a><a class="" href="/about/">关于</a></nav>
+    </header>
+    <ul id="sidebar-tags" aria-label="按标签筛选文章">
+      <li><button class="sidebar-tag active" type="button" data-all="true" aria-pressed="true">全部文章</button></li>
+      <li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Java">Java</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Linux">Linux</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Shell">Shell</button></li>
+    </ul>
+  </div>
+  <div id="sidebar-right">
+    <div id="search-box"><input id="search-input" type="search" placeholder="搜索文章" aria-label="搜索文章"></div>
+    <nav id="toc" aria-label="文章列表"><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-664d93b2/" aria-current="page" title="Java-反射机制介绍">Java-反射机制介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-81a0e8a2/" title="Java-注解介绍">Java-注解介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-b3143e0b/" title="Java-类的加载机制介绍">Java-类的加载机制介绍</a><a class="toc-link" data-tags="[]" href="/categories/Linux/post-44d87909/" title="Linux profile 和 bashrc 的区别">Linux profile 和 bashrc 的区别</a><a class="toc-link" data-tags="[&quot;Linux&quot;,&quot;Shell&quot;]" href="/categories/Linux/post-a42caa80/" title="正确获取shell脚本所在目录">正确获取shell脚本所在目录</a><p id="search-empty" role="status" hidden>没有找到文章</p></nav>
+  </div>
 </aside>
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar"><div class="slimContent"><nav id="toc" class="article-toc"><h3 class="toc-title">Catalogue</h3><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1.-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84"><span class="toc-text">1. 什么是反射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2.-%E5%8F%8D%E5%B0%84%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">2. 反射的使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3.-%E5%8F%8D%E5%B0%84%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">3. 反射的基本用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4.-%E8%8E%B7%E5%8F%96-class-%E5%AF%B9%E8%B1%A1"><span class="toc-text">4. 获取 Class 对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5.-%E5%88%9B%E5%BB%BA%E7%B1%BB%E5%AE%9E%E4%BE%8B"><span class="toc-text">5. 创建类实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6.-%E8%B0%83%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">6. 调用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7.-%E8%AE%BF%E9%97%AE%E5%8F%98%E9%87%8F"><span class="toc-text">7. 访问变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8.-%E8%8E%B7%E5%8F%96%E7%88%B6%E7%B1%BB%E4%BF%A1%E6%81%AF"><span class="toc-text">8. 获取父类信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9.-%E6%9E%9A%E4%B8%BE%E7%9A%84%E5%8F%8D%E5%B0%84"><span class="toc-text">9. 枚举的反射</span></a></li></ol></nav></div></aside><main class="main" role="main"><div class="content">
-<article class="article article-type-post" id="post-categories/Java/post-664d93b2/" itemscope="" itemtype="http://schema.org/BlogPosting">
-<div class="article-header">
-<h1 class="article-title" itemprop="name">Java-反射机制介绍</h1>
-<div class="article-meta"><span class="article-date"><i class="icon icon-calendar-check"></i> <a class="article-date" href="/categories/Java/post-664d93b2/"><time datetime="2026-11-05" itemprop="datePublished">2026-11-05</time></a></span>
-<span class="article-category"><i class="icon icon-folder"></i> <a class="article-category-link" href="/categories/Java/">Java</a></span>
-<span class="article-tag"><i class="icon icon-tags"></i> <a class="article-tag-link-link" href="/tags/Java/">Java</a></span>
-<span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/Java/post-664d93b2/#comments">评论</a></span></div>
-</div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><p>我觉得作为一个 java 语言的使用者，无论你是 web 开发，还是 Android　开发，你都有必要了解一下这几个知识点：反射，类的加载机制，注解,动态代理。作为一个普通的开发者，你可能没有意识到你有使用过这些技术，但实际上这些技术是应用非常广的，基本上我们使用的各种 web 框架， ORM 框架，插件化框架都会依赖这些技术去实现。如果你想对使用的各种框架有更深入的理解，或者甚至想开发自己的框架，那你一定要深入理解前面提到的几个基本知识点。这里先介绍反射，后面再依次介绍其他知识点。</p>
+<main id="main">
+  <article class="post container">
+  <div class="post-meta"><span class="post-meta-span date"><time datetime="2026-11-05">2026-11-05</time></span><span class="post-meta-span tag"><a class="article-tag-link-link" href="/tags/Java/">Java</a></span></div>
+  <h1 class="post-title">Java-反射机制介绍</h1>
+  <article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><p>我觉得作为一个 java 语言的使用者，无论你是 web 开发，还是 Android　开发，你都有必要了解一下这几个知识点：反射，类的加载机制，注解,动态代理。作为一个普通的开发者，你可能没有意识到你有使用过这些技术，但实际上这些技术是应用非常广的，基本上我们使用的各种 web 框架， ORM 框架，插件化框架都会依赖这些技术去实现。如果你想对使用的各种框架有更深入的理解，或者甚至想开发自己的框架，那你一定要深入理解前面提到的几个基本知识点。这里先介绍反射，后面再依次介绍其他知识点。</p>
 <h2 id="1.-什么是反射">1. 什么是反射</h2>
 <p>反射机制是 Java 语言的一个重要特性。在学习 Java 反射机制前，大家应该先分清楚两个概念: 编译期和运行期。</p>
 <ul>
@@ -335,54 +239,18 @@ nameField<span class="token punctuation">.</span><span class="token function">se
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre></figure></div>
-</article></div>
-<div class="article-footer">
-<blockquote class="mt-2x">
-<ul class="post-copyright list-unstyled">
-<li class="post-copyright-link hidden-xs">
-<strong>本文链接：</strong>
-<a href="https://qiushao.github.io/categories/Java/post-664d93b2/" rel="external" target="_blank" title="Java-反射机制介绍">https://qiushao.github.io/categories/Java/post-664d93b2/</a>
-</li>
-<li class="post-copyright-license">
-<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-</ul>
-</blockquote>
-</div>
 </article>
-<section id="comments"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
-</div>
-<nav class="bar bar-footer clearfix" data-stick-bottom><div class="bar-inner"><ul class="pager pull-left"><li class="next"><a href="/categories/Java/post-81a0e8a2/" title="Java-注解介绍"><span>下一篇  </span><i class="icon icon-angle-right"></i></a></li><li class="toggle-toc"><a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" aria-controls="collapseToc" title="Catalogue" role="button"><span>[&nbsp;</span><span>Catalogue</span> <i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><div class="bar-right"></div></div></nav></main>
-<footer class="footer" itemscope="" itemtype="http://schema.org/WPFooter">
-<ul class="social-links">
-<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
-</ul>
-<div class="copyright">
-<p>Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
-<div class="publishby">
-        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
-        </div>
-</div>
-</footer>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/plugin.min.js"></script>
-<script src="/js/application.js"></script>
-<script>
-(function (window) {
-    var INSIGHT_CONFIG = {
-        TRANSLATION: {
-            POSTS: '文章',
-            PAGES: '页面',
-            CATEGORIES: '分类',
-            TAGS: '标签',
-            UNTITLED: '(未命名)',
-        },
-        ROOT_URL: '/',
-        CONTENT_URL: '/content.json',
-    };
-    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
-})(window);
-</script>
-<script src="/js/insight.js"></script>
+  <div class="post-categories"><a class="article-category-link" href="/categories/Java/">Java</a></div>
+  <div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="" href="/categories/Java/post-81a0e8a2/">Java-注解介绍 ›</a></div></div>
+</article>
+<section id="comments" class="comment container"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
+
+  <footer class="footer"><div class="container">
+    <p class="footer-entry">Android系统开发，音视频开发</p>
+    <p class="footer-entry">Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
+    <p class="footer-entry">Theme <a href="https://github.com/P233/3-Jekyll">3-Jekyll</a> by P233</p>
+  </div></footer>
+</main>
+<button id="menu" type="button" aria-label="切换导航" aria-controls="sidebar" aria-expanded="false"><span id="menu-icons" aria-hidden="true"></span></button>
 </body>
 </html>
