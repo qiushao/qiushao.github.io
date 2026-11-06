@@ -130,9 +130,9 @@
 <span class="article-tag"><i class="icon icon-tags"></i> <a class="article-tag-link-link" href="/tags/Java/">Java</a></span>
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/Java/post-b3143e0b/#comments">评论</a></span></div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><p>在开始介绍类的加载机制之前我们先看一个有趣的例子。
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><p>在开始介绍类的加载机制之前我们先看一个有趣的例子。
 新建一个 apk 工程，然后修改其中的 MainActivity 代码如下：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">net<span class="token punctuation">.</span>qiushao<span class="token punctuation">.</span>classloadertest</span><span class="token punctuation">;</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">net<span class="token punctuation">.</span>qiushao<span class="token punctuation">.</span>classloadertest</span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">androidx<span class="token punctuation">.</span>appcompat<span class="token punctuation">.</span>app<span class="token punctuation">.</span></span><span class="token class-name">AppCompatActivity</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">android<span class="token punctuation">.</span>content<span class="token punctuation">.</span></span><span class="token class-name">Context</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">android<span class="token punctuation">.</span>os<span class="token punctuation">.</span></span><span class="token class-name">Bundle</span></span><span class="token punctuation">;</span>
@@ -151,7 +151,7 @@
 <span class="token punctuation">}</span>
 </code></pre></figure></div>
 <p>我们知道 ServiceManager 这个类是 hide 的，在 sdk 里面是没有这个类的，因此上面的代码会提示找不到 ServiceManager 这个类。我们来加点魔法。在工程里新建一个包 <code>android.os</code>，　然后在这个包下面新建一个 ServiceManager 类：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">android<span class="token punctuation">.</span>os</span><span class="token punctuation">;</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">android<span class="token punctuation">.</span>os</span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">android<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Log</span></span><span class="token punctuation">;</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ServiceManager</span> <span class="token punctuation">{</span>
     <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">IBinder</span> <span class="token function">getService</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -161,7 +161,7 @@
 <span class="token punctuation">}</span>
 </code></pre></figure></div>
 <p>这样就没有错误提示了。同学们猜测一下 <code>Log.d("qiushao", "qiushao define ServiceManager");</code> 这行代码会不会被执行？　<code>IBinder binder = ServiceManager.getService(Context.POWER_SERVICE);</code>　获取到的服务会不会是 null？ 我们来运行一下 apk，看下 log</p>
-<div class="code-toolbar"><figure class="code-block" data-language="shell"><button class="code-copy" type="button">复制</button><pre class="language-shell" tabindex="0"><code class="language-shell"><span class="token number">130</span><span class="token operator">|</span>generic_x86:/ $ logcat -c<span class="token punctuation">;</span>logcat <span class="token parameter variable">-s</span> qiushao
+<div class="code-toolbar"><figure data-language="shell" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-shell" tabindex="0"><code class="language-shell"><span class="token number">130</span><span class="token operator">|</span>generic_x86:/ $ logcat -c<span class="token punctuation">;</span>logcat <span class="token parameter variable">-s</span> qiushao
 --------- beginning of main
 --------- beginning of system
 02-17 <span class="token number">22</span>:27:44.932  <span class="token number">9324</span>  <span class="token number">9324</span> D qiushao <span class="token builtin class-name">:</span> binder <span class="token operator">=</span> android.os.BinderProxy@6cfb07c
@@ -201,12 +201,12 @@
 <li>这里所设置的初始值通常情况下是数据类型默认的零值（如0、0L、null、false等），而不是被在 java 代码中被显式地赋予的值。
 假设一个类变量的定义为:</li>
 </ol>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">int</span> value <span class="token operator">=</span> <span class="token number">3</span>；
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">int</span> value <span class="token operator">=</span> <span class="token number">3</span>；
 </code></pre></figure></div>
 <p>那么变量 value 在准备阶段过后的初始值为 0，而不是 3，因为这时候尚未开始执行任何 java 方法，后面的初始化阶段会执行这个赋值语句，将 value 赋值为 3。
 3. 如果类字段的字段属性表中存在常量属性，即同时被 final 和 static 修饰，那么在准备阶段变量 value 就会被初始化为常量属性所指定的值。
 假设上面的类变量 value 被定义为：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">int</span> value <span class="token operator">=</span> <span class="token number">3</span>；
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">int</span> value <span class="token operator">=</span> <span class="token number">3</span>；
 </code></pre></figure></div>
 <p>编译时 javac 将会为 value 生成常量属性，在准备阶段虚拟机就会根据常量的设置将 value 赋值为 3。</p>
 <h3 id="2.4.-解析：将符号引用转成直接引用">2.4. 解析：将符号引用转成直接引用</h3>
@@ -238,7 +238,7 @@
 <li>应用类加载器：由 sun.misc.Launcher$AppClassLoader 实现的。由于这个类加载器是 ClassLoader 中的 getSystemClassLoader 方法的返回值，所以也叫系统类加载器。它负责加载用户类路径(CLASSPATH)上所指定的类库，可以被直接使用。如果未自定义类加载器，默认为该类加载器。</li>
 </ul>
 <p>我们可以通过这种方式打印加载路径及相关jar：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
 
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">App</span> <span class="token punctuation">{</span>
     <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">NoSuchFieldException</span><span class="token punctuation">,</span> <span class="token class-name">IllegalAccessException</span> <span class="token punctuation">{</span>
@@ -267,7 +267,7 @@
 </ul>
 <p>双亲委派模型是为了保证 java 核心库的类型安全。所有 java 应用都至少需要引用 java.lang.Object 类，在运行时这个类需要被加载到 java 虚拟机中。如果该加载过程由自定义类加载器来完成，可能就会存在多个版本的 java.lang.Object 类，而且这些类之间是不兼容的。通过双亲委派模型，对于 java 核心库的类的加载工作由启动类加载器来统一完成，保证了 java 应用所使用的都是同一个版本的 java 核心库的类，是互相兼容的。</p>
 <p>下面我们来看一下<strong>双亲委派模型</strong>的代码是如何实现的。其实非常简单，相关的代码在 ClassLoader 类的 loadClass 方法：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">protected</span> <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span> <span class="token function">loadClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">,</span> <span class="token keyword">boolean</span> resolve<span class="token punctuation">)</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">protected</span> <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span> <span class="token function">loadClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">,</span> <span class="token keyword">boolean</span> resolve<span class="token punctuation">)</span>
     <span class="token keyword">throws</span> <span class="token class-name">ClassNotFoundException</span>
 <span class="token punctuation">{</span>    
         <span class="token comment">//首先判断指定类是否已经被加载过</span>
@@ -297,7 +297,7 @@
 <h3 id="4.2-自定义类加载器">4.2 自定义类加载器</h3>
 <p>系统提供的类加载器只能够加载系统配置目录下的 jar 包和 .class文件, 如果想要加载网络上或者指定的目录下的 jar 包或者 class 文件，我们可以实现一个自己的类加载器。自定义类加载器只需要继承 java.lang.ClassLoader 类，然后重写 findClass(String name) 方法即可，在方法中指明如何获取类的字节码流。下面来写个 Demo 试试看。
 我们先编写一个测试类，用来被我们自定义的类加载器加载：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Person</span> <span class="token punctuation">{</span>
     <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">say</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"hello class loader"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -306,7 +306,7 @@
 </code></pre></figure></div>
 <p>我们编译这个类生成 Person.class 文件，把这个文件放到 /home/qiushao/test/classloader/qiushao/net　目录下，然后删除 Person.java 源文件。
 接下来我们就定义一个可以从指定目录加载 .class 文件的类加载器　TestClassloader:</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
 
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token class-name">FileInputStream</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token class-name">FileNotFoundException</span></span><span class="token punctuation">;</span>
@@ -351,7 +351,7 @@
 <span class="token punctuation">}</span>
 </code></pre></figure></div>
 <p>接下来我们就可以使用这个自定义的类加载器来加载我们之前编译的 .class了</p>
-<div class="code-toolbar"><figure class="code-block" data-language="java"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
+<div class="code-toolbar"><figure data-language="java" class="code-block"><button class="code-copy" type="button">复制</button><pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">qiushao<span class="token punctuation">.</span>net</span><span class="token punctuation">;</span>
 
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">InvocationTargetException</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span></span><span class="token punctuation">;</span>
