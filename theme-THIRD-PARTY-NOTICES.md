@@ -1,19 +1,32 @@
-# 3-Jekyll upstream assets
+# Plume for QSNote
 
-Source: https://github.com/P233/3-Jekyll
-Author: P233 (Peiwen Lu)
-Revision: 45ca7c4578d498890c8ef078ff13c189a12df114
+Upstream: https://github.com/pengzhanbo/vuepress-theme-plume
+Version: 1.0.0-rc.214
+Commit: 0e9b5fdbc1ca7cb3c72b06f57e1387657926ac93
+License: MIT (see LICENSE).
 
-`assets/css/main.css` is compiled from upstream `css/main.sass` and `_sass/`.
-The IcoMoon font files and default avatar are copied unchanged from upstream.
-The templates adapt upstream `_layouts/default.html`, `_layouts/post.html`,
-and `_includes/sidebar.html`. The QSNote script replaces the Jekyll/Liquid,
-jQuery and PJAX integration with static links, native menu/filter handling,
-and the existing local search index.
+- `assets/css/vars.css`: upstream `theme/src/client/styles/vars.css`, unchanged.
+- `assets/css/components.css`: scoped styles from `Posts/VPPostItem.vue` and
+  `Posts/VPPostsProfile.vue`; Vue `:deep()` wrappers removed for static HTML.
+- `assets/css/icons.css`: selected static icons from upstream `styles/icons.css`;
+  sun/moon icons retain the Lucide/Feather licenses in `assets/ICON-LICENSE`.
+  Search, menu and chevron paths are local static controls. The GitHub mark is
+  the Simple Icons GitHub mark (CC0).
+- `templates/card.html` and `profile.html`: static adaptation of those components.
+- `templates/shell.html`, `page.html`, `assets/css/qsnote-plume.css`: QSNote adaptation
+  of `Nav/VPNavBar.vue`, `Nav/VPSwitchAppearance.vue`, `VPSwitch.vue`,
+  `Posts/VPPosts.vue`, `VPPostList.vue`, `VPPostsAside.vue`, `VPPostsNav.vue`,
+  `VPPostsExtract.vue`, `VPPagination.vue`, `VPDoc.vue`, `VPSidebar.vue` and
+  `VPDocAsideOutline.vue`. The reset follows `styles/normalize.css`.
+  Article excerpts follow the upstream explicit `<!-- more -->` marker;
+  reading time and deterministic tag colors are lightweight QSNote equivalents.
+- `assets/nav-icons/*.svg`: QSNote navigation icons. Settings reuses the
+  application icon; GitHub reuses the Simple Icons mark (CC0).
+- `assets/js/plume.js`: QSNote implementation using native HTML controls, without Vue.
 
-The upstream repository at this revision does not include a theme LICENSE
-or an explicit license grant for its bundled fonts/avatar. No license is
-inferred here. The upstream default footer's CC BY-NC-SA statement refers
-to site content; it is not treated as a license for the theme source.
-The upstream HTML compression template and third-party JavaScript libraries
-are not included in this port.
+Updating: check out the pinned upstream commit (or deliberately select and record
+its successor), copy vars.css and extract the two component style blocks above,
+remove :deep() wrappers, then review template and adapter differences. Run the
+optional QSNOTE_BUILD_SITE_TESTS tests and inspect blog/document pages at desktop
+and mobile widths, both color schemes and without JavaScript. No Node.js build
+or VuePress plugins are required by QSNote or its generated sites.

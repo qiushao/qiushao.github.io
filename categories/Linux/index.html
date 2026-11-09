@@ -1,67 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Linux | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发">
-<meta name="description" content="Android系统开发，音视频开发">
-<link rel="canonical" href="https://qiushao.github.io/categories/Linux/">
-<link rel="stylesheet" href="/css/main.css">
-<link rel="stylesheet" href="/css/qsnote-3-jekyll.css">
-<script src="/js/qsnote-3-jekyll.js" defer></script>
-<link rel="stylesheet" href="/css/qsnote-article.css"></head>
-<body data-root="/">
-<aside id="sidebar" aria-label="站点导航">
-  <div id="sidebar-left">
-    <header class="header">
-      <a id="sidebar-avatar" href="/"><img id="sidebar-avatar-img" alt="一叶知秋" src="/images/qsnote-avatar.png"></a>
-      <div id="sidebar-social"><a class="sidebar-social-icon github" href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"></a></div>
-      <a class="site-title" href="/">一叶知秋</a>
-      <p class="site-author">秋少</p>
-      <nav class="site-menu" aria-label="页面"><a class="" href="/">首页</a><a class="" href="/categories/">分类</a><a class="" href="/tags/">标签</a><a class="" href="/archives/">归档</a><a class="" href="/links/">友链</a><a class="" href="/about/">关于</a></nav>
-    </header>
-    <ul id="sidebar-tags" aria-label="按标签筛选文章">
-      <li><button class="sidebar-tag active" type="button" data-all="true" aria-pressed="true">全部文章</button></li>
-      <li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Java">Java</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Linux">Linux</button></li><li><button class="sidebar-tag" type="button" aria-pressed="false" data-filter="Shell">Shell</button></li>
-    </ul>
-  </div>
-  <div id="sidebar-right">
-    <div id="search-box"><input id="search-input" type="search" placeholder="搜索文章" aria-label="搜索文章"></div>
-    <nav id="toc" aria-label="文章列表"><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-664d93b2/" title="Java-反射机制介绍">Java-反射机制介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-81a0e8a2/" title="Java-注解介绍">Java-注解介绍</a><a class="toc-link" data-tags="[&quot;Java&quot;]" href="/categories/Java/post-b3143e0b/" title="Java-类的加载机制介绍">Java-类的加载机制介绍</a><a class="toc-link" data-tags="[]" href="/categories/Linux/post-44d87909/" title="Linux profile 和 bashrc 的区别">Linux profile 和 bashrc 的区别</a><a class="toc-link" data-tags="[&quot;Linux&quot;,&quot;Shell&quot;]" href="/categories/Linux/post-a42caa80/" title="正确获取shell脚本所在目录">正确获取shell脚本所在目录</a><p id="search-empty" role="status" hidden>没有找到文章</p></nav>
-  </div>
-</aside>
-<main id="main">
-  <article class="post container">
-  <h1 class="post-title">Linux</h1>
-  <section class="post-summary">
-  <div class="post-meta"><span class="post-meta-span date"><time datetime="2026-11-05">2026-11-05</time></span><span class="post-meta-span tag"></span></div>
-  <h2><a href="/categories/Linux/post-44d87909/">Linux profile 和 bashrc 的区别</a></h2>
-  <p>Linux 系统上有四个环境配置文件，分别为:
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux | 一叶知秋</title><meta name="description" content="Android系统开发，音视频开发"><meta name="keywords" content="Android系统开发,音视频开发">
+<link rel="stylesheet" href="/css/vars.css"><link rel="stylesheet" href="/css/components.css"><link rel="stylesheet" href="/css/icons.css"><link rel="stylesheet" href="/css/qsnote-article.css"><link rel="stylesheet" href="/css/qsnote-plume.css">
+<script src="/js/plume.js" defer></script>
+</head>
+<body data-root="/" class="blog">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="vp-navbar">
+<button type="button" id="search-toggle" aria-label="搜索文档" hidden><span class="vpi-search" aria-hidden="true"></span><span class="search-label">搜索文档</span><kbd>Ctrl K</kbd></button>
+<details class="vp-menu" open><summary aria-label="菜单"><span class="vpi-menu" aria-hidden="true"></span></summary><nav aria-label="主导航"><a href="/"><svg stroke-linejoin="round" width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" stroke-width="1.65" fill="none" stroke="currentColor" height="24" viewBox="0 0 24 24" stroke-linecap="round"><path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/></svg><span>博客</span></a>
+<a href="/docs/android-system-dev-tutorial/"><svg width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" height="24" viewBox="0 0 128 128"><path xmlns="http://www.w3.org/2000/svg" d="M21.012 91.125c-5.538.003-10.038-4.503-10.039-10.04l-.002-30.739c-.002-5.532 4.497-10.037 10.028-10.038c2.689-.002 5.207 1.041 7.105 2.937s2.942 4.418 2.944 7.099l-.003 30.74a9.92 9.92 0 0 1-2.931 7.094a9.96 9.96 0 0 1-7.102 2.947m-.008-48.12c-4.053-.002-7.338 3.291-7.339 7.341l.005 30.736a7.347 7.347 0 0 0 7.341 7.348a7.34 7.34 0 0 0 7.339-7.347V50.342a7.345 7.345 0 0 0-7.346-7.337" fill="#fff"/><path xmlns="http://www.w3.org/2000/svg" d="m99.742 44.527l-2.698-.001l-66.119.009l-2.699.001l-.002-2.699c-.006-11.08 6.03-21.385 15.917-27.473l-3.844-7.017c-.47-.822-.588-1.863-.314-2.815a3.73 3.73 0 0 1 1.814-2.239a3.6 3.6 0 0 1 1.759-.447c1.362 0 2.609.739 3.267 1.933l4.023 7.329a37.8 37.8 0 0 1 13.099-2.305c4.606-.002 9.023.777 13.204 2.311l4.017-7.341a3.71 3.71 0 0 1 3.263-1.932a3.7 3.7 0 0 1 1.761.438A3.7 3.7 0 0 1 88 4.524a3.7 3.7 0 0 1-.318 2.832l-3.842 7.013c9.871 6.101 15.9 16.398 15.899 27.459zM80.196 15.403l5.123-9.355a1.019 1.019 0 1 0-1.783-.981l-5.176 9.45c-4.354-1.934-9.229-3.021-14.382-3.016c-5.142-.005-10.008 1.078-14.349 3.005l-5.181-9.429a1.01 1.01 0 0 0-1.379-.405c-.497.266-.68.891-.403 1.379l5.125 9.348c-10.07 5.194-16.874 15.084-16.868 26.439l66.118-.008c.003-11.351-6.789-21.221-16.845-26.427M48.94 29.86a2.772 2.772 0 0 1 .003-5.545a2.78 2.78 0 0 1 2.775 2.774a2.775 2.775 0 0 1-2.778 2.771m30.107-.006a2.767 2.767 0 0 1-2.772-2.771a2.79 2.79 0 0 1 2.773-2.778a2.79 2.79 0 0 1 2.767 2.779a2.77 2.77 0 0 1-2.768 2.77m-27.336 96.305c-5.533-.001-10.036-4.501-10.037-10.038l-.002-13.567l-2.638.003a10.45 10.45 0 0 1-7.448-3.082a10.44 10.44 0 0 1-3.083-7.452l-.01-47.627v-2.701h2.699l65.623-.01l2.7-.002v2.699l.007 47.633c.001 5.809-4.725 10.536-10.532 10.535l-2.654.002l.003 13.562c0 5.534-4.502 10.039-10.033 10.039a9.93 9.93 0 0 1-7.098-2.937a9.95 9.95 0 0 1-2.947-7.096v-13.568H61.75v13.565c-.002 5.535-4.503 10.043-10.039 10.042" fill="#fff"/><path xmlns="http://www.w3.org/2000/svg" d="M31.205 92.022a7.82 7.82 0 0 0 7.831 7.837h5.333l.006 16.264c-.001 4.05 3.289 7.341 7.335 7.342a7.34 7.34 0 0 0 7.338-7.348l.001-16.259l9.909-.003l-.001 16.263c.004 4.051 3.298 7.346 7.343 7.338c4.056.003 7.344-3.292 7.343-7.344l-.005-16.259l5.353-.001c4.319.001 7.832-3.508 7.832-7.837l-.009-47.635l-65.621.012zm75.791-.91c-5.536.001-10.039-4.498-10.038-10.036l-.008-30.738c.002-5.537 4.498-10.041 10.031-10.041c5.54-.001 10.046 4.502 10.045 10.038l.003 30.736c.001 5.534-4.498 10.042-10.033 10.041m-.01-48.116c-4.053-.004-7.337 3.287-7.337 7.342l.003 30.737a7.336 7.336 0 0 0 7.342 7.34a7.34 7.34 0 0 0 7.338-7.343l-.008-30.736a7.335 7.335 0 0 0-7.338-7.34" fill="#fff"/><path xmlns="http://www.w3.org/2000/svg" d="M21.004 43.005c-4.053-.002-7.338 3.291-7.339 7.341l.005 30.736a7.34 7.34 0 0 0 7.342 7.343a7.33 7.33 0 0 0 7.338-7.342V50.342a7.345 7.345 0 0 0-7.346-7.337m59.192-27.602l5.123-9.355a1.023 1.023 0 0 0-.401-1.388a1.02 1.02 0 0 0-1.382.407l-5.175 9.453c-4.354-1.938-9.227-3.024-14.383-3.019c-5.142-.005-10.013 1.078-14.349 3.005l-5.181-9.429a1.01 1.01 0 0 0-1.378-.406a1.007 1.007 0 0 0-.404 1.38l5.125 9.349c-10.07 5.193-16.874 15.083-16.868 26.438l66.118-.008c.003-11.351-6.789-21.221-16.845-26.427M48.94 29.86a2.772 2.772 0 0 1 .003-5.545a2.78 2.78 0 0 1 2.775 2.774a2.775 2.775 0 0 1-2.778 2.771m30.107-.006a2.77 2.77 0 0 1-2.772-2.771a2.793 2.793 0 0 1 2.773-2.778a2.79 2.79 0 0 1 2.767 2.779a2.767 2.767 0 0 1-2.768 2.77M31.193 44.392l.011 47.635a7.82 7.82 0 0 0 7.832 7.831l5.333.002l.006 16.264c-.001 4.05 3.291 7.342 7.335 7.342c4.056 0 7.342-3.295 7.343-7.347l-.004-16.26l9.909-.003l.004 16.263c0 4.047 3.293 7.346 7.338 7.338c4.056.003 7.344-3.292 7.343-7.344l-.005-16.259l5.352-.004a7.835 7.835 0 0 0 7.836-7.834l-.009-47.635zm83.134 5.943a7.34 7.34 0 0 0-7.341-7.339c-4.053-.004-7.337 3.287-7.337 7.342l.006 30.738a7.334 7.334 0 0 0 7.339 7.339a7.337 7.337 0 0 0 7.338-7.343z" fill="#a4c439"/></svg><span>Android系统开发入门</span></a>
+<a href="/docs/audio-video-development-tutorial/"><svg width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" height="24" viewBox="0 0 20 20"><path xmlns="http://www.w3.org/2000/svg" d="M13 11V4c0-.55-.45-1-1-1h-1.67L9 1H5L3.67 3H2c-.55 0-1 .45-1 1v7c0 .55.45 1 1 1h10c.55 0 1-.45 1-1M7 4.5a2.5 2.5 0 0 1 0 5a2.5 2.5 0 0 1 0-5M14 6h5v10.5a2.5 2.5 0 0 1-5 0a2.5 2.5 0 0 1 3-2.45V9h-3zm-4 8.05V13h2v3.5a2.5 2.5 0 0 1-5 0a2.5 2.5 0 0 1 3-2.45" fill="currentColor"/></svg><span>音视频开发入门</span></a>
+<details class="vp-nav-group"><summary><svg width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" height="24" viewBox="0 0 24 24"><g stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round"><rect width="18.5" xmlns="http://www.w3.org/2000/svg" rx="2.5" stroke-width="1.5" height="15.5" x="2.75" y="4.25"/><path xmlns="http://www.w3.org/2000/svg" stroke-width="2" d="M6 8.25h.01M6 12h.01M6 15.75h.01"/><path xmlns="http://www.w3.org/2000/svg" stroke-width="1.5" d="M9.5 8.25h8m-8 7.5h6M9.5 12h8"/></g></svg><span>更多教程</span></summary><div><a href="/docs/harmony-system-dev-tutorial/"><svg width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" height="24" viewBox="0 0 24 24"><g xmlns="http://www.w3.org/2000/svg" fill="none"><path xmlns="http://www.w3.org/2000/svg" d="M17.117 3.025a3.88 3.88 0 0 0-3.884 3.87v4.293q-.598.042-1.233.044c-.424 0-.831.017-1.233.04V6.897a3.884 3.884 0 0 0-7.767 0v10.258a3.884 3.884 0 0 0 7.767 0v-4.292q.598-.042 1.233-.044c.424 0 .831-.017 1.233-.041v4.377a3.884 3.884 0 0 0 7.767 0V6.896a3.88 3.88 0 0 0-3.883-3.871M6.883 4.61a2.29 2.29 0 0 1 2.292 2.285v4.545a13 13 0 0 0-3.3.933c-.457.2-.887.457-1.28.764V6.896A2.29 2.29 0 0 1 6.883 4.61m2.292 12.543a2.292 2.292 0 0 1-4.584 0v-1.03c0-.908.72-1.77 1.927-2.305c.85-.367 1.743-.628 2.657-.777zm7.942 2.285a2.29 2.29 0 0 1-2.292-2.285v-4.545a13 13 0 0 0 3.3-.933c.457-.2.887-.457 1.28-.764v6.242a2.29 2.29 0 0 1-2.288 2.285m.365-9.214c-.85.367-1.743.627-2.657.777V6.896a2.292 2.292 0 0 1 4.584 0v1.029c0 .905-.72 1.766-1.927 2.3" fill="url(#qs-nav-icon-5-0)"/><defs xmlns="http://www.w3.org/2000/svg"><linearGradient x1="4.14" gradientUnits="userSpaceOnUse" id="qs-nav-icon-5-0" xmlns="http://www.w3.org/2000/svg" y2="3.978" x2="19.757" y1="19.638"><stop stop-color="#00aee9" xmlns="http://www.w3.org/2000/svg"/><stop stop-color="#69fabd" xmlns="http://www.w3.org/2000/svg" offset="1"/></linearGradient></defs></g></svg><span>鸿蒙系统开发入门</span></a>
+</div></details><a href="/links/"><svg stroke-linejoin="round" width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" stroke-width="1.65" fill="none" stroke="currentColor" height="24" viewBox="0 0 24 24" stroke-linecap="round"><path d="m10 7 3-3a5 5 0 0 1 7 7l-3 3M14 17l-3 3a5 5 0 0 1-7-7l3-3M8 16l8-8"/></svg><span>友链</span></a>
+<a href="/about/"><svg stroke-linejoin="round" width="24" aria-hidden="true" class="vp-nav-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" stroke-width="1.65" fill="none" stroke="currentColor" height="24" viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M3 21a9 9 0 0 1 18 0"/></svg><span>关于</span></a>
 
-/etc/profile
-/etc/bash.bashrc
-~/.profile
-~/.bashrc
+</nav></details>
+<div class="vp-tools"><button type="button" id="theme-toggle" role="switch" aria-checked="false" aria-label="深色模式" hidden><span class="switch-check"><span class="vpi-sun" aria-hidden="true"></span><span class="vpi-moon" aria-hidden="true"></span></span></button><button type="button" id="reading-toggle" aria-label="全屏阅读" title="全屏阅读" aria-pressed="false" aria-controls="main" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="expand-icon" d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/><path class="collapse-icon" d="M3 8h5V3M16 3v5h5M21 16h-5v5M8 21v-5H3"/></svg></button></div>
+</header>
+<div class="vp-layout"><aside class="vp-left"><section class="vp-profile"><div class="profile-avatar"><img class="show" src="/images/qsnote-avatar.png" alt="秋少" width="128" height="128"></div><div class="profile-info"><h3>秋少</h3><p>Android系统开发，音视频开发</p><div class="profile-location"><span class="vpi-location" aria-hidden="true"></span><p>深圳</p></div></div><div class="profile-social"><a class="vp-social-link" href="https://github.com/qiushao" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/></svg>
+</a></div></section>
+<nav class="vp-posts-nav" aria-label="博客索引">
+<a class="nav-link" href="/tags/"><span class="vpi-tag icon-logo" aria-hidden="true"></span><span class="text">标签</span><span class="total">5</span><span class="vpi-chevron-right icon" aria-hidden="true"></span></a>
+<a class="nav-link" href="/categories/"><span class="vpi-category icon-logo" aria-hidden="true"></span><span class="text">分类</span><span class="total">6</span><span class="vpi-chevron-right icon" aria-hidden="true"></span></a>
+<a class="nav-link" href="/archives/"><span class="vpi-archive icon-logo" aria-hidden="true"></span><span class="text">归档</span><span class="total">9</span><span class="vpi-chevron-right icon" aria-hidden="true"></span></a>
+</nav>
+</aside><main id="main" tabindex="-1"><section class="vp-post-list" aria-label="博客文章"><h1>Linux</h1><article class="vp-post-item"><div class="post-item-content"><h3><a href="/categories/Linux/post-44d87909/">Linux profile 和 bashrc 的区别</a></h3><div class="post-meta"><div class="category-list"><span class="icon vpi-folder" aria-hidden="true"></span><a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div><div class="reading-time"><span class="icon vpi-books" aria-hidden="true"></span><span>约 555 字</span><span>2 分钟</span></div><div class="tag-list"><span class="icon vpi-tag" aria-hidden="true"></span><a class="tag vp-tag-color-0" href="/tags/Linux/">Linux</a><a class="tag vp-tag-color-0" href="/tags/Shell/">Shell</a></div><div class="create-time"><span class="icon vpi-clock" aria-hidden="true"></span><time datetime="2026-11-05">2026-11-05</time></div>
+</div></div></article>
+<article class="vp-post-item"><div class="post-item-content"><h3><a href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></h3><div class="post-meta"><div class="category-list"><span class="icon vpi-folder" aria-hidden="true"></span><a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div><div class="reading-time"><span class="icon vpi-books" aria-hidden="true"></span><span>约 1700 字</span><span>6 分钟</span></div><div class="tag-list"><span class="icon vpi-tag" aria-hidden="true"></span><a class="tag vp-tag-color-0" href="/tags/Linux/">Linux</a><a class="tag vp-tag-color-0" href="/tags/Shell/">Shell</a></div><div class="create-time"><span class="icon vpi-clock" aria-hidden="true"></span><time datetime="2026-11-05">2026-11-05</time></div>
+</div></div></article>
 
-1. 先从作用域来说
-/etc 目录下的配置文件影响所有用户。
-~/ 用户家目录下的配置文件只影...</p>
-</section>
-<section class="post-summary">
-  <div class="post-meta"><span class="post-meta-span date"><time datetime="2026-11-05">2026-11-05</time></span><span class="post-meta-span tag"><a class="article-tag-link-link" href="/tags/Linux/">Linux</a><a class="article-tag-link-link" href="/tags/Shell/">Shell</a></span></div>
-  <h2><a href="/categories/Linux/post-a42caa80/">正确获取shell脚本所在目录</a></h2>
-  <p>1. why，为什么我们要获取脚本所在的目录
-编写脚本时，经常需要知道脚本所在目录的位置，以便引用其他的资源或调用其他的脚本。因为这些资源的目录位置相对于当前脚本的位置是固定的。有同学就会问，既然它们的相对位置是固定的，那为什么我们不直接使用相对路径...</p>
 </section>
 
-</article>
-
-  <footer class="footer"><div class="container">
-    <p class="footer-entry">Android系统开发，音视频开发</p>
-    <p class="footer-entry">Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
-    <p class="footer-entry">Theme <a href="https://github.com/P233/3-Jekyll">3-Jekyll</a> by P233</p>
-  </div></footer>
-</main>
-<button id="menu" type="button" aria-label="切换导航" aria-controls="sidebar" aria-expanded="false"><span id="menu-icons" aria-hidden="true"></span></button>
-</body>
-</html>
+</main><aside class="vp-outline" aria-label="本页目录"></aside></div>
+<button type="button" class="vp-posts-extract" aria-label="博客资料与导航" aria-haspopup="dialog" aria-expanded="false" hidden><span class="vpi-posts-ext" aria-hidden="true"></span></button><dialog id="profile-dialog" aria-label="博客资料与导航"><form method="dialog"><button aria-label="关闭资料">×</button></form><section class="vp-profile"><div class="profile-avatar"><img class="show" src="/images/qsnote-avatar.png" alt="秋少" width="128" height="128"></div><div class="profile-info"><h3>秋少</h3><p>Android系统开发，音视频开发</p><div class="profile-location"><span class="vpi-location" aria-hidden="true"></span><p>深圳</p></div></div><div class="profile-social"><a class="vp-social-link" href="https://github.com/qiushao" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/></svg>
+</a></div></section>
+<nav class="vp-posts-nav" aria-label="博客索引">
+<a class="nav-link" href="/tags/"><span class="vpi-tag icon-logo" aria-hidden="true"></span><span class="text">标签</span><span class="total">5</span><span class="vpi-chevron-right icon" aria-hidden="true"></span></a>
+<a class="nav-link" href="/categories/"><span class="vpi-category icon-logo" aria-hidden="true"></span><span class="text">分类</span><span class="total">6</span><span class="vpi-chevron-right icon" aria-hidden="true"></span></a>
+<a class="nav-link" href="/archives/"><span class="vpi-archive icon-logo" aria-hidden="true"></span><span class="text">归档</span><span class="total">9</span><span class="vpi-chevron-right icon" aria-hidden="true"></span></a>
+</nav>
+</dialog>
+<footer class="vp-footer">Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a> · Theme <a href="https://github.com/pengzhanbo/vuepress-theme-plume">Plume</a></footer>
+<dialog id="search-dialog" aria-labelledby="search-title"><form method="dialog"><button aria-label="关闭搜索">关闭</button></form><h2 id="search-title">搜索</h2><label for="search-input">搜索博客与文档</label><input id="search-input" type="search" autocomplete="off"><p id="search-status" role="status"></p><ul id="search-results"></ul></dialog>
+</body></html>
