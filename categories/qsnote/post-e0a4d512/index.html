@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Markdown基础语法 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/categories/qsnote/post-e0a4d512/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
+<body class="main-center theme-purple" itemscope="" itemtype="http://schema.org/WebPage">
+<header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+<div class="slimContent">
+<div class="navbar-header">
+<div class="profile-block text-center">
+<a href="https://qiushao.github.io" id="avatar" target="_blank">
+<img class="img-circle img-rotate" height="200" src="/images/qsnote-avatar.png" width="200"/>
+</a>
+<h2 class="hidden-xs hidden-sm" id="name">秋少</h2>
+<h3 class="hidden-xs hidden-sm hidden-md" id="title"></h3>
+<small class="text-muted hidden-xs hidden-sm" id="location"><i class="icon icon-map-marker"></i> 深圳</small>
+</div>
+<div class="search" id="search-form-wrap">
+<form class="search-form sidebar-form">
+<div class="input-group">
+<input class="search-form-input form-control" placeholder="搜索" type="text"/>
+<span class="input-group-btn">
+<button class="search-form-submit btn btn-flat" onclick="return false;" type="submit"><i class="icon icon-search"></i></button>
+</span>
+</div>
+</form>
+<div class="ins-search">
+<div class="ins-search-mask"></div>
+<div class="ins-search-container">
+<div class="ins-input-wrapper">
+<input class="ins-search-input" placeholder="想要查找什么..." type="text" x-webkit-speech=""/>
+<button aria-label="Close" class="close ins-close ins-selectable" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+</div>
+<div class="ins-section-wrapper">
+<div class="ins-section-container"></div>
+</div>
+</div>
+</div>
+</div>
+<button aria-controls="main-navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#main-navbar" data-toggle="collapse" type="button">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+</div>
+<nav class="collapse navbar-collapse" id="main-navbar" itemscope="" itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href="/.">
+<i class="icon icon-home-fill"></i>
+<span class="menu-title">首页</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href="/archives">
+<i class="icon icon-archives-fill"></i>
+<span class="menu-title">归档</span>
+</a>
+</li>
+<li class="menu-item menu-item-categories">
+<a href="/categories">
+<i class="icon icon-folder"></i>
+<span class="menu-title">分类</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href="/tags">
+<i class="icon icon-tags"></i>
+<span class="menu-title">标签</span>
+</a>
+</li>
+<li class="menu-item menu-item-links">
+<a href="/links">
+<i class="icon icon-friendship"></i>
+<span class="menu-title">友链</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href="/about">
+<i class="icon icon-cup-fill"></i>
+<span class="menu-title">关于</span>
+</a>
+</li>
+</ul>
+<ul class="social-links">
+<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
+</ul>
+</nav>
+</div>
+</header>
+<button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="main-sidebar" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+<aside id="main-sidebar" class="sidebar" itemscope="" itemtype="http://schema.org/WPSideBar">
+<div class="slimContent">
+<div class="widget">
+<h3 class="widget-title">分类</h3>
+<div class="widget-body">
+<ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/qsnote/">QSNote</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/qshell/">QShell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/zhaohuaxishi/">朝花夕拾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/renshengbaitai/">人生百态</a><span class="category-list-count">1</span></li></ul>
+</div>
+</div>
+<div class="widget">
+<h3 class="widget-title">标签</h3>
+<div class="widget-body">
+<ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/">Markdown</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QSNote/">QSNote</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QShell/">QShell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a><span class="tag-list-count">2</span></li></ul>
+</div>
+</div>
+<div class="widget">
+<h3 class="widget-title">标签云</h3>
+<div class="widget-body tagcloud"><a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 13px;">Markdown</a> <a href="/tags/QSNote/" style="font-size: 13px;">QSNote</a> <a href="/tags/QShell/" style="font-size: 13px;">QShell</a> <a href="/tags/Shell/" style="font-size: 13px;">Shell</a> </div>
+</div>
+<div class="widget">
+<h3 class="widget-title">归档</h3>
+<div class="widget-body">
+<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/11/">十一月 2026</a><span class="archive-list-count">12</span></li></ul>
+</div>
+</div>
+<div class="widget">
+<h3 class="widget-title">最新文章</h3>
+<div class="widget-body">
+<ul class="recent-post-list list-unstyled no-thumbnail"><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a></p><p class="item-date"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/post-e0a4d512/">Markdown基础语法</a></p><p class="item-date"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/post-5c6c4f49/">Markdown扩展语法</a></p><p class="item-date"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/qsnote-intro/">QSNote介绍</a></p><p class="item-date"><time datetime="2026-11-09" itemprop="datePublished">2026-11-09</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qshell/">QShell</a></p><p class="item-title"><a class="title" href="/categories/qshell/qshell-intro/">QShell介绍</a></p><p class="item-date"><time datetime="2026-11-09" itemprop="datePublished">2026-11-09</time></p></div></li></ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse in" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar"><div class="slimContent"><nav id="toc" class="article-toc"><h3 class="toc-title">Catalogue</h3><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#markdown-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">Markdown 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%87%E9%A2%98"><span class="toc-text">标题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AE%B5%E8%90%BD%E4%B8%8E%E6%8D%A2%E8%A1%8C"><span class="toc-text">段落与换行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E8%B0%83%E6%96%87%E5%AD%97"><span class="toc-text">强调文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8"><span class="toc-text">列表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E5%BA%8F%E5%88%97%E8%A1%A8"><span class="toc-text">无序列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%BA%8F%E5%88%97%E8%A1%A8"><span class="toc-text">有序列表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%93%BE%E6%8E%A5"><span class="toc-text">链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E7%89%87"><span class="toc-text">图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E5%86%85%E4%BB%A3%E7%A0%81"><span class="toc-text">行内代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-text">代码块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E9%9A%94%E7%BA%BF"><span class="toc-text">分隔线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E6%A0%87%E8%AE%B0%E6%9C%AC%E8%BA%AB"><span class="toc-text">显示标记本身</span></a></li></ol></nav></div></aside><main class="main" role="main"><div class="content">
+<article class="article article-type-post" id="post-categories/qsnote/post-e0a4d512/" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="article-header">
+<h1 class="article-title" itemprop="name">Markdown基础语法</h1>
+<div class="article-meta"><span class="article-date"><i class="icon icon-calendar-check"></i> <a class="article-date" href="/categories/qsnote/post-e0a4d512/"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></a></span>
+<span class="article-category"><i class="icon icon-folder"></i> <a class="article-category-link" href="/categories/qsnote/">QSNote</a>
+</span>
+<span class="article-tag"><i class="icon icon-tags"></i> <a class="article-tag-link-link" href="/tags/Markdown/">Markdown</a><a class="article-tag-link-link" href="/tags/QSNote/">QSNote</a>
+</span>
+<span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-e0a4d512/#comments">评论</a></span>
+</div>
+</div>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="markdown-是什么">Markdown 是什么</h2>
+<p>Markdown 使用简单的文本标记表达标题、列表、引用、链接和代码。源码本身可以直接阅读，也方便用 Git 保存修改记录。在 QSNote 中，可以切换到分屏模式，一边输入源码，一边查看排版。</p>
+<p>本文介绍日常写作的基础语法，扩展语法见 <a href="/categories/qsnote/post-5c6c4f49/">Markdown扩展语法</a>，流程图和时序图等见 <a href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a>。代码框展示的是输入内容，复制时保留其中的空行和缩进。</p>
+<h2 id="标题">标题</h2>
+<p>在行首使用一到六个 <code>#</code>，后面加一个空格。数量越多，层级越深。</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 一级标题</span>
+<span class="token title important"><span class="token punctuation">##</span> 二级标题</span>
+<span class="token title important"><span class="token punctuation">###</span> 三级标题</span>
+<span class="token title important"><span class="token punctuation">####</span> 四级标题</span>
+<span class="token title important"><span class="token punctuation">#####</span> 五级标题</span>
+<span class="token title important"><span class="token punctuation">######</span> 六级标题</span>
+</code></pre></figure></div>
+<p>写文章时按内容层次使用标题，不要仅为了调整字号而跳级。QSNote 会根据标题生成大纲，长文章可以通过大纲定位章节。</p>
+<h2 id="段落与换行">段落与换行</h2>
+<p>段落之间留一个空行：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">这是第一段，用来说明背景。
+
+这是第二段，用来介绍具体做法。
+</code></pre></figure></div>
+<p>段内需要明确换行时，可以在行末添加两个空格后回车。下面用 <code>␠</code> 表示空格，实际输入时应替换为空格字符：</p>
+<div class="code-toolbar"><figure data-language="text" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-text" tabindex="0"><code class="language-text">第一行␠␠
+第二行
+</code></pre></figure></div>
+<p>不要用连续空格实现文字对齐；需要按列展示时使用表格。</p>
+<h2 id="强调文字">强调文字</h2>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">这是 <span class="token bold"><span class="token punctuation">**</span><span class="token content">加粗文字</span><span class="token punctuation">**</span></span>。
+这是 <span class="token italic"><span class="token punctuation">*</span><span class="token content">斜体文字</span><span class="token punctuation">*</span></span>。
+这是 <span class="token bold"><span class="token punctuation">**</span><span class="token content"><span class="token italic"><span class="token punctuation">*</span><span class="token content">加粗并倾斜的文字</span><span class="token punctuation">*</span></span></span><span class="token punctuation">**</span></span>。
+</code></pre></figure></div>
+<p>效果：这是 <strong>加粗文字</strong>，这是 <em>斜体文字</em>，这是 <em><strong>加粗并倾斜的文字</strong></em>。</p>
+<p>标记应紧贴文字，避免写成 <code>** 加粗文字 **</code>。</p>
+<h2 id="列表">列表</h2>
+<h3 id="无序列表">无序列表</h3>
+<p>用 <code>-</code> 加空格表示一个条目，适合没有先后顺序的内容。子列表需要缩进：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token list punctuation">-</span> 写作工具
+    <span class="token list punctuation">-</span> QSNote
+    <span class="token list punctuation">-</span> 文本编辑器
+<span class="token list punctuation">-</span> 备份工具
+    <span class="token list punctuation">-</span> Git
+    <span class="token list punctuation">-</span> 云盘
+</code></pre></figure></div>
+<p>效果：</p>
+<ul>
+<li>写作工具
+<ul>
+<li>QSNote</li>
+<li>文本编辑器</li>
+</ul>
+</li>
+<li>备份工具
+<ul>
+<li>Git</li>
+<li>云盘</li>
+</ul>
+</li>
+</ul>
+<h3 id="有序列表">有序列表</h3>
+<p>用数字、英文句点和空格表示步骤：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token list punctuation">1.</span> 新建笔记。
+<span class="token list punctuation">2.</span> 输入内容。
+<span class="token list punctuation">3.</span> 切换预览检查排版。
+</code></pre></figure></div>
+<p>效果：</p>
+<ol>
+<li>新建笔记。</li>
+<li>输入内容。</li>
+<li>切换预览检查排版。</li>
+</ol>
+<p>列表项中包含多段内容时，后续段落应缩进到该条目内部，避免被识别成列表外的正文。</p>
+<h2 id="引用">引用</h2>
+<p>在行首加 <code>></code> 和空格。多段引用之间使用单独的 <code>></code> 行，嵌套引用再加一层标记：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token blockquote punctuation">></span> 先把想法记录下来。
+<span class="token blockquote punctuation">></span>
+<span class="token blockquote punctuation">></span> 再逐步整理结构。
+<span class="token blockquote punctuation">>></span> 这里是引用中的补充说明。
+</code></pre></figure></div>
+<p>效果：</p>
+<blockquote>
+<p>先把想法记录下来。</p>
+<p>再逐步整理结构。</p>
+<blockquote>
+<p>这里是引用中的补充说明。</p>
+</blockquote>
+</blockquote>
+<h2 id="链接">链接</h2>
+<p>基本形式为 <code>[显示文字](目标地址)</code>：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token url">[<span class="token content">QSNote 项目主页</span>](<span class="token url">https://github.com/qiushao/qsnote</span>)</span>
+<span class="token url">[<span class="token content">同目录的另一篇文章</span>](<span class="token url">Markdown图表.md</span>)</span>
+<span class="token url">[<span class="token content">跳到本文的图片章节</span>](<span class="token url">#图片</span>)</span>
+</code></pre></figure></div>
+<p>效果：</p>
+<p><a href="https://github.com/qiushao/qsnote">QSNote 项目主页</a></p>
+<p><a href="/categories/qsnote/post-3ba9c37a/">同目录的另一篇文章</a></p>
+<p><a href="#%E5%9B%BE%E7%89%87">跳到本文的图片章节</a></p>
+<p>QSNote 的本地链接以当前文档所在目录为基准，<code>../</code> 表示上一级目录。文件名、扩展名和相对目录都需要与实际文件一致。</p>
+<p>标题可以作为跳转目标，例如中文标题 <code>图片</code> 对应 <code>#图片</code>，英文标题 <code>Usage Example</code> 对应 <code>#usage-example</code>。修改标题后，也要更新指向它的链接。</p>
+<h2 id="图片">图片</h2>
+<p>图片比链接多一个开头的感叹号：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token url"><span class="token operator">!</span>[<span class="token content">图片说明</span>](<span class="token url">resources/images/example.png</span>)</span>
+</code></pre></figure></div>
+<p>这里的路径只是示例，使用时需要替换为实际图片路径。方括号中的文字用于描述图片内容。</p>
+<p>在 QSNote 中，也可以通过工具栏、粘贴或拖入插图。对于已保存到目录中的文档，插入的图片会保存到文档旁的 <code>resources/images/</code>。备份或移动文章时，要一起保留图片目录。</p>
+<h2 id="代码">代码</h2>
+<h3 id="行内代码">行内代码</h3>
+<p>用一对反引号包住命令、文件名或函数名：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">使用 <span class="token code-snippet code keyword">`git status`</span> 查看文件状态。
+</code></pre></figure></div>
+<p>效果：使用 <code>git status</code> 查看文件状态。</p>
+<h3 id="代码块">代码块</h3>
+<p>多行代码使用三个反引号包围，开头可以指定语言以便语法高亮：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">python</span>
+<span class="token code-block language-python">name <span class="token operator">=</span> <span class="token string">"QSNote"</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Hello, </span><span class="token interpolation"><span class="token punctuation">{</span>name<span class="token punctuation">}</span></span><span class="token string">!"</span></span><span class="token punctuation">)</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div class="code-toolbar"><figure data-language="python" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-python" tabindex="0"><code class="language-python">name <span class="token operator">=</span> <span class="token string">"QSNote"</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Hello, </span><span class="token interpolation"><span class="token punctuation">{</span>name<span class="token punctuation">}</span></span><span class="token string">!"</span></span><span class="token punctuation">)</span>
+</code></pre></figure></div>
+<p>代码块只展示代码，不会执行程序。不要遗漏结束的三个反引号，否则后面的正文也可能被当成代码。</p>
+<p>如果要像本文这样展示包含三个反引号的 Markdown 源码，外层使用四个反引号即可。</p>
+<h2 id="分隔线">分隔线</h2>
+<p>独立一行写三个连字符，并在前后留空行：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">上一个主题。
+
+<span class="token hr punctuation">---</span>
+
+下一个主题。
+</code></pre></figure></div>
+<p>效果：</p>
+<hr/>
+<p>分隔线适合分开主题，不需要在每个小节之间都添加。</p>
+<h2 id="显示标记本身">显示标记本身</h2>
+<p>如果要显示星号等符号，而不是应用格式，可以在符号前加反斜杠：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">\*这里的星号是正文\*
+</code></pre></figure></div>
+<p>效果：*这里的星号是正文*。展示整段语法时，使用代码块通常更清楚。</p>
+</article></div>
+<div class="article-footer">
+<blockquote class="mt-2x">
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接：</strong>
+<a href="https://qiushao.github.io/categories/qsnote/post-e0a4d512/" rel="external" target="_blank" title="Markdown基础语法">https://qiushao.github.io/categories/qsnote/post-e0a4d512/</a>
+</li>
+<li class="post-copyright-license">
+<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+</ul>
+</blockquote>
+</div>
+</article>
+<section id="comments"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
+</div>
+<nav class="bar bar-footer clearfix" data-stick-bottom><div class="bar-inner"><ul class="pager pull-left"><li class="prev"><a href="/categories/qsnote/post-3ba9c37a/" title="Markdown图表"><i class="icon icon-angle-left"></i><span>  上一篇</span></a></li><li class="next"><a href="/categories/qsnote/post-5c6c4f49/" title="Markdown扩展语法"><span>下一篇  </span><i class="icon icon-angle-right"></i></a></li><li class="toggle-toc"><a class="toggle-btn" data-toggle="collapse" href="#collapseToc" aria-expanded="true" aria-controls="collapseToc" title="Catalogue" role="button"><span>[&nbsp;</span><span>Catalogue</span> <i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><div class="bar-right"></div></div></nav>
+
+</main>
+<footer class="footer" itemscope="" itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
+</ul>
+<div class="copyright">
+<p>Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
+<div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+</div>
+</footer>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/plugin.min.js"></script>
+<script src="/js/application.js"></script>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+</body>
+</html>

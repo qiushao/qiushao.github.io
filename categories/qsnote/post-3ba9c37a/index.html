@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Markdown图表 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/categories/qsnote/post-3ba9c37a/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
+<body class="main-center theme-purple" itemscope="" itemtype="http://schema.org/WebPage">
+<header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+<div class="slimContent">
+<div class="navbar-header">
+<div class="profile-block text-center">
+<a href="https://qiushao.github.io" id="avatar" target="_blank">
+<img class="img-circle img-rotate" height="200" src="/images/qsnote-avatar.png" width="200"/>
+</a>
+<h2 class="hidden-xs hidden-sm" id="name">秋少</h2>
+<h3 class="hidden-xs hidden-sm hidden-md" id="title"></h3>
+<small class="text-muted hidden-xs hidden-sm" id="location"><i class="icon icon-map-marker"></i> 深圳</small>
+</div>
+<div class="search" id="search-form-wrap">
+<form class="search-form sidebar-form">
+<div class="input-group">
+<input class="search-form-input form-control" placeholder="搜索" type="text"/>
+<span class="input-group-btn">
+<button class="search-form-submit btn btn-flat" onclick="return false;" type="submit"><i class="icon icon-search"></i></button>
+</span>
+</div>
+</form>
+<div class="ins-search">
+<div class="ins-search-mask"></div>
+<div class="ins-search-container">
+<div class="ins-input-wrapper">
+<input class="ins-search-input" placeholder="想要查找什么..." type="text" x-webkit-speech=""/>
+<button aria-label="Close" class="close ins-close ins-selectable" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+</div>
+<div class="ins-section-wrapper">
+<div class="ins-section-container"></div>
+</div>
+</div>
+</div>
+</div>
+<button aria-controls="main-navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#main-navbar" data-toggle="collapse" type="button">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+</div>
+<nav class="collapse navbar-collapse" id="main-navbar" itemscope="" itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href="/.">
+<i class="icon icon-home-fill"></i>
+<span class="menu-title">首页</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href="/archives">
+<i class="icon icon-archives-fill"></i>
+<span class="menu-title">归档</span>
+</a>
+</li>
+<li class="menu-item menu-item-categories">
+<a href="/categories">
+<i class="icon icon-folder"></i>
+<span class="menu-title">分类</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href="/tags">
+<i class="icon icon-tags"></i>
+<span class="menu-title">标签</span>
+</a>
+</li>
+<li class="menu-item menu-item-links">
+<a href="/links">
+<i class="icon icon-friendship"></i>
+<span class="menu-title">友链</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href="/about">
+<i class="icon icon-cup-fill"></i>
+<span class="menu-title">关于</span>
+</a>
+</li>
+</ul>
+<ul class="social-links">
+<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
+</ul>
+</nav>
+</div>
+</header>
+<button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="main-sidebar" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+<aside id="main-sidebar" class="sidebar" itemscope="" itemtype="http://schema.org/WPSideBar">
+<div class="slimContent">
+<div class="widget">
+<h3 class="widget-title">分类</h3>
+<div class="widget-body">
+<ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/qsnote/">QSNote</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/qshell/">QShell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/zhaohuaxishi/">朝花夕拾</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/renshengbaitai/">人生百态</a><span class="category-list-count">1</span></li></ul>
+</div>
+</div>
+<div class="widget">
+<h3 class="widget-title">标签</h3>
+<div class="widget-body">
+<ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/">Markdown</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QSNote/">QSNote</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/QShell/">QShell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a><span class="tag-list-count">2</span></li></ul>
+</div>
+</div>
+<div class="widget">
+<h3 class="widget-title">标签云</h3>
+<div class="widget-body tagcloud"><a href="/tags/Java/" style="font-size: 13px;">Java</a> <a href="/tags/Linux/" style="font-size: 13px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 13px;">Markdown</a> <a href="/tags/QSNote/" style="font-size: 13px;">QSNote</a> <a href="/tags/QShell/" style="font-size: 13px;">QShell</a> <a href="/tags/Shell/" style="font-size: 13px;">Shell</a> </div>
+</div>
+<div class="widget">
+<h3 class="widget-title">归档</h3>
+<div class="widget-body">
+<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/11/">十一月 2026</a><span class="archive-list-count">12</span></li></ul>
+</div>
+</div>
+<div class="widget">
+<h3 class="widget-title">最新文章</h3>
+<div class="widget-body">
+<ul class="recent-post-list list-unstyled no-thumbnail"><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a></p><p class="item-date"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/post-e0a4d512/">Markdown基础语法</a></p><p class="item-date"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/post-5c6c4f49/">Markdown扩展语法</a></p><p class="item-date"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qsnote/">QSNote</a></p><p class="item-title"><a class="title" href="/categories/qsnote/qsnote-intro/">QSNote介绍</a></p><p class="item-date"><time datetime="2026-11-09" itemprop="datePublished">2026-11-09</time></p></div></li><li><div class="item-inner"><p class="item-category"><a class="category-link" href="/categories/qshell/">QShell</a></p><p class="item-title"><a class="title" href="/categories/qshell/qshell-intro/">QShell介绍</a></p><p class="item-date"><time datetime="2026-11-09" itemprop="datePublished">2026-11-09</time></p></div></li></ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse in" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar"><div class="slimContent"><nav id="toc" class="article-toc"><h3 class="toc-title">Catalogue</h3><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%96%87%E5%AD%97%E6%8F%8F%E8%BF%B0%E5%9B%BE%E8%A1%A8"><span class="toc-text">用文字描述图表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mermaid"><span class="toc-text">Mermaid</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text">流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="toc-text">时序图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9B%BE"><span class="toc-text">类图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%98%E7%89%B9%E5%9B%BE"><span class="toc-text">甘特图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A5%BC%E5%9B%BE"><span class="toc-text">饼图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%91%E5%9B%BE"><span class="toc-text">脑图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%90%E6%A0%87%E8%BD%B4%E5%9B%BE"><span class="toc-text">坐标轴图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84%E5%9D%90%E6%A0%87%E8%BD%B4%E5%9B%BE"><span class="toc-text">更复杂的坐标轴图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flowchart"><span class="toc-text">Flowchart</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#graphviz"><span class="toc-text">Graphviz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wavedrom"><span class="toc-text">WaveDrom</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#plantuml"><span class="toc-text">PlantUML</span></a></li></ol></nav></div></aside><main class="main" role="main"><div class="content">
+<article class="article article-type-post" id="post-categories/qsnote/post-3ba9c37a/" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div class="article-header">
+<h1 class="article-title" itemprop="name">Markdown图表</h1>
+<div class="article-meta"><span class="article-date"><i class="icon icon-calendar-check"></i> <a class="article-date" href="/categories/qsnote/post-3ba9c37a/"><time datetime="2026-11-10" itemprop="datePublished">2026-11-10</time></a></span>
+<span class="article-category"><i class="icon icon-folder"></i> <a class="article-category-link" href="/categories/qsnote/">QSNote</a>
+</span>
+<span class="article-tag"><i class="icon icon-tags"></i> <a class="article-tag-link-link" href="/tags/Markdown/">Markdown</a><a class="article-tag-link-link" href="/tags/QSNote/">QSNote</a>
+</span>
+<span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-3ba9c37a/#comments">评论</a></span>
+</div>
+</div>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="用文字描述图表">用文字描述图表</h2>
+<p>QSNote 支持多种图表渲染引擎： Mermaid、Flowchart、Graphviz、WaveDrom 和 PlantUML 。图表写在带语言名的代码块中，语言名决定使用哪种渲染器。本文给出可直接复制的入门示例。</p>
+<table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>常用代码块语言名</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mermaid</td>
+<td><code>mermaid</code></td>
+<td>流程、交互、类关系、计划、数据展示</td>
+</tr>
+<tr>
+<td>Flowchart</td>
+<td><code>flowchart</code>、<code>flow</code></td>
+<td>简单步骤与判断分支</td>
+</tr>
+<tr>
+<td>Graphviz</td>
+<td><code>dot</code>、<code>graphviz</code></td>
+<td>依赖关系、节点网络</td>
+</tr>
+<tr>
+<td>WaveDrom</td>
+<td><code>wavedrom</code>、<code>wave</code></td>
+<td>数字电路信号波形</td>
+</tr>
+<tr>
+<td>PlantUML</td>
+<td><code>plantuml</code>、<code>puml</code></td>
+<td>UML 建模与交互说明</td>
+</tr>
+</tbody>
+</table>
+<p>复制下面示例时，应包括代码框内的三个反引号与语言名。切换到分屏或预览查看图形，也可以在编辑器设置中开启图表就地预览。</p>
+<h2 id="mermaid">Mermaid</h2>
+<p>Mermaid 的不同图形共用 <code>mermaid</code> 语言名，由代码块第一行指定图形类型。</p>
+<h3 id="流程图">流程图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid"><span class="token keyword">flowchart</span> TD
+    A<span class="token text string">[收到问题]</span> <span class="token arrow operator">--></span> B<span class="token text string">[分析原因]</span>
+    B <span class="token arrow operator">--></span> C<span class="token text string">{可以复现吗？}</span>
+    C <span class="token arrow operator">--></span><span class="token label property">|可以|</span> D<span class="token text string">[修复并验证]</span>
+    C <span class="token arrow operator">--></span><span class="token label property">|不可以|</span> E<span class="token text string">[补充信息]</span>
+    E <span class="token arrow operator">--></span> B</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-2" class="diagram"><img alt="Mermaid 图表" style="width: 331px;" height="472" src="/categories/qsnote/post-3ba9c37a/4c55f3e652f84fbca223c00bbe1567907883e28695a8afbbd76ba642fae0691b.png" width="331"/></div>
+<h3 id="时序图">时序图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid"><span class="token keyword">sequenceDiagram</span>
+    <span class="token keyword">participant</span> U as 用户
+    <span class="token keyword">participant</span> A as 应用
+    <span class="token keyword">participant</span> D as 数据库
+    U<span class="token arrow operator">->></span>A<span class="token operator">:</span> 查询笔记
+    A<span class="token arrow operator">->></span>D<span class="token operator">:</span> 读取内容
+    D<span class="token arrow operator">-->></span>A<span class="token operator">:</span> 返回结果
+    A<span class="token arrow operator">-->></span>U<span class="token operator">:</span> 展示笔记</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-4" class="diagram"><img alt="Mermaid 图表" style="width: 650px;" height="403" src="/categories/qsnote/post-3ba9c37a/2d586062e6bb1c3c30300d1bf46f1970f38e1c9ef14f4f2512b3894ccd35ce05.png" width="650"/></div>
+<h3 id="类图">类图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid"><span class="token keyword">classDiagram</span>
+    Folder <span class="token string">"1"</span> <span class="token arrow operator">--></span> <span class="token string">"*"</span> Document
+    <span class="token keyword">class</span> Document <span class="token punctuation">{</span>
+        +String name
+        +open<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        +save<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-6" class="diagram"><img alt="Mermaid 图表" style="width: 176px;" height="286" src="/categories/qsnote/post-3ba9c37a/f3bdf246a4f0fea316a61a5ebe479e203af9212bde919024bea1f38bf53e3b21.png" width="176"/></div>
+<h3 id="甘特图">甘特图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid"><span class="token keyword">gantt</span>
+    title 项目计划
+    dateFormat YYYY-MM-DD
+    section 开发
+    需求分析 <span class="token operator">:</span>a, 2026-01-01, 2d
+    功能实现 <span class="token operator">:</span>b, after a, 3d
+    测试验收 <span class="token operator">:</span>after b, 2d</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-8" class="diagram"><img alt="Mermaid 图表" style="width: 1024px;" height="172" src="/categories/qsnote/post-3ba9c37a/aebf95d77a88f0ae96cb6dd46f581c07558f872eb5cb1cd48040d5c8e5cf5943.png" width="1024"/></div>
+<p>任务会按日期显示为时间条。<code>3d</code> 表示三天，<code>after draft</code> 表示在 <code>draft</code> 完成后开始。</p>
+<h3 id="饼图">饼图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid"><span class="token keyword">pie</span> title 笔记分类
+    <span class="token string">"技术"</span> <span class="token operator">:</span> 12
+    <span class="token string">"阅读"</span> <span class="token operator">:</span> 6
+    <span class="token string">"生活"</span> <span class="token operator">:</span> 6</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-10" class="diagram"><img alt="Mermaid 图表" style="width: 546px;" height="450" src="/categories/qsnote/post-3ba9c37a/71459a3ba4b80311e3cb97e4d9aecf9603a715818572cf72916a65056ed1db08.png" width="546"/></div>
+<p>三类数据的占比分别为 50%、25%、25%。输入的是数值，渲染时根据总数计算比例。</p>
+<h3 id="脑图">脑图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid">mindmap
+    root<span class="token text string">((个人知识库))</span>
+        技术
+            编程
+            系统
+        阅读
+            摘录
+            思考
+        生活</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-12" class="diagram"><img alt="Mermaid 图表" style="width: 334px;" height="402" src="/categories/qsnote/post-3ba9c37a/d93d63952e4cfdfb49f5f09d4e9419d0c0a6b5fb4be6be05f20726b3e6b9689c.png" width="334"/></div>
+<p>缩进表示父子关系，同级节点应保持相同缩进。中心节点为“个人知识库”，向外展开三个分支。</p>
+<h3 id="坐标轴图">坐标轴图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid">xychart
+    title <span class="token string">"每月阅读数量"</span>
+    <span class="token arrow operator">x-</span>axis <span class="token text string">["一月", "二月", "三月"]</span>
+    y-axis <span class="token string">"本数"</span> 0 <span class="token arrow operator">--></span> 10
+    bar <span class="token text string">[3, 5, 7]</span>
+    line <span class="token text string">[4, 4, 6]</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-14" class="diagram"><img alt="Mermaid 图表" style="width: 700px;" height="500" src="/categories/qsnote/post-3ba9c37a/7fafc79f5ad519b9b9bb581bfd15820ca6656c9eae7f68c65302452fc4da24ed.png" width="700"/></div>
+<p><code>bar</code> 表示柱形数据，<code>line</code> 表示折线数据。各组数据的数量应与横轴标签数量一致。这里会显示三根柱子和一条折线。</p>
+<h3 id="更复杂的坐标轴图">更复杂的坐标轴图</h3>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<span class="token code-block language-mermaid">xychart-beta
+    title <span class="token string">"声波 - 连续模拟信号 (Analog Signal)"</span>
+    <span class="token arrow operator">x-</span>axis <span class="token string">"时间 (t)"</span> 0 <span class="token arrow operator">--></span> 720
+    y-axis <span class="token string">"振幅 (Amplitude)"</span> -1.2 <span class="token arrow operator">--></span> 1.2
+    line <span class="token text string">[0, 0.087, 0.174, 0.259, 0.342, 0.423, 0.5, 0.574, 0.643, 0.707, 0.766, 0.819, 0.866, 0.906, 0.94, 0.966, 0.985, 0.996, 1, 0.996, 0.985, 0.966, 0.94, 0.906, 0.866, 0.819, 0.766, 0.707, 0.643, 0.574, 0.5, 0.423, 0.342, 0.259, 0.174, 0.087, 0, -0.087, -0.174, -0.259, -0.342, -0.423, -0.5, -0.574, -0.643, -0.707, -0.766, -0.819, -0.866, -0.906, -0.94, -0.966, -0.985, -0.996, -1, -0.996, -0.985, -0.966, -0.94, -0.906, -0.866, -0.819, -0.766, -0.707, -0.643, -0.574, -0.5, -0.423, -0.342, -0.259, -0.174, -0.087, 0, 0.087, 0.174, 0.259, 0.342, 0.423, 0.5, 0.574, 0.643, 0.707, 0.766, 0.819, 0.866, 0.906, 0.94, 0.966, 0.985, 0.996, 1, 0.996, 0.985, 0.966, 0.94, 0.906, 0.866, 0.819, 0.766, 0.707, 0.643, 0.574, 0.5, 0.423, 0.342, 0.259, 0.174, 0.087, 0, -0.087, -0.174, -0.259, -0.342, -0.423, -0.5, -0.574, -0.643, -0.707, -0.766, -0.819, -0.866, -0.906, -0.94, -0.966, -0.985, -0.996, -1, -0.996, -0.985, -0.966, -0.94, -0.906, -0.866, -0.819, -0.766, -0.707, -0.643, -0.574, -0.5, -0.423, -0.342, -0.259, -0.174, -0.087, 0]</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-16" class="diagram"><img alt="Mermaid 图表" style="width: 700px;" height="500" src="/categories/qsnote/post-3ba9c37a/46a3ae668a2bee4e5b27530be7f062e62d477ba3fa604e9cba44043c7b9ead2b.png" width="700"/></div>
+<h2 id="flowchart">Flowchart</h2>
+<p>Flowchart 是独立的图表语法。代码块语言名使用 <code>flowchart</code>，内容使用 <code>=></code> 定义节点；不要把 Mermaid 的 <code>flowchart TD</code> 放进这种代码块。</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">flowchart</span>
+<span class="token code-block language-flowchart">start=>start: Start
+read=>operation: Read
+check=>condition: Understood?
+review=>operation: Review
+end=>end: Done
+start->read->check
+check(yes)->end
+check(no)->review->read</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-18" class="diagram"><img alt="图表 图表" style="width: 425px;" height="438" src="/categories/qsnote/post-3ba9c37a/4a5510d747a1accb365a81b8a903e32767f1030bac9f730bcfba4612816c3568.png" width="425"/></div>
+<h2 id="graphviz">Graphviz</h2>
+<p>Graphviz 使用 DOT 语言描述节点和关系，适合模块依赖、组织关系等图形。</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">dot</span>
+<span class="token code-block language-dot"><span class="token keyword">digraph</span> <span class="token graph-name class-name">App</span> <span class="token punctuation">{</span>
+    <span class="token attr-name">rankdir</span><span class="token operator">=</span><span class="token attr-value">LR</span><span class="token punctuation">;</span>
+    <span class="token node">Editor</span> <span class="token operator">-></span> <span class="token node">Parser</span><span class="token punctuation">;</span>
+    <span class="token node">Parser</span> <span class="token operator">-></span> <span class="token node">Preview</span><span class="token punctuation">;</span>
+    <span class="token node">Parser</span> <span class="token operator">-></span> <span class="token node">Export</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-20" class="diagram"><img alt="图表 图表" style="width: 307px;" height="98" src="/categories/qsnote/post-3ba9c37a/78f44c637535477f6c705d7b48d113525c3447e5952dcabf10484fe4eee38faa.png" width="307"/></div>
+<p><code>digraph</code> 定义有向图，<code>-></code> 定义有向边，<code>rankdir=LR</code> 让图从左向右布局。这个示例表示编辑器内容经过解析器后，分别用于预览与导出。</p>
+<h2 id="wavedrom">WaveDrom</h2>
+<p>WaveDrom 用于展示数字信号随时间的变化，适合时钟、控制位和数据总线。</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">wavedrom</span>
+<span class="token code-block language-wavedrom">{
+  "signal": [
+    { "name": "clock", "wave": "p....." },
+    { "name": "enable", "wave": "01..0." },
+    { "name": "bus", "wave": "x.=.x.", "data": ["value"] }
+  ]
+}</span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-22" class="diagram"><img alt="图表 图表" style="width: 340px;" height="90" src="/categories/qsnote/post-3ba9c37a/fbf918fffbf8fe8d3cdca0cbb85da045b5f73e61f4c3394eea21640949750156.png" width="340"/></div>
+<p>这个示例显示三行等长波形。<code>p</code> 表示时钟，<code>0</code>、<code>1</code> 表示低电平和高电平，<code>.</code> 延续前一个状态，<code>x</code> 表示未知状态，<code>=</code> 表示数据区间，<code>data</code> 提供数据标签。</p>
+<p>代码块内容必须是合法 JSON：键名和字符串用双引号，不添加注释，不在最后一项后面添加逗号。</p>
+<h2 id="plantuml">PlantUML</h2>
+<p>PlantUML 使用 <code>@startuml</code> 与 <code>@enduml</code> 包围图形定义：</p>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">plantuml</span>
+<span class="token code-block language-plantuml"><span class="token delimiter punctuation">@startuml</span>
+<span class="token keyword">actor</span> Reader
+<span class="token keyword">participant</span> Notebook
+Reader <span class="token arrow operator">-></span> Notebook<span class="token punctuation">:</span> Open document
+Notebook <span class="token arrow operator">--></span> Reader<span class="token punctuation">:</span> Display content
+<span class="token delimiter punctuation">@enduml</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre></figure></div>
+<p>效果：</p>
+<div id="diagram-24" class="diagram"><img alt="PlantUML 图表" src="/categories/qsnote/post-3ba9c37a/32601ed30f0ca926ef418578c25218fb154b802539ae2ff333df093bff988299.png"/></div>
+<p>这个示例生成读者与笔记本之间的时序图。语言名也可以写成 <code>puml</code>。</p>
+<p>PlantUML 需要本机渲染环境。Linux/macOS 需要可执行的 <code>plantuml</code>，部分图形还依赖 Graphviz；Windows 安装包若带有 PlantUML JAR，仍需要可用的 Java。</p>
+<p>首次使用时，先确认上面的自包含示例能正常显示，再增加复杂结构或外部资源引用。</p>
+</article></div>
+<div class="article-footer">
+<blockquote class="mt-2x">
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接：</strong>
+<a href="https://qiushao.github.io/categories/qsnote/post-3ba9c37a/" rel="external" target="_blank" title="Markdown图表">https://qiushao.github.io/categories/qsnote/post-3ba9c37a/</a>
+</li>
+<li class="post-copyright-license">
+<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+</ul>
+</blockquote>
+</div>
+</article>
+<section id="comments"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
+</div>
+<nav class="bar bar-footer clearfix" data-stick-bottom><div class="bar-inner"><ul class="pager pull-left"><li class="next"><a href="/categories/qsnote/post-e0a4d512/" title="Markdown基础语法"><span>下一篇  </span><i class="icon icon-angle-right"></i></a></li><li class="toggle-toc"><a class="toggle-btn" data-toggle="collapse" href="#collapseToc" aria-expanded="true" aria-controls="collapseToc" title="Catalogue" role="button"><span>[&nbsp;</span><span>Catalogue</span> <i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><div class="bar-right"></div></div></nav>
+
+</main>
+<footer class="footer" itemscope="" itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+<li><a href="https://github.com/qiushao" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="icon icon-github"></i></a></li>
+</ul>
+<div class="copyright">
+<p>Powered by <a href="https://github.com/qiushao/qsnote">QSNote</a></p>
+<div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+</div>
+</footer>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/plugin.min.js"></script>
+<script src="/js/application.js"></script>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+</body>
+</html>
