@@ -133,7 +133,7 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/Linux/post-44d87909/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><p>Linux 系统上有四个环境配置文件，分别为:</p>
+<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><p>Linux 系统上有四个环境配置文件，分别为:</p>
 <ul>
 <li>/etc/profile</li>
 <li>/etc/bash.bashrc</li>
@@ -152,17 +152,17 @@ bashrc 是用户在启动 bash shell 的时候加载的。也就是启动一个 
 <h2 id="4.-知识点应用举例">4. 知识点应用举例</h2>
 <p>问题：在 clion 中设置交叉编译环境，获取不到 .bashrc 中设置的 PATH 环境变量。</p>
 <p>在 ~/.bashrc 中设置交叉编译工具环境变量</p>
-<figure class="code-block"><button type="button" class="code-copy">复制</button><pre><code>export PATH=$PATH:/media/deep/source-code/Hi3516/sourceCode/toolchain/arm-himix200-linux/bin
+<figure class="code-block"><button class="code-copy" type="button">复制</button><pre><code>export PATH=$PATH:/media/deep/source-code/Hi3516/sourceCode/toolchain/arm-himix200-linux/bin
 </code></pre></figure>
 <p>在 clion 中设置交叉编译工具</p>
-<figure class="code-block"><button type="button" class="code-copy">复制</button><pre><code>set(CMAKE_SYSTEM_NAME Linux)
+<figure class="code-block"><button class="code-copy" type="button">复制</button><pre><code>set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_C_COMPILER arm-himix200-linux-gcc)
 set(CMAKE_CXX_COMPILER arm-himix200-linux-g++)
 </code></pre></figure>
 <p>clion 中提示 arm-himix200-linux-gcc 找不到。但直接在 terminal 中执行 cmake 是可以编译成功的。</p>
 <p>原因分析：clion 是由 gnome 桌面启动的。gnome 是由登录式 shell 启动的。因此环境变量是继承的登录式 shell 的环境变量。也就是 profile 配置的环境变量。profile 中没配置 arm-himix200-linux 路径，因此找不到。启动的终端是非登录式 shell。会加载 bashrc 文件, 因此能找到 arm-himix200-linux。</p>
 <p>解决方案：在　~/.profile 中设置编译工具环境变量，然后重启即可。</p>
-<figure class="code-block"><button type="button" class="code-copy">复制</button><pre><code>qiushao@qiushao-PC:~$ tail .profile 
+<figure class="code-block"><button class="code-copy" type="button">复制</button><pre><code>qiushao@qiushao-PC:~$ tail .profile 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
