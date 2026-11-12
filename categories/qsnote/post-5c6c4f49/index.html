@@ -142,7 +142,7 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-5c6c4f49/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="扩展语法的范围">扩展语法的范围</h2>
+<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><h2 id="扩展语法的范围">扩展语法的范围</h2>
 <p>Markdown 的不同实现支持的扩展并不完全一致。本文按 QSNote 官方教程介绍表格、任务列表、文字标记、脚注、提示块、目录和公式。基础写法见 <a href="/categories/qsnote/post-e0a4d512/">Markdown基础语法</a>，图表见 <a href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a>。</p>
 <h2 id="表格">表格</h2>
 <p>用竖线分隔单元格，第二行分隔表头与数据。分隔行中的冒号控制对齐方向：</p>
@@ -182,7 +182,7 @@
 </code></pre></figure></div>
 <p>效果：</p>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input checked="" disabled="" type="checkbox" class="task-list-item-checkbox"/> 建立文章目录</li>
+<li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox" checked=""/> 建立文章目录</li>
 <li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox"/> 编写示例</li>
 <li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox"/> 检查预览</li>
 </ul>
@@ -202,7 +202,7 @@
 
 <span class="token url-reference url"><span class="token punctuation">[</span><span class="token variable">^reason</span><span class="token punctuation">]</span><span class="token punctuation">:</span> 优先保留便于阅读和迁移的文本格式。</span>
 </code></pre></figure></div>
-<p>效果：这项选择需要补充说明。<sup class="footnote-ref"><a id="fnref1" href="#fn1">[1]</a></sup></p>
+<p>效果：这项选择需要补充说明。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <h2 id="提示块">提示块</h2>
 <h3 id="容器写法">容器写法</h3>
 <p>QSNote 支持以三冒号包围的提示容器：</p>
@@ -284,7 +284,7 @@
 <p>在图片路径后加尺寸，可以指定显示宽高：</p>
 <div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">![灰阶](resources/images/post-5c6c4f49/灰阶.png =320x200)
 </code></pre></figure></div>
-<figure><img style="width: 320px; height: 200px;" width="320" src="/categories/qsnote/post-5c6c4f49/%E7%81%B0%E9%98%B6.png" height="200" alt=""/><figcaption>灰阶</figcaption></figure>
+<figure><img src="/categories/qsnote/post-5c6c4f49/%E7%81%B0%E9%98%B6.png" width="320" style="width: 320px; height: 200px;" height="200" alt=""/><figcaption>灰阶</figcaption></figure>
 <p>这里表示宽 320、高 200。路径应换成实际图片，尺寸比例最好与原图一致，避免拉伸。</p>
 <h2 id="数学公式">数学公式</h2>
 <p>QSNote 使用 KaTeX 排版公式。它支持常用数学表达式，但不是完整的 LaTeX 编译环境。</p>
@@ -292,7 +292,7 @@
 <p>使用一对美元符号：</p>
 <div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">勾股定理可以写作 $a^2+b^2=c^2$。
 </code></pre></figure></div>
-<p>效果：勾股定理可以写作 <img style="width: 104px;" width="104" src="/categories/qsnote/post-5c6c4f49/9152634efba434b68d7f804527415c2eaa58ecee7ae3a87f61789cf27939da5c.png" height="33" alt="a^2+b^2=c^2" class="math-inline"/>。</p>
+<p>效果：勾股定理可以写作 <img src="/categories/qsnote/post-5c6c4f49/9152634efba434b68d7f804527415c2eaa58ecee7ae3a87f61789cf27939da5c.png" width="104" style="width: 104px;" height="33" class="math-inline" alt="a^2+b^2=c^2"/>。</p>
 <h3 id="独立公式">独立公式</h3>
 <p>公式较长时，用独立成行的 <code>$$</code> 包围：</p>
 <div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
@@ -300,7 +300,7 @@ x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
 $$
 </code></pre></figure></div>
 <p>效果：</p>
-<section><img style="width: 177px;" width="177" src="/categories/qsnote/post-5c6c4f49/b19721ae1349ced947924338536c393490a03feba180828a539224b3238aa144.png" height="49" alt="&#xa;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}&#xa;" class="math-display"/></section><h3 id="多行公式">多行公式</h3>
+<section><img src="/categories/qsnote/post-5c6c4f49/b19721ae1349ced947924338536c393490a03feba180828a539224b3238aa144.png" width="177" style="width: 177px;" height="49" class="math-display" alt="&#xa;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}&#xa;"/></section><h3 id="多行公式">多行公式</h3>
 <p><code>aligned</code> 环境可以对齐多行，<code>&amp;</code> 指定对齐位置，<code>\\</code> 表示换行：</p>
 <div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
 \begin{aligned}
@@ -310,7 +310,7 @@ v &amp;= \frac{s}{t}
 $$
 </code></pre></figure></div>
 <p>效果：
-<img style="width: 57px;" width="57" src="/categories/qsnote/post-5c6c4f49/24d895df64515884f8af0a9c23ecd18b386cdf5fec5f3807b38b229794ed7411.png" height="74" alt="&#xa;\begin{aligned}&#xa;s &amp;= vt \\&#xa;v &amp;= \frac{s}{t}&#xa;\end{aligned}&#xa;" class="math-inline"/></p>
+<img src="/categories/qsnote/post-5c6c4f49/24d895df64515884f8af0a9c23ecd18b386cdf5fec5f3807b38b229794ed7411.png" width="57" style="width: 57px;" height="74" class="math-inline" alt="&#xa;\begin{aligned}&#xa;s &amp;= vt \\&#xa;v &amp;= \frac{s}{t}&#xa;\end{aligned}&#xa;"/></p>
 <p>QSNote 还兼容 <code>\(...\)</code>、<code>\[...\]</code> 和语言名为 <code>mathjax</code> 的代码块；后者仍使用 KaTeX 渲染。</p>
 <h2 id="少量-html">少量 HTML</h2>
 <p>正文支持部分 HTML，例如使用 <code>&lt;kbd>Enter&lt;/kbd></code> 展示按键。脚本等不允许的内容会被过滤，不应依赖正文中的 JavaScript 实现功能。</p>
@@ -372,5 +372,15 @@ $$
 })(window);
 </script>
 <script src="/js/insight.js"></script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?97405e7a98766f6fae394b9556bf109d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
 </body>
 </html>
