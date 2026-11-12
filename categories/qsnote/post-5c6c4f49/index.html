@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 
 <html lang="zh">
-<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Markdown扩展语法 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/categories/qsnote/post-5c6c4f49/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
+<head><meta charset="utf-8"/>
+<script>
+(function () {
+  var savedTheme;
+  try { savedTheme = localStorage.getItem('qsnote-pure-theme'); } catch (_) {}
+  document.documentElement.dataset.theme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+})();
+</script>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/><meta content="秋少" name="author"/><meta content="QSNote" name="generator"/><title>Markdown扩展语法 | 一叶知秋</title><meta name="keywords" content="Android系统开发,音视频开发"><meta content="Android系统开发，音视频开发" name="description"/><link href="https://qiushao.github.io/categories/qsnote/post-5c6c4f49/" rel="canonical"/><link href="/css/style.css" rel="stylesheet"/><link href="/css/qsnote-pure.css" rel="stylesheet"/><script defer="" src="/js/highlight.js"></script><link rel="stylesheet" href="/css/qsnote-article.css"></head>
 <body class="main-center theme-purple" itemscope="" itemtype="http://schema.org/WebPage">
 <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
 <div class="slimContent">
@@ -88,6 +96,7 @@
 </nav>
 </div>
 </header>
+<button id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="深色模式" title="深色模式" hidden><span class="switch-check"><svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/></svg><svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg></span></button>
 <button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-controls="main-sidebar" aria-expanded="true" aria-label="收起侧栏" title="收起侧栏" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
 <aside id="main-sidebar" class="sidebar" itemscope="" itemtype="http://schema.org/WPSideBar">
 <div class="slimContent">
@@ -121,7 +130,7 @@
 </div>
 </div>
 </aside>
-<aside class="sidebar sidebar-toc collapse in" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar"><div class="slimContent"><nav id="toc" class="article-toc"><h3 class="toc-title">Catalogue</h3><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E8%AF%AD%E6%B3%95%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="toc-text">扩展语法的范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E6%A0%BC"><span class="toc-text">表格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E5%88%97%E8%A1%A8"><span class="toc-text">任务列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%BA%BF%E3%80%81%E9%AB%98%E4%BA%AE%E3%80%81%E4%B8%8A%E4%B8%8B%E6%A0%87%E4%B8%8E%E8%A1%A8%E6%83%85"><span class="toc-text">删除线、高亮、上下标与表情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%B3%A8"><span class="toc-text">脚注</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA%E5%9D%97"><span class="toc-text">提示块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E5%86%99%E6%B3%95"><span class="toc-text">容器写法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#github-%E9%A3%8E%E6%A0%BC%E5%86%99%E6%B3%95"><span class="toc-text">GitHub 风格写法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%97%B6%E9%97%B4%E7%BA%BF"><span class="toc-text">步骤时间线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E5%86%85%E7%9B%AE%E5%BD%95"><span class="toc-text">文内目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8"><span class="toc-text">图片尺寸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F"><span class="toc-text">数学公式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E5%86%85%E5%85%AC%E5%BC%8F"><span class="toc-text">行内公式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8B%AC%E7%AB%8B%E5%85%AC%E5%BC%8F"><span class="toc-text">独立公式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%A1%8C%E5%85%AC%E5%BC%8F"><span class="toc-text">多行公式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%91%E9%87%8F-html"><span class="toc-text">少量 HTML</span></a></li></ol></nav></div></aside><main class="main" role="main"><div class="content">
+<aside class="sidebar sidebar-toc collapse in" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar"><div class="slimContent"><nav id="toc" class="article-toc"><h3 class="toc-title">Catalogue</h3><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E8%AF%AD%E6%B3%95%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="toc-text">扩展语法的范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E6%A0%BC"><span class="toc-text">表格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E5%88%97%E8%A1%A8"><span class="toc-text">任务列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%BA%BF%E3%80%81%E9%AB%98%E4%BA%AE%E3%80%81%E4%B8%8A%E4%B8%8B%E6%A0%87%E4%B8%8E%E8%A1%A8%E6%83%85"><span class="toc-text">删除线、高亮、上下标与表情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%B3%A8"><span class="toc-text">脚注</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA%E5%9D%97"><span class="toc-text">提示块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E5%86%99%E6%B3%95"><span class="toc-text">容器写法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#github-%E9%A3%8E%E6%A0%BC%E5%86%99%E6%B3%95"><span class="toc-text">GitHub 风格写法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%97%B6%E9%97%B4%E7%BA%BF"><span class="toc-text">步骤时间线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E5%86%85%E7%9B%AE%E5%BD%95"><span class="toc-text">文内目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E5%B0%BA%E5%AF%B8"><span class="toc-text">图片尺寸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F"><span class="toc-text">数学公式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E5%86%85%E5%85%AC%E5%BC%8F"><span class="toc-text">行内公式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8B%AC%E7%AB%8B%E5%85%AC%E5%BC%8F"><span class="toc-text">独立公式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%A1%8C%E5%85%AC%E5%BC%8F"><span class="toc-text">多行公式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%91%E9%87%8F-html"><span class="toc-text">少量 HTML</span></a></li></ol></nav></div></aside><main id="main" class="main has-bottom-bar" role="main"><div class="content">
 <article class="article article-type-post" id="post-categories/qsnote/post-5c6c4f49/" itemscope="" itemtype="http://schema.org/BlogPosting">
 <div class="article-header">
 <h1 class="article-title" itemprop="name">Markdown扩展语法</h1>
@@ -133,11 +142,11 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-5c6c4f49/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><h2 id="扩展语法的范围">扩展语法的范围</h2>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="扩展语法的范围">扩展语法的范围</h2>
 <p>Markdown 的不同实现支持的扩展并不完全一致。本文按 QSNote 官方教程介绍表格、任务列表、文字标记、脚注、提示块、目录和公式。基础写法见 <a href="/categories/qsnote/post-e0a4d512/">Markdown基础语法</a>，图表见 <a href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a>。</p>
 <h2 id="表格">表格</h2>
 <p>用竖线分隔单元格，第二行分隔表头与数据。分隔行中的冒号控制对齐方向：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token table"><span class="token table-header-row"><span class="token punctuation">|</span><span class="token table-header important"> 项目 </span><span class="token punctuation">|</span><span class="token table-header important"> 状态 </span><span class="token punctuation">|</span><span class="token table-header important"> 数量 </span><span class="token punctuation">|</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token table"><span class="token table-header-row"><span class="token punctuation">|</span><span class="token table-header important"> 项目 </span><span class="token punctuation">|</span><span class="token table-header important"> 状态 </span><span class="token punctuation">|</span><span class="token table-header important"> 数量 </span><span class="token punctuation">|</span>
 </span><span class="token table-line"><span class="token punctuation">|</span> <span class="token punctuation">:---</span> <span class="token punctuation">|</span> <span class="token punctuation">:---:</span> <span class="token punctuation">|</span> <span class="token punctuation">---:</span> <span class="token punctuation">|</span>
 </span><span class="token table-data-rows"><span class="token punctuation">|</span><span class="token table-data"> 笔记 </span><span class="token punctuation">|</span><span class="token table-data"> 已整理 </span><span class="token punctuation">|</span><span class="token table-data"> 12 </span><span class="token punctuation">|</span>
 <span class="token punctuation">|</span><span class="token table-data"> 草稿 </span><span class="token punctuation">|</span><span class="token table-data"> 待检查 </span><span class="token punctuation">|</span><span class="token table-data"> 3 </span><span class="token punctuation">|</span>
@@ -167,19 +176,19 @@
 <p><code>:---</code> 左对齐，<code>:---:</code> 居中，<code>---:</code> 右对齐。单元格内需要竖线时写成 <code>\|</code>。</p>
 <h2 id="任务列表">任务列表</h2>
 <p>在无序列表标记后加入方括号，空格表示未完成，<code>x</code> 表示已完成：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token list punctuation">-</span> [x] 建立文章目录
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token list punctuation">-</span> [x] 建立文章目录
 <span class="token list punctuation">-</span> [ ] 编写示例
 <span class="token list punctuation">-</span> [ ] 检查预览
 </code></pre></figure></div>
 <p>效果：</p>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox" type="checkbox" checked="" disabled=""/> 建立文章目录</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox" type="checkbox" disabled=""/> 编写示例</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox" type="checkbox" disabled=""/> 检查预览</li>
+<li class="task-list-item enabled"><input checked="" disabled="" type="checkbox" class="task-list-item-checkbox"/> 建立文章目录</li>
+<li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox"/> 编写示例</li>
+<li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox"/> 检查预览</li>
 </ul>
 <p>QSNote 应用内的预览任务框可以点击，状态会回写到 Markdown 源码。这些正文任务与独立的待办清单笔记本分别管理。</p>
 <h2 id="删除线、高亮、上下标与表情">删除线、高亮、上下标与表情</h2>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token strike"><span class="token punctuation">~~</span><span class="token content">已经废弃的方案</span><span class="token punctuation">~~</span></span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token strike"><span class="token punctuation">~~</span><span class="token content">已经废弃的方案</span><span class="token punctuation">~~</span></span>
 ==需要关注的结论==
 水的化学式是 H<span class="token strike"><span class="token punctuation">~</span><span class="token content">2</span><span class="token punctuation">~</span></span>O。
 平方可以写成 x^2^。
@@ -189,15 +198,15 @@
 <p>上下标适合简短标注；分式、求和、多行推导等复杂表达式应使用公式。</p>
 <h2 id="脚注">脚注</h2>
 <p>正文中写脚注引用，在单独的段落中定义说明，引用与定义的名称必须一致：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">这项选择需要补充说明。[^reason]
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">这项选择需要补充说明。[^reason]
 
 <span class="token url-reference url"><span class="token punctuation">[</span><span class="token variable">^reason</span><span class="token punctuation">]</span><span class="token punctuation">:</span> 优先保留便于阅读和迁移的文本格式。</span>
 </code></pre></figure></div>
-<p>效果：这项选择需要补充说明。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<p>效果：这项选择需要补充说明。<sup class="footnote-ref"><a id="fnref1" href="#fn1">[1]</a></sup></p>
 <h2 id="提示块">提示块</h2>
 <h3 id="容器写法">容器写法</h3>
 <p>QSNote 支持以三冒号包围的提示容器：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">::: alert-info
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">::: alert-info
 保存正文后，再检查预览。
 :::
 
@@ -213,7 +222,7 @@
 <p>结束的 <code>:::</code> 需要独立成行。</p>
 <h3 id="github-风格写法">GitHub 风格写法</h3>
 <p>也可以在引用第一行标注提示类型：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token blockquote punctuation">></span> [!NOTE]
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token blockquote punctuation">></span> [!NOTE]
 <span class="token blockquote punctuation">></span> 这里填写补充说明。
 
 <span class="token blockquote punctuation">></span> [!TIP]
@@ -233,7 +242,7 @@
 <p>长文章先列标题，再补充正文，便于整理思路。</p>
 </aside>
 <h2 id="步骤时间线">步骤时间线</h2>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">
 ::: steps
 <span class="token list punctuation">1.</span> <span class="token bold"><span class="token punctuation">**</span><span class="token content">★准备环境</span><span class="token punctuation">**</span></span>
 
@@ -268,32 +277,32 @@
 </div>
 <h2 id="文内目录">文内目录</h2>
 <p>在正文中独立一行写入：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">[[toc]]
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">[[toc]]
 </code></pre></figure></div>
 <p>QSNote 会根据文章标题生成可点击目录。注意是两层方括号；右侧大纲无需写这个占位符也可以使用。</p>
 <h2 id="图片尺寸">图片尺寸</h2>
 <p>在图片路径后加尺寸，可以指定显示宽高：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">![灰阶](resources/images/post-5c6c4f49/灰阶.png =320x200)
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">![灰阶](resources/images/post-5c6c4f49/灰阶.png =320x200)
 </code></pre></figure></div>
-<figure><img width="320" style="width: 320px; height: 200px;" alt="" src="/categories/qsnote/post-5c6c4f49/%E7%81%B0%E9%98%B6.png" height="200"/><figcaption>灰阶</figcaption></figure>
+<figure><img style="width: 320px; height: 200px;" width="320" src="/categories/qsnote/post-5c6c4f49/%E7%81%B0%E9%98%B6.png" height="200" alt=""/><figcaption>灰阶</figcaption></figure>
 <p>这里表示宽 320、高 200。路径应换成实际图片，尺寸比例最好与原图一致，避免拉伸。</p>
 <h2 id="数学公式">数学公式</h2>
 <p>QSNote 使用 KaTeX 排版公式。它支持常用数学表达式，但不是完整的 LaTeX 编译环境。</p>
 <h3 id="行内公式">行内公式</h3>
 <p>使用一对美元符号：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">勾股定理可以写作 $a^2+b^2=c^2$。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">勾股定理可以写作 $a^2+b^2=c^2$。
 </code></pre></figure></div>
-<p>效果：勾股定理可以写作 <img width="104" class="math-inline" style="width: 104px;" alt="a^2+b^2=c^2" src="/categories/qsnote/post-5c6c4f49/9152634efba434b68d7f804527415c2eaa58ecee7ae3a87f61789cf27939da5c.png" height="33"/>。</p>
+<p>效果：勾股定理可以写作 <img style="width: 104px;" width="104" src="/categories/qsnote/post-5c6c4f49/9152634efba434b68d7f804527415c2eaa58ecee7ae3a87f61789cf27939da5c.png" height="33" alt="a^2+b^2=c^2" class="math-inline"/>。</p>
 <h3 id="独立公式">独立公式</h3>
 <p>公式较长时，用独立成行的 <code>$$</code> 包围：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
 x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
 $$
 </code></pre></figure></div>
 <p>效果：</p>
-<section><img width="177" class="math-display" style="width: 177px;" alt="&#xa;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}&#xa;" src="/categories/qsnote/post-5c6c4f49/b19721ae1349ced947924338536c393490a03feba180828a539224b3238aa144.png" height="49"/></section><h3 id="多行公式">多行公式</h3>
+<section><img style="width: 177px;" width="177" src="/categories/qsnote/post-5c6c4f49/b19721ae1349ced947924338536c393490a03feba180828a539224b3238aa144.png" height="49" alt="&#xa;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}&#xa;" class="math-display"/></section><h3 id="多行公式">多行公式</h3>
 <p><code>aligned</code> 环境可以对齐多行，<code>&amp;</code> 指定对齐位置，<code>\\</code> 表示换行：</p>
-<div class="code-toolbar"><figure class="code-block" data-language="markdown"><button class="code-copy" type="button">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
 \begin{aligned}
 s &amp;= vt \\
 v &amp;= \frac{s}{t}
@@ -301,14 +310,14 @@ v &amp;= \frac{s}{t}
 $$
 </code></pre></figure></div>
 <p>效果：
-<img width="57" class="math-inline" style="width: 57px;" alt="&#xa;\begin{aligned}&#xa;s &amp;= vt \\&#xa;v &amp;= \frac{s}{t}&#xa;\end{aligned}&#xa;" src="/categories/qsnote/post-5c6c4f49/24d895df64515884f8af0a9c23ecd18b386cdf5fec5f3807b38b229794ed7411.png" height="74"/></p>
+<img style="width: 57px;" width="57" src="/categories/qsnote/post-5c6c4f49/24d895df64515884f8af0a9c23ecd18b386cdf5fec5f3807b38b229794ed7411.png" height="74" alt="&#xa;\begin{aligned}&#xa;s &amp;= vt \\&#xa;v &amp;= \frac{s}{t}&#xa;\end{aligned}&#xa;" class="math-inline"/></p>
 <p>QSNote 还兼容 <code>\(...\)</code>、<code>\[...\]</code> 和语言名为 <code>mathjax</code> 的代码块；后者仍使用 KaTeX 渲染。</p>
 <h2 id="少量-html">少量 HTML</h2>
 <p>正文支持部分 HTML，例如使用 <code>&lt;kbd>Enter&lt;/kbd></code> 展示按键。脚本等不允许的内容会被过滤，不应依赖正文中的 JavaScript 实现功能。</p>
 <hr class="footnotes-sep"/>
 <section class="footnotes">
 <ol class="footnotes-list">
-<li class="footnote-item" id="fn1"><p>优先保留便于阅读和迁移的文本格式。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+<li id="fn1" class="footnote-item"><p>优先保留便于阅读和迁移的文本格式。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
@@ -327,7 +336,7 @@ $$
 </blockquote>
 </div>
 </article>
-<section id="comments"><section class="giscus"></section><script src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
+<section id="comments"><section class="giscus"></section><script data-src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
 </div>
 <nav class="bar bar-footer clearfix" data-stick-bottom><div class="bar-inner"><ul class="pager pull-left"><li class="prev"><a href="/categories/qsnote/post-e0a4d512/" title="Markdown基础语法"><i class="icon icon-angle-left"></i><span>  上一篇</span></a></li><li class="next"><a href="/categories/qsnote/qsnote-intro/" title="QSNote介绍"><span>下一篇  </span><i class="icon icon-angle-right"></i></a></li><li class="toggle-toc"><a class="toggle-btn" data-toggle="collapse" href="#collapseToc" aria-expanded="true" aria-controls="collapseToc" title="Catalogue" role="button"><span>[&nbsp;</span><span>Catalogue</span> <i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><div class="bar-right"></div></div></nav>
 
