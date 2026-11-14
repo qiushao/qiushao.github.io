@@ -142,15 +142,29 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/qsnote-intro/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><h2 id="起源">起源</h2>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="起源">起源</h2>
 <p><a href="https://github.com/qiushao/qsnote">QSNote</a> 起源于我自己的写作需求。我平时有记笔记，写博客，写电子书，记录待办事项的习惯。之前这些都是使用不同的应用来进行的，但各种应用都或多或少有些不太满足自己的需求，比如说：</p>
-<ul>
-<li>记笔记： VNote。VNote 的整本笔记导出功能没有目录，笔记目录里有应用配置文件目录，新版本界面越来越花里胡哨。</li>
-<li>写博客： vscode + hexo。 vscode Markdown 编辑体验不好。hexo 速度慢，安装配置复杂，还要敲命令。</li>
-<li>写电子书： gitbook。多年前用的是命令行的 gitbook，要手动编辑 SUMMARY.md，章节有变化时非常麻烦，生成的电子书格式也是一言难尽。</li>
-<li>待办事项：滴答清单。界面越花里胡哨太复杂。</li>
-</ul>
-<p>之前就一直想自己重新造个轮子，以便满足自己的各种需求，奈何能力有限，尝试了几次之后，就不了了之了。
+<div class="steps">
+<ol>
+<li class="k">
+<p class="t"><strong>记笔记</strong></p>
+<p class="d">之前使用 VNote 来记笔记，有时候需要导出某个目录，或者整个笔记本出来给其他同事查看，但 VNote 是一篇笔记一个 pdf，没有合并为一个 pdf      的功能。还有 VNote 会在笔记目录生成一些元数据文件，显得比较杂乱。界面布局也比较混乱，花里胡哨的，一点都不专注。但 VNote 的 Markdown 编辑器组件 <code>vtextedit</code> 还是很不错的，QSNote 的编辑器也使用了 <code>vtextedit</code> 组件。</p>
+</li>
+<li class="k">
+<p class="t"><strong>写博客</strong></p>
+<p class="d">之前使用 hexo + Typora，Typora 收费之后用 VS Code。编辑和预览发布不连贯，还得敲 hexo 的命令，最关键是文章多后， hexo 太慢了。hugo 据说很快，但后面工作忙了，就没折腾博客，没试用了。后面又试用了 Gridea Pro， 界面倒是设计得不错，但编辑器有点弱。</p>
+</li>
+<li class="k">
+<p class="t"><strong>写电子书</strong></p>
+<p class="d">平时没事的时候会写一些教程，给新员工分享学习，教会新人之后，工作就可以交给新人来干，自己就可以悠闲一点干其他事了。之前是使用 gitbook + VS Code。要手动编辑 SUMMARY.md，章节有变化时，章节序号的调整非常麻烦，生成的电子书格式也是一言难尽。</p>
+</li>
+<li class="k">
+<p class="t"><strong>待办事项</strong></p>
+<p class="d">各种杂事太多，不记录个  todo  list 的话，经常就忘事了。一开始直接用笔在本子上记，但 review ，查找，改动不太方便，后面又用有道笔记，滴答清单清单之类的，界面越花里胡哨太复杂。</p>
+</li>
+</ol>
+</div>
+<p>一直想自己重新造个轮子，以便满足自己的各种需求，奈何能力有限，尝试了几次之后，就不了了之了。
 但从 claude code, codex 发布之后，感觉限制我们的只有想象力了，于是趁着最近工作比较悠闲，便开始了造轮运动。
 前后大概花了一个月的业余时间完成了核心功能，再花一个月边使用，边把各种细节打磨一遍。目前这个状态自我感觉已经很满意了。</p>
 <h2 id="特色功能">特色功能</h2>
@@ -159,32 +173,32 @@
 <li>使用 c++ QT 开发，性能流畅</li>
 <li>本地目录管理 Markdown 文件，数据掌握在自己手中，数据的备份，同步可以使用 git, iCloud 云盘, 坚果云或你熟悉的文件同步工具。</li>
 <li>除基本 Markdown 语法支持外，还支持丰富的图表，公式等。</li>
+<li>贴心的各种图表公式样板</li>
+<li>各种格式的文本文件语法高亮</li>
 <li>支持多种类型笔记本：普通笔记本，静态博客，电子书，待办事项。</li>
 <li>静态博客，电子书写作，预览，发布一条龙。</li>
-<li>各种格式的文本文件语法高亮</li>
-<li>贴心的各种图表公式样板</li>
 <li>电子书章节自动编号</li>
-<li>暖心护眼的主题配色</li>
 </ul>
 <h2 id="todo">todo</h2>
 <ul>
 <li>移动端开发</li>
 <li>桌面便签</li>
+<li>不断参考学习其他优秀的笔记应用功能</li>
 </ul>
 <h2 id="主界面介绍">主界面介绍</h2>
+<p>浅色模式：
+<img alt="" src="/categories/qsnote/qsnote-intro/image-20261113-175125.png"/></p>
+<p>深色模式：
+<img alt="" src="/categories/qsnote/qsnote-intro/image-20261114-083958.png"/>
+整体界面简单明了，三栏布局，左边是目录树，中间是正文编辑/预览区， 右侧是文章大纲。顶部去掉系统原生标题栏，自定义标题栏放置笔记本切换，搜索， 发布功能。基本上核心的功能都一目了然，又不会过于拥挤，花里胡哨。</p>
 </article></div>
 <div class="article-footer">
-<blockquote class="mt-2x">
-<ul class="post-copyright list-unstyled">
-<li class="post-copyright-link hidden-xs">
-<strong>本文链接：</strong>
-<a href="https://qiushao.github.io/categories/qsnote/qsnote-intro/" rel="external" target="_blank" title="QSNote介绍">https://qiushao.github.io/categories/qsnote/qsnote-intro/</a>
-</li>
-<li class="post-copyright-license">
-<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-</ul>
-</blockquote>
+<aside class="alert-note hidden-xs">
+<p class="alert-title">本文链接</p>
+<p><a href="https://qiushao.github.io/categories/qsnote/qsnote-intro/" rel="external" target="_blank" title="QSNote介绍">https://qiushao.github.io/categories/qsnote/qsnote-intro/</a></p>
+<p class="alert-title">版权声明</p>
+<p>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN</a> 许可协议。转载请注明出处！</p>
+</aside>
 </div>
 </article>
 <section id="comments"><section class="giscus"></section><script data-src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>

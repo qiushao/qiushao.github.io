@@ -142,7 +142,7 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-3ba9c37a/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><h2 id="用文字描述图表">用文字描述图表</h2>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="用文字描述图表">用文字描述图表</h2>
 <p>QSNote 支持多种图表渲染引擎： Mermaid、Flowchart、Graphviz、WaveDrom 和 PlantUML 。图表写在带语言名的代码块中，语言名决定使用哪种渲染器。本文给出可直接复制的入门示例。</p>
 <table>
 <thead>
@@ -184,7 +184,7 @@
 <h2 id="mermaid">Mermaid</h2>
 <p>Mermaid 的不同图形共用 <code>mermaid</code> 语言名，由代码块第一行指定图形类型。</p>
 <h3 id="流程图">流程图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid"><span class="token keyword">flowchart</span> TD
     A<span class="token text string">[收到问题]</span> <span class="token arrow operator">--></span> B<span class="token text string">[分析原因]</span>
     B <span class="token arrow operator">--></span> C<span class="token text string">{可以复现吗？}</span>
@@ -194,9 +194,9 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-2" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/4c55f3e652f84fbca223c00bbe1567907883e28695a8afbbd76ba642fae0691b.png" width="331" style="width: 331px;" height="472" alt="Mermaid 图表"/></div>
+<div id="diagram-2" class="diagram"><img alt="Mermaid 图表" width="331" height="472" src="/categories/qsnote/post-3ba9c37a/707a2dadbd8294408e179da39c98b4dc82a4055eed733e18be1338680467cea4.png" style="width: 331px;"/></div>
 <h3 id="时序图">时序图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid"><span class="token keyword">sequenceDiagram</span>
     <span class="token keyword">participant</span> U as 用户
     <span class="token keyword">participant</span> A as 应用
@@ -208,9 +208,9 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-4" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/2d586062e6bb1c3c30300d1bf46f1970f38e1c9ef14f4f2512b3894ccd35ce05.png" width="650" style="width: 650px;" height="403" alt="Mermaid 图表"/></div>
+<div id="diagram-4" class="diagram"><img alt="Mermaid 图表" width="650" height="403" src="/categories/qsnote/post-3ba9c37a/ab73d35402689ff973a911ebd65d98eb1e2b84616aedbadbc931083e6fe16d36.png" style="width: 650px;"/></div>
 <h3 id="类图">类图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid"><span class="token keyword">classDiagram</span>
     Folder <span class="token string">"1"</span> <span class="token arrow operator">--></span> <span class="token string">"*"</span> Document
     <span class="token keyword">class</span> Document <span class="token punctuation">{</span>
@@ -221,9 +221,9 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-6" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/f3bdf246a4f0fea316a61a5ebe479e203af9212bde919024bea1f38bf53e3b21.png" width="176" style="width: 176px;" height="286" alt="Mermaid 图表"/></div>
+<div id="diagram-6" class="diagram"><img alt="Mermaid 图表" width="176" height="286" src="/categories/qsnote/post-3ba9c37a/cc5186dcb20190e60dd22c00d2ded6cedb635174d90fdef77bab7eb1844f0ee3.png" style="width: 176px;"/></div>
 <h3 id="甘特图">甘特图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid"><span class="token keyword">gantt</span>
     title 项目计划
     dateFormat YYYY-MM-DD
@@ -234,10 +234,10 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-8" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/aebf95d77a88f0ae96cb6dd46f581c07558f872eb5cb1cd48040d5c8e5cf5943.png" width="1024" style="width: 1024px;" height="172" alt="Mermaid 图表"/></div>
+<div id="diagram-8" class="diagram"><img alt="Mermaid 图表" width="1024" height="172" src="/categories/qsnote/post-3ba9c37a/d5bde869474a99c76522b2e2508e6791a2562fec912449443e84e3c2fafe0471.png" style="width: 1024px;"/></div>
 <p>任务会按日期显示为时间条。<code>3d</code> 表示三天，<code>after draft</code> 表示在 <code>draft</code> 完成后开始。</p>
 <h3 id="饼图">饼图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid"><span class="token keyword">pie</span> title 笔记分类
     <span class="token string">"技术"</span> <span class="token operator">:</span> 12
     <span class="token string">"阅读"</span> <span class="token operator">:</span> 6
@@ -245,10 +245,10 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-10" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/71459a3ba4b80311e3cb97e4d9aecf9603a715818572cf72916a65056ed1db08.png" width="546" style="width: 546px;" height="450" alt="Mermaid 图表"/></div>
+<div id="diagram-10" class="diagram"><img alt="Mermaid 图表" width="546" height="450" src="/categories/qsnote/post-3ba9c37a/9d7a811a72f05e856a0d681adb2f4b6b63213887b77a8bb3f43eeb367a2c136e.png" style="width: 546px;"/></div>
 <p>三类数据的占比分别为 50%、25%、25%。输入的是数值，渲染时根据总数计算比例。</p>
 <h3 id="脑图">脑图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid">mindmap
     root<span class="token text string">((个人知识库))</span>
         技术
@@ -261,10 +261,10 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-12" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/d93d63952e4cfdfb49f5f09d4e9419d0c0a6b5fb4be6be05f20726b3e6b9689c.png" width="334" style="width: 334px;" height="402" alt="Mermaid 图表"/></div>
+<div id="diagram-12" class="diagram"><img alt="Mermaid 图表" width="334" height="402" src="/categories/qsnote/post-3ba9c37a/1ac7d0c023893c0cfe11a7753d90ce9cd588eaf265995998c887096286924024.png" style="width: 334px;"/></div>
 <p>缩进表示父子关系，同级节点应保持相同缩进。中心节点为“个人知识库”，向外展开三个分支。</p>
 <h3 id="坐标轴图">坐标轴图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid">xychart
     title <span class="token string">"每月阅读数量"</span>
     <span class="token arrow operator">x-</span>axis <span class="token text string">["一月", "二月", "三月"]</span>
@@ -274,10 +274,10 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-14" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/7fafc79f5ad519b9b9bb581bfd15820ca6656c9eae7f68c65302452fc4da24ed.png" width="700" style="width: 700px;" height="500" alt="Mermaid 图表"/></div>
+<div id="diagram-14" class="diagram"><img alt="Mermaid 图表" width="700" height="500" src="/categories/qsnote/post-3ba9c37a/0da264092e144e2ee4d702d790634bf86d53bc40515735549fc13b125bb985d7.png" style="width: 700px;"/></div>
 <p><code>bar</code> 表示柱形数据，<code>line</code> 表示折线数据。各组数据的数量应与横轴标签数量一致。这里会显示三根柱子和一条折线。</p>
 <h3 id="更复杂的坐标轴图">更复杂的坐标轴图</h3>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">mermaid</span>
 <span class="token code-block language-mermaid">xychart-beta
     title <span class="token string">"声波 - 连续模拟信号 (Analog Signal)"</span>
     <span class="token arrow operator">x-</span>axis <span class="token string">"时间 (t)"</span> 0 <span class="token arrow operator">--></span> 720
@@ -286,10 +286,10 @@
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-16" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/46a3ae668a2bee4e5b27530be7f062e62d477ba3fa604e9cba44043c7b9ead2b.png" width="700" style="width: 700px;" height="500" alt="Mermaid 图表"/></div>
+<div id="diagram-16" class="diagram"><img alt="Mermaid 图表" width="700" height="500" src="/categories/qsnote/post-3ba9c37a/01bc26e8f47ab88ed5c1fc02491ce9afb80c7316bc171d9b801b1ed9fdd70bf5.png" style="width: 700px;"/></div>
 <h2 id="flowchart">Flowchart</h2>
 <p>Flowchart 是独立的图表语法。代码块语言名使用 <code>flowchart</code>，内容使用 <code>=></code> 定义节点；不要把 Mermaid 的 <code>flowchart TD</code> 放进这种代码块。</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">flowchart</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">flowchart</span>
 <span class="token code-block language-flowchart">start=>start: Start
 read=>operation: Read
 check=>condition: Understood?
@@ -301,10 +301,10 @@ check(no)->review->read</span>
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-18" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/4a5510d747a1accb365a81b8a903e32767f1030bac9f730bcfba4612816c3568.png" width="425" style="width: 425px;" height="438" alt="图表 图表"/></div>
+<div id="diagram-18" class="diagram"><img alt="图表 图表" width="425" height="438" src="/categories/qsnote/post-3ba9c37a/69a75cf66005cca254b5db80e5f35690d5e2eb7f7849eeef5d4597968f4d96e7.png" style="width: 425px;"/></div>
 <h2 id="graphviz">Graphviz</h2>
 <p>Graphviz 使用 DOT 语言描述节点和关系，适合模块依赖、组织关系等图形。</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">dot</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">dot</span>
 <span class="token code-block language-dot"><span class="token keyword">digraph</span> <span class="token graph-name class-name">App</span> <span class="token punctuation">{</span>
     <span class="token attr-name">rankdir</span><span class="token operator">=</span><span class="token attr-value">LR</span><span class="token punctuation">;</span>
     <span class="token node">Editor</span> <span class="token operator">-></span> <span class="token node">Parser</span><span class="token punctuation">;</span>
@@ -314,11 +314,11 @@ check(no)->review->read</span>
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-20" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/78f44c637535477f6c705d7b48d113525c3447e5952dcabf10484fe4eee38faa.png" width="307" style="width: 307px;" height="98" alt="图表 图表"/></div>
+<div id="diagram-20" class="diagram"><img alt="图表 图表" width="307" height="98" src="/categories/qsnote/post-3ba9c37a/5f6642204099dd17bf1d50574fd966c3070ab188744f57e7fde38f864940ddab.png" style="width: 307px;"/></div>
 <p><code>digraph</code> 定义有向图，<code>-></code> 定义有向边，<code>rankdir=LR</code> 让图从左向右布局。这个示例表示编辑器内容经过解析器后，分别用于预览与导出。</p>
 <h2 id="wavedrom">WaveDrom</h2>
 <p>WaveDrom 用于展示数字信号随时间的变化，适合时钟、控制位和数据总线。</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">wavedrom</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">wavedrom</span>
 <span class="token code-block language-wavedrom">{
   "signal": [
     { "name": "clock", "wave": "p....." },
@@ -329,12 +329,12 @@ check(no)->review->read</span>
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-22" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/fbf918fffbf8fe8d3cdca0cbb85da045b5f73e61f4c3394eea21640949750156.png" width="340" style="width: 340px;" height="90" alt="图表 图表"/></div>
+<div id="diagram-22" class="diagram"><img alt="图表 图表" width="340" height="90" src="/categories/qsnote/post-3ba9c37a/efe73ec4f8125e9f4433d7aab9fd8fbfb16968074d92289618e2986d239b0d5b.png" style="width: 340px;"/></div>
 <p>这个示例显示三行等长波形。<code>p</code> 表示时钟，<code>0</code>、<code>1</code> 表示低电平和高电平，<code>.</code> 延续前一个状态，<code>x</code> 表示未知状态，<code>=</code> 表示数据区间，<code>data</code> 提供数据标签。</p>
 <p>代码块内容必须是合法 JSON：键名和字符串用双引号，不添加注释，不在最后一项后面添加逗号。</p>
 <h2 id="plantuml">PlantUML</h2>
 <p>PlantUML 使用 <code>@startuml</code> 与 <code>@enduml</code> 包围图形定义：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">plantuml</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">plantuml</span>
 <span class="token code-block language-plantuml"><span class="token delimiter punctuation">@startuml</span>
 <span class="token keyword">actor</span> Reader
 <span class="token keyword">participant</span> Notebook
@@ -344,23 +344,18 @@ Notebook <span class="token arrow operator">--></span> Reader<span class="token 
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div id="diagram-24" class="diagram"><img src="/categories/qsnote/post-3ba9c37a/32601ed30f0ca926ef418578c25218fb154b802539ae2ff333df093bff988299.png" alt="PlantUML 图表"/></div>
+<div id="diagram-24" class="diagram"><img alt="PlantUML 图表" src="/categories/qsnote/post-3ba9c37a/32601ed30f0ca926ef418578c25218fb154b802539ae2ff333df093bff988299.png"/></div>
 <p>这个示例生成读者与笔记本之间的时序图。语言名也可以写成 <code>puml</code>。</p>
 <p>PlantUML 需要本机渲染环境。Linux/macOS 需要可执行的 <code>plantuml</code>，部分图形还依赖 Graphviz；Windows 安装包若带有 PlantUML JAR，仍需要可用的 Java。</p>
 <p>首次使用时，先确认上面的自包含示例能正常显示，再增加复杂结构或外部资源引用。</p>
 </article></div>
 <div class="article-footer">
-<blockquote class="mt-2x">
-<ul class="post-copyright list-unstyled">
-<li class="post-copyright-link hidden-xs">
-<strong>本文链接：</strong>
-<a href="https://qiushao.github.io/categories/qsnote/post-3ba9c37a/" rel="external" target="_blank" title="Markdown图表">https://qiushao.github.io/categories/qsnote/post-3ba9c37a/</a>
-</li>
-<li class="post-copyright-license">
-<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-</ul>
-</blockquote>
+<aside class="alert-note hidden-xs">
+<p class="alert-title">本文链接</p>
+<p><a href="https://qiushao.github.io/categories/qsnote/post-3ba9c37a/" rel="external" target="_blank" title="Markdown图表">https://qiushao.github.io/categories/qsnote/post-3ba9c37a/</a></p>
+<p class="alert-title">版权声明</p>
+<p>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN</a> 许可协议。转载请注明出处！</p>
+</aside>
 </div>
 </article>
 <section id="comments"><section class="giscus"></section><script data-src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>

@@ -142,12 +142,12 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-e0a4d512/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><h2 id="markdown-是什么">Markdown 是什么</h2>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="markdown-是什么">Markdown 是什么</h2>
 <p>Markdown 使用简单的文本标记表达标题、列表、引用、链接和代码。源码本身可以直接阅读，也方便用 Git 保存修改记录。在 QSNote 中，可以切换到分屏模式，一边输入源码，一边查看排版。</p>
 <p>本文介绍日常写作的基础语法，扩展语法见 <a href="/categories/qsnote/post-5c6c4f49/">Markdown扩展语法</a>，流程图和时序图等见 <a href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a>。代码框展示的是输入内容，复制时保留其中的空行和缩进。</p>
 <h2 id="标题">标题</h2>
 <p>在行首使用一到六个 <code>#</code>，后面加一个空格。数量越多，层级越深。</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 一级标题</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 一级标题</span>
 <span class="token title important"><span class="token punctuation">##</span> 二级标题</span>
 <span class="token title important"><span class="token punctuation">###</span> 三级标题</span>
 <span class="token title important"><span class="token punctuation">####</span> 四级标题</span>
@@ -157,17 +157,17 @@
 <p>写文章时按内容层次使用标题，不要仅为了调整字号而跳级。QSNote 会根据标题生成大纲，长文章可以通过大纲定位章节。</p>
 <h2 id="段落与换行">段落与换行</h2>
 <p>段落之间留一个空行：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">这是第一段，用来说明背景。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">这是第一段，用来说明背景。
 
 这是第二段，用来介绍具体做法。
 </code></pre></figure></div>
 <p>段内需要明确换行时，可以在行末添加两个空格后回车。下面用 <code>␠</code> 表示空格，实际输入时应替换为空格字符：</p>
-<div class="code-toolbar"><figure data-language="text" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-text"><code class="language-text">第一行␠␠
+<div class="code-toolbar"><figure data-language="text" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-text" tabindex="0"><code class="language-text">第一行␠␠
 第二行
 </code></pre></figure></div>
 <p>不要用连续空格实现文字对齐；需要按列展示时使用表格。</p>
 <h2 id="强调文字">强调文字</h2>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">这是 <span class="token bold"><span class="token punctuation">**</span><span class="token content">加粗文字</span><span class="token punctuation">**</span></span>。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">这是 <span class="token bold"><span class="token punctuation">**</span><span class="token content">加粗文字</span><span class="token punctuation">**</span></span>。
 这是 <span class="token italic"><span class="token punctuation">*</span><span class="token content">斜体文字</span><span class="token punctuation">*</span></span>。
 这是 <span class="token bold"><span class="token punctuation">**</span><span class="token content"><span class="token italic"><span class="token punctuation">*</span><span class="token content">加粗并倾斜的文字</span><span class="token punctuation">*</span></span></span><span class="token punctuation">**</span></span>。
 </code></pre></figure></div>
@@ -176,7 +176,7 @@
 <h2 id="列表">列表</h2>
 <h3 id="无序列表">无序列表</h3>
 <p>用 <code>-</code> 加空格表示一个条目，适合没有先后顺序的内容。子列表需要缩进：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token list punctuation">-</span> 写作工具
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token list punctuation">-</span> 写作工具
     <span class="token list punctuation">-</span> QSNote
     <span class="token list punctuation">-</span> 文本编辑器
 <span class="token list punctuation">-</span> 备份工具
@@ -200,7 +200,7 @@
 </ul>
 <h3 id="有序列表">有序列表</h3>
 <p>用数字、英文句点和空格表示步骤：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token list punctuation">1.</span> 新建笔记。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token list punctuation">1.</span> 新建笔记。
 <span class="token list punctuation">2.</span> 输入内容。
 <span class="token list punctuation">3.</span> 切换预览检查排版。
 </code></pre></figure></div>
@@ -213,7 +213,7 @@
 <p>列表项中包含多段内容时，后续段落应缩进到该条目内部，避免被识别成列表外的正文。</p>
 <h2 id="引用">引用</h2>
 <p>在行首加 <code>></code> 和空格。多段引用之间使用单独的 <code>></code> 行，嵌套引用再加一层标记：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token blockquote punctuation">></span> 先把想法记录下来。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token blockquote punctuation">></span> 先把想法记录下来。
 <span class="token blockquote punctuation">></span>
 <span class="token blockquote punctuation">></span> 再逐步整理结构。
 <span class="token blockquote punctuation">>></span> 这里是引用中的补充说明。
@@ -228,7 +228,7 @@
 </blockquote>
 <h2 id="链接">链接</h2>
 <p>基本形式为 <code>[显示文字](目标地址)</code>：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token url">[<span class="token content">QSNote 项目主页</span>](<span class="token url">https://github.com/qiushao/qsnote</span>)</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token url">[<span class="token content">QSNote 项目主页</span>](<span class="token url">https://github.com/qiushao/qsnote</span>)</span>
 <span class="token url">[<span class="token content">同目录的另一篇文章</span>](<span class="token url">Markdown图表.md</span>)</span>
 <span class="token url">[<span class="token content">跳到本文的图片章节</span>](<span class="token url">#图片</span>)</span>
 </code></pre></figure></div>
@@ -240,32 +240,32 @@
 <p>标题可以作为跳转目标，例如中文标题 <code>图片</code> 对应 <code>#图片</code>，英文标题 <code>Usage Example</code> 对应 <code>#usage-example</code>。修改标题后，也要更新指向它的链接。</p>
 <h2 id="图片">图片</h2>
 <p>图片比链接多一个开头的感叹号：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token url"><span class="token operator">!</span>[<span class="token content">图片说明</span>](<span class="token url">resources/images/example.png</span>)</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token url"><span class="token operator">!</span>[<span class="token content">图片说明</span>](<span class="token url">resources/images/example.png</span>)</span>
 </code></pre></figure></div>
 <p>这里的路径只是示例，使用时需要替换为实际图片路径。方括号中的文字用于描述图片内容。</p>
 <p>在 QSNote 中，也可以通过工具栏、粘贴或拖入插图。对于已保存到目录中的文档，插入的图片会保存到文档旁的 <code>resources/images/</code>。备份或移动文章时，要一起保留图片目录。</p>
 <h2 id="代码">代码</h2>
 <h3 id="行内代码">行内代码</h3>
 <p>用一对反引号包住命令、文件名或函数名：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">使用 <span class="token code-snippet code keyword">`git status`</span> 查看文件状态。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">使用 <span class="token code-snippet code keyword">`git status`</span> 查看文件状态。
 </code></pre></figure></div>
 <p>效果：使用 <code>git status</code> 查看文件状态。</p>
 <h3 id="代码块">代码块</h3>
 <p>多行代码使用三个反引号包围，开头可以指定语言以便语法高亮：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">python</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">python</span>
 <span class="token code-block language-python">name <span class="token operator">=</span> <span class="token string">"QSNote"</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Hello, </span><span class="token interpolation"><span class="token punctuation">{</span>name<span class="token punctuation">}</span></span><span class="token string">!"</span></span><span class="token punctuation">)</span></span>
 <span class="token punctuation">```</span></span>
 </code></pre></figure></div>
 <p>效果：</p>
-<div class="code-toolbar"><figure data-language="python" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-python"><code class="language-python">name <span class="token operator">=</span> <span class="token string">"QSNote"</span>
+<div class="code-toolbar"><figure data-language="python" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-python" tabindex="0"><code class="language-python">name <span class="token operator">=</span> <span class="token string">"QSNote"</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Hello, </span><span class="token interpolation"><span class="token punctuation">{</span>name<span class="token punctuation">}</span></span><span class="token string">!"</span></span><span class="token punctuation">)</span>
 </code></pre></figure></div>
 <p>代码块只展示代码，不会执行程序。不要遗漏结束的三个反引号，否则后面的正文也可能被当成代码。</p>
 <p>如果要像本文这样展示包含三个反引号的 Markdown 源码，外层使用四个反引号即可。</p>
 <h2 id="分隔线">分隔线</h2>
 <p>独立一行写三个连字符，并在前后留空行：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">上一个主题。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">上一个主题。
 
 <span class="token hr punctuation">---</span>
 
@@ -276,22 +276,17 @@
 <p>分隔线适合分开主题，不需要在每个小节之间都添加。</p>
 <h2 id="显示标记本身">显示标记本身</h2>
 <p>如果要显示星号等符号，而不是应用格式，可以在符号前加反斜杠：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">\*这里的星号是正文\*
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">\*这里的星号是正文\*
 </code></pre></figure></div>
 <p>效果：*这里的星号是正文*。展示整段语法时，使用代码块通常更清楚。</p>
 </article></div>
 <div class="article-footer">
-<blockquote class="mt-2x">
-<ul class="post-copyright list-unstyled">
-<li class="post-copyright-link hidden-xs">
-<strong>本文链接：</strong>
-<a href="https://qiushao.github.io/categories/qsnote/post-e0a4d512/" rel="external" target="_blank" title="Markdown基础语法">https://qiushao.github.io/categories/qsnote/post-e0a4d512/</a>
-</li>
-<li class="post-copyright-license">
-<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-</ul>
-</blockquote>
+<aside class="alert-note hidden-xs">
+<p class="alert-title">本文链接</p>
+<p><a href="https://qiushao.github.io/categories/qsnote/post-e0a4d512/" rel="external" target="_blank" title="Markdown基础语法">https://qiushao.github.io/categories/qsnote/post-e0a4d512/</a></p>
+<p class="alert-title">版权声明</p>
+<p>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN</a> 许可协议。转载请注明出处！</p>
+</aside>
 </div>
 </article>
 <section id="comments"><section class="giscus"></section><script data-src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>

@@ -142,11 +142,11 @@
 <span class="post-comment"><i class="icon icon-comment"></i> <a class="article-comment-link" href="/categories/qsnote/post-5c6c4f49/#comments">评论</a></span>
 </div>
 </div>
-<div class="article-entry marked-body" itemprop="articleBody"><article class="qsnote-article" xmlns="http://www.w3.org/1999/xhtml"><h2 id="扩展语法的范围">扩展语法的范围</h2>
+<div class="article-entry marked-body" itemprop="articleBody"><article xmlns="http://www.w3.org/1999/xhtml" class="qsnote-article"><h2 id="扩展语法的范围">扩展语法的范围</h2>
 <p>Markdown 的不同实现支持的扩展并不完全一致。本文按 QSNote 官方教程介绍表格、任务列表、文字标记、脚注、提示块、目录和公式。基础写法见 <a href="/categories/qsnote/post-e0a4d512/">Markdown基础语法</a>，图表见 <a href="/categories/qsnote/post-3ba9c37a/">Markdown图表</a>。</p>
 <h2 id="表格">表格</h2>
 <p>用竖线分隔单元格，第二行分隔表头与数据。分隔行中的冒号控制对齐方向：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token table"><span class="token table-header-row"><span class="token punctuation">|</span><span class="token table-header important"> 项目 </span><span class="token punctuation">|</span><span class="token table-header important"> 状态 </span><span class="token punctuation">|</span><span class="token table-header important"> 数量 </span><span class="token punctuation">|</span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token table"><span class="token table-header-row"><span class="token punctuation">|</span><span class="token table-header important"> 项目 </span><span class="token punctuation">|</span><span class="token table-header important"> 状态 </span><span class="token punctuation">|</span><span class="token table-header important"> 数量 </span><span class="token punctuation">|</span>
 </span><span class="token table-line"><span class="token punctuation">|</span> <span class="token punctuation">:---</span> <span class="token punctuation">|</span> <span class="token punctuation">:---:</span> <span class="token punctuation">|</span> <span class="token punctuation">---:</span> <span class="token punctuation">|</span>
 </span><span class="token table-data-rows"><span class="token punctuation">|</span><span class="token table-data"> 笔记 </span><span class="token punctuation">|</span><span class="token table-data"> 已整理 </span><span class="token punctuation">|</span><span class="token table-data"> 12 </span><span class="token punctuation">|</span>
 <span class="token punctuation">|</span><span class="token table-data"> 草稿 </span><span class="token punctuation">|</span><span class="token table-data"> 待检查 </span><span class="token punctuation">|</span><span class="token table-data"> 3 </span><span class="token punctuation">|</span>
@@ -176,19 +176,19 @@
 <p><code>:---</code> 左对齐，<code>:---:</code> 居中，<code>---:</code> 右对齐。单元格内需要竖线时写成 <code>\|</code>。</p>
 <h2 id="任务列表">任务列表</h2>
 <p>在无序列表标记后加入方括号，空格表示未完成，<code>x</code> 表示已完成：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token list punctuation">-</span> [x] 建立文章目录
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token list punctuation">-</span> [x] 建立文章目录
 <span class="token list punctuation">-</span> [ ] 编写示例
 <span class="token list punctuation">-</span> [ ] 检查预览
 </code></pre></figure></div>
 <p>效果：</p>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox" checked=""/> 建立文章目录</li>
-<li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox"/> 编写示例</li>
-<li class="task-list-item enabled"><input disabled="" type="checkbox" class="task-list-item-checkbox"/> 检查预览</li>
+<li class="task-list-item enabled"><input type="checkbox" disabled="" class="task-list-item-checkbox" checked=""/> 建立文章目录</li>
+<li class="task-list-item enabled"><input type="checkbox" disabled="" class="task-list-item-checkbox"/> 编写示例</li>
+<li class="task-list-item enabled"><input type="checkbox" disabled="" class="task-list-item-checkbox"/> 检查预览</li>
 </ul>
 <p>QSNote 应用内的预览任务框可以点击，状态会回写到 Markdown 源码。这些正文任务与独立的待办清单笔记本分别管理。</p>
 <h2 id="删除线、高亮、上下标与表情">删除线、高亮、上下标与表情</h2>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token strike"><span class="token punctuation">~~</span><span class="token content">已经废弃的方案</span><span class="token punctuation">~~</span></span>
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token strike"><span class="token punctuation">~~</span><span class="token content">已经废弃的方案</span><span class="token punctuation">~~</span></span>
 ==需要关注的结论==
 水的化学式是 H<span class="token strike"><span class="token punctuation">~</span><span class="token content">2</span><span class="token punctuation">~</span></span>O。
 平方可以写成 x^2^。
@@ -198,15 +198,15 @@
 <p>上下标适合简短标注；分式、求和、多行推导等复杂表达式应使用公式。</p>
 <h2 id="脚注">脚注</h2>
 <p>正文中写脚注引用，在单独的段落中定义说明，引用与定义的名称必须一致：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">这项选择需要补充说明。[^reason]
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">这项选择需要补充说明。[^reason]
 
 <span class="token url-reference url"><span class="token punctuation">[</span><span class="token variable">^reason</span><span class="token punctuation">]</span><span class="token punctuation">:</span> 优先保留便于阅读和迁移的文本格式。</span>
 </code></pre></figure></div>
-<p>效果：这项选择需要补充说明。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<p>效果：这项选择需要补充说明。<sup class="footnote-ref"><a id="fnref1" href="#fn1">[1]</a></sup></p>
 <h2 id="提示块">提示块</h2>
 <h3 id="容器写法">容器写法</h3>
 <p>QSNote 支持以三冒号包围的提示容器：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">::: alert-info
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">::: alert-info
 保存正文后，再检查预览。
 :::
 
@@ -222,7 +222,7 @@
 <p>结束的 <code>:::</code> 需要独立成行。</p>
 <h3 id="github-风格写法">GitHub 风格写法</h3>
 <p>也可以在引用第一行标注提示类型：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown"><span class="token blockquote punctuation">></span> [!NOTE]
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown"><span class="token blockquote punctuation">></span> [!NOTE]
 <span class="token blockquote punctuation">></span> 这里填写补充说明。
 
 <span class="token blockquote punctuation">></span> [!TIP]
@@ -242,7 +242,7 @@
 <p>长文章先列标题，再补充正文，便于整理思路。</p>
 </aside>
 <h2 id="步骤时间线">步骤时间线</h2>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">
 ::: steps
 <span class="token list punctuation">1.</span> <span class="token bold"><span class="token punctuation">**</span><span class="token content">★准备环境</span><span class="token punctuation">**</span></span>
 
@@ -277,32 +277,32 @@
 </div>
 <h2 id="文内目录">文内目录</h2>
 <p>在正文中独立一行写入：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">[[toc]]
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">[[toc]]
 </code></pre></figure></div>
 <p>QSNote 会根据文章标题生成可点击目录。注意是两层方括号；右侧大纲无需写这个占位符也可以使用。</p>
 <h2 id="图片尺寸">图片尺寸</h2>
 <p>在图片路径后加尺寸，可以指定显示宽高：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">![灰阶](resources/images/post-5c6c4f49/灰阶.png =320x200)
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">![灰阶](resources/images/post-5c6c4f49/灰阶.png =320x200)
 </code></pre></figure></div>
-<figure><img src="/categories/qsnote/post-5c6c4f49/%E7%81%B0%E9%98%B6.png" width="320" style="width: 320px; height: 200px;" height="200" alt=""/><figcaption>灰阶</figcaption></figure>
+<figure><img alt="" width="320" height="200" src="/categories/qsnote/post-5c6c4f49/%E7%81%B0%E9%98%B6.png" style="width: 320px; height: 200px;"/><figcaption>灰阶</figcaption></figure>
 <p>这里表示宽 320、高 200。路径应换成实际图片，尺寸比例最好与原图一致，避免拉伸。</p>
 <h2 id="数学公式">数学公式</h2>
 <p>QSNote 使用 KaTeX 排版公式。它支持常用数学表达式，但不是完整的 LaTeX 编译环境。</p>
 <h3 id="行内公式">行内公式</h3>
 <p>使用一对美元符号：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">勾股定理可以写作 $a^2+b^2=c^2$。
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">勾股定理可以写作 $a^2+b^2=c^2$。
 </code></pre></figure></div>
-<p>效果：勾股定理可以写作 <img src="/categories/qsnote/post-5c6c4f49/9152634efba434b68d7f804527415c2eaa58ecee7ae3a87f61789cf27939da5c.png" width="104" style="width: 104px;" height="33" class="math-inline" alt="a^2+b^2=c^2"/>。</p>
+<p>效果：勾股定理可以写作 <img alt="a^2+b^2=c^2" width="104" height="33" class="math-inline" src="/categories/qsnote/post-5c6c4f49/7e62c3d0df98543d3272252cd41ebfc5f3c6b2ced0ca1430d78836087bbfa6c4.png" style="width: 104px;"/>。</p>
 <h3 id="独立公式">独立公式</h3>
 <p>公式较长时，用独立成行的 <code>$$</code> 包围：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">$$
 x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
 $$
 </code></pre></figure></div>
 <p>效果：</p>
-<section><img src="/categories/qsnote/post-5c6c4f49/b19721ae1349ced947924338536c393490a03feba180828a539224b3238aa144.png" width="177" style="width: 177px;" height="49" class="math-display" alt="&#xa;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}&#xa;"/></section><h3 id="多行公式">多行公式</h3>
+<section><img alt="&#xa;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}&#xa;" width="177" height="49" class="math-display" src="/categories/qsnote/post-5c6c4f49/9040f2fb0829833bd39caec21b60104e1c97918d1242899f231feac7ac1e6588.png" style="width: 177px;"/></section><h3 id="多行公式">多行公式</h3>
 <p><code>aligned</code> 环境可以对齐多行，<code>&amp;</code> 指定对齐位置，<code>\\</code> 表示换行：</p>
-<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre tabindex="0" class="language-markdown"><code class="language-markdown">$$
+<div class="code-toolbar"><figure data-language="markdown" class="code-block"><button type="button" class="code-copy">复制</button><pre class="language-markdown" tabindex="0"><code class="language-markdown">$$
 \begin{aligned}
 s &amp;= vt \\
 v &amp;= \frac{s}{t}
@@ -310,30 +310,25 @@ v &amp;= \frac{s}{t}
 $$
 </code></pre></figure></div>
 <p>效果：
-<img src="/categories/qsnote/post-5c6c4f49/24d895df64515884f8af0a9c23ecd18b386cdf5fec5f3807b38b229794ed7411.png" width="57" style="width: 57px;" height="74" class="math-inline" alt="&#xa;\begin{aligned}&#xa;s &amp;= vt \\&#xa;v &amp;= \frac{s}{t}&#xa;\end{aligned}&#xa;"/></p>
+<img alt="&#xa;\begin{aligned}&#xa;s &amp;= vt \\&#xa;v &amp;= \frac{s}{t}&#xa;\end{aligned}&#xa;" width="57" height="74" class="math-inline" src="/categories/qsnote/post-5c6c4f49/8cf05bd34cc0b2b57f915c96b28b38376ddb2f9cfe4183a892fa3597b2bde4f8.png" style="width: 57px;"/></p>
 <p>QSNote 还兼容 <code>\(...\)</code>、<code>\[...\]</code> 和语言名为 <code>mathjax</code> 的代码块；后者仍使用 KaTeX 渲染。</p>
 <h2 id="少量-html">少量 HTML</h2>
 <p>正文支持部分 HTML，例如使用 <code>&lt;kbd>Enter&lt;/kbd></code> 展示按键。脚本等不允许的内容会被过滤，不应依赖正文中的 JavaScript 实现功能。</p>
 <hr class="footnotes-sep"/>
 <section class="footnotes">
 <ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>优先保留便于阅读和迁移的文本格式。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+<li id="fn1" class="footnote-item"><p>优先保留便于阅读和迁移的文本格式。 <a class="footnote-backref" href="#fnref1">↩︎</a></p>
 </li>
 </ol>
 </section>
 </article></div>
 <div class="article-footer">
-<blockquote class="mt-2x">
-<ul class="post-copyright list-unstyled">
-<li class="post-copyright-link hidden-xs">
-<strong>本文链接：</strong>
-<a href="https://qiushao.github.io/categories/qsnote/post-5c6c4f49/" rel="external" target="_blank" title="Markdown扩展语法">https://qiushao.github.io/categories/qsnote/post-5c6c4f49/</a>
-</li>
-<li class="post-copyright-license">
-<strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-</ul>
-</blockquote>
+<aside class="alert-note hidden-xs">
+<p class="alert-title">本文链接</p>
+<p><a href="https://qiushao.github.io/categories/qsnote/post-5c6c4f49/" rel="external" target="_blank" title="Markdown扩展语法">https://qiushao.github.io/categories/qsnote/post-5c6c4f49/</a></p>
+<p class="alert-title">版权声明</p>
+<p>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" rel="external" target="_blank">CC BY 4.0 CN</a> 许可协议。转载请注明出处！</p>
+</aside>
 </div>
 </article>
 <section id="comments"><section class="giscus"></section><script data-src="https://giscus.app/client.js" data-repo="qiushao/qiushao.github.io" data-repo-id="MDEwOlJlcG9zaXRvcnk0NDgxODM3Ng==" data-category="Announcements" data-category-id="DIC_kwDOAqvfyM4DKbna" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></section>
